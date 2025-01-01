@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import nodemailer from "nodemailer";
 import clientPromise from "@/lib/mongodb";
-import { unsubscribeTemplate } from "@/emails/templates/unsubscribe";
+import { unsubscribeTemplate } from "@/emails/unsubscribe";
 import crypto from "crypto";
 
 interface UnsubscribeResponse {
