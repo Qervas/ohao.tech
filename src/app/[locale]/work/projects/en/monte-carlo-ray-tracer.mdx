@@ -1,0 +1,87 @@
+---
+title: "Monte Carlo Ray Tracer"
+publishedAt: "2024-04-08"
+summary: "Advanced global illumination renderer with photon mapping and physically-based rendering capabilities."
+images:
+  - "/images/projects/project-01/raytracer.png"
+team:
+  - name: "Shaoxuan Yin"
+    role: "Graphics Engineer"
+    avatar: "/images/me_snap.png"
+    linkedIn: "https://www.linkedin.com/in/shaoxuan-yin-021548170/"
+---
+
+## Overview
+
+The Monte Carlo Ray Tracer represents a sophisticated implementation of advanced rendering techniques, pushing the boundaries of photorealistic image synthesis. This project combines cutting-edge algorithms in computer graphics with efficient computational methods to achieve stunning visual results.
+
+## Key Features
+
+- **Advanced Ray Tracing**:
+  - Implemented sophisticated ray tracing algorithms for various materials
+  - Developed accurate reflection and refraction handling
+  - Integrated Monte Carlo sampling for realistic light transport
+
+- **Photon Mapping**:
+  - Applied advanced photon mapping techniques for complex lighting scenarios
+  - Implemented caustics rendering for realistic water and glass effects
+  - Optimized photon storage and lookup using efficient data structures
+
+- **Material System**:
+  - Developed physically-based material models
+  - Implemented BRDF (Bidirectional Reflectance Distribution Function) for realistic surface interactions
+  - Created support for various material types including diffuse, specular, and translucent surfaces
+
+- **Scene Geometry**:
+  - Composed diverse and intricate scene geometries for comprehensive testing
+  - Implemented efficient intersection algorithms for various primitive types
+  - Developed a flexible scene graph structure for complex object arrangements
+
+## Technologies Used
+
+- **C++**: Core implementation language, leveraging modern C++ features
+- **CUDA**: GPU acceleration for parallel ray computation
+- **OpenGL**: Real-time preview and debugging visualization
+- **CMake**: Build system and dependency management
+
+## Technical Challenges
+
+1. **Performance Optimization**:
+   - Implemented spatial acceleration structures (BVH)
+   - Optimized memory access patterns for CUDA kernels
+   - Reduced computation time through efficient sampling strategies
+
+2. **Lighting Accuracy**:
+   - Balanced noise reduction with computation time
+   - Implemented importance sampling for variance reduction
+   - Developed adaptive sampling techniques for complex lighting scenarios
+
+3. **Memory Management**:
+   - Efficient handling of large photon maps
+   - Optimized scene data structures for GPU memory
+   - Implemented out-of-core techniques for large scenes
+
+## Results and Impact
+
+The ray tracer successfully demonstrates:
+- Photorealistic rendering of complex scenes
+- Accurate global illumination effects
+- Efficient handling of various material types
+- Real-time preview capabilities
+- Scalable performance on modern GPU hardware
+
+## Future Development
+
+Planned enhancements include:
+- Integration of machine learning denoising
+- Support for volumetric rendering
+- Implementation of bidirectional path tracing
+- Enhanced real-time preview features
+
+## Project Timeline
+
+- Development Start: September 2024
+- Current Status: Active Development
+- Regular updates and feature additions
+
+[View on GitHub](https://github.com/Qervas/Monte-Carlo-Ray-Tracer)
