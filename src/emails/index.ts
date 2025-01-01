@@ -1,3 +1,3 @@
-export { welcomeEmailTemplate } from "./templates/welcome";
-export { newsletterTemplate } from "./templates/newsletter";
-export { unsubscribeTemplate } from "./templates/unsubscribe";
+export { welcomeEmailTemplate } from "./welcome";
+export { createNewsletterTemplate } from "./newsletter";
+export { unsubscribeTemplate } from "./unsubscribe";

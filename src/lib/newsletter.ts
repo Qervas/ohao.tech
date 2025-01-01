@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 import clientPromise from "./mongodb";
-import { createNewsletterTemplate } from "@/emails/templates/newsletter";
+import { createNewsletterTemplate } from "@/emails/newsletter";
 import crypto from "crypto";
 
 interface SendNewsletterOptions {
