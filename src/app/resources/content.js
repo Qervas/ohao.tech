@@ -17,7 +17,7 @@ const newsletter = {
   title: <>Subscribe to {person.firstName}'s Newsletter</>,
   description: (
     <>
-      I occasionally write about design, technology, and share thoughts on the
+      I occasionally write about technology, and share thoughts on the
       intersection of creativity and engineering.
     </>
   ),
@@ -52,17 +52,19 @@ const social = [
 ];
 
 const home = {
-	label: "Home",
-	title: `${person.name}'s Portfolio`,
-	description: `Portfolio website showcasing my work as a ${person.role}`,
-	headline: <>Graphics Engineer and AI Builder</>,
-	subline: (
-	  <>
-		I'm Shaoxuan, a computer science student at <InlineCode>Linköping University</InlineCode>, where I
-		explore computer graphics and <br />AI technologies. I build games and tools in my free time.
-	  </>
-	),
-  };
+  label: "Home",
+  title: `${person.name}'s Portfolio`,
+  description: `Portfolio website showcasing my work as a ${person.role}`,
+  headline: <>Graphics Engineer and AI Builder</>,
+  subline: (
+    <>
+      I'm Shaoxuan, a computer science student at{" "}
+      <InlineCode>Linköping University</InlineCode>, where I explore computer
+      graphics and <br />
+      AI technologies. I build games and tools in my free time.
+    </>
+  ),
+};
 
 const about = {
   label: "About",
@@ -183,13 +185,13 @@ const about = {
         ),
         images: [
           {
-            src: "/projects/image/1_project/raytracer.png",
+            src: "/projects/image/project-01/raytracer.png",
             alt: "Monte-Carlo Ray Tracer",
             width: 16,
             height: 9,
           },
           {
-            src: "/projects/image/3_project/water.png",
+            src: "/projects/image/water.png",
             alt: "Water Simulation",
             width: 16,
             height: 9,
