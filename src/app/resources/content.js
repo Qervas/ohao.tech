@@ -7,7 +7,7 @@ const person = {
     return `${this.firstName} ${this.lastName}`;
   },
   role: "Computer Science Graduate Student",
-  avatar: "/images/avatar.jpg",
+  avatar: "/images/avatar.png",
   location: "Europe/Stockholm",
   languages: ["Chinese (Native)", "English (Fluent)"],
 };
@@ -52,18 +52,17 @@ const social = [
 ];
 
 const home = {
-  label: "Home",
-  title: `${person.name}'s Portfolio`,
-  description: `Portfolio website showcasing my work as a ${person.role}`,
-  headline: <>Design engineer and builder</>,
-  subline: (
-    <>
-      I'm Selene, a design engineer at <InlineCode>FLY</InlineCode>, where I
-      craft intuitive
-      <br /> user experiences. After hours, I build my own projects.
-    </>
-  ),
-};
+	label: "Home",
+	title: `${person.name}'s Portfolio`,
+	description: `Portfolio website showcasing my work as a ${person.role}`,
+	headline: <>Graphics Engineer and AI Builder</>,
+	subline: (
+	  <>
+		I'm Shaoxuan, a computer science student at <InlineCode>Linköping University</InlineCode>, where I
+		explore computer graphics and <br />AI technologies. I build games and tools in my free time.
+	  </>
+	),
+  };
 
 const about = {
   label: "About",
@@ -203,7 +202,7 @@ const about = {
 
 const blog = {
   label: "Blog",
-  title: "Writing about design and tech...",
+  title: "Writing about tech and fun...",
   description: `Read what ${person.name} has been up to recently`,
   // Create new blog posts by adding a new .mdx file to app/blog/posts
   // All posts will be listed on the /blog route
