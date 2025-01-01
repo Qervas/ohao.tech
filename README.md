@@ -33,4 +33,4 @@ This project is built upon the excellent [Once UI Magic Portfolio](Fork.md) temp
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0) - see the [LICENSE](LICENSE) file for details.

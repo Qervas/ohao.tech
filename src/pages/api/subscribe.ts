@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import nodemailer from "nodemailer";
+import { SendMailClient } from "zeptomail";
 import clientPromise from "@/lib/mongodb";
 import { welcomeEmailTemplate } from "@/emails/welcome";
 
@@ -30,6 +30,10 @@ export default async function handler(
 
   const { email } = req.body;
 
+  if (!email) {
+    return res.status(400).json({ error: "Email is required" });
+  }
+
   try {
     const isValidEmail = await validateEmail(email);
     if (!isValidEmail) {
@@ -37,16 +41,6 @@ export default async function handler(
         error: "Invalid email or already subscribed",
       });
     }
-
-    const transporter = nodemailer.createTransport({
-      host: "smtp.zoho.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: process.env.ZOHO_MAIL_USER,
-        pass: process.env.ZOHO_MAIL_PASSWORD,
-      },
-    });
 
     // Store in database first
     const client = await clientPromise;
@@ -58,20 +52,47 @@ export default async function handler(
       source: "website",
     });
 
+    // Initialize ZeptoMail client
+    const url = "api.zeptomail.com/";
+    const token = process.env.ZEPTOMAIL_TOKEN!;
+    const mailClient = new SendMailClient({ url, token });
+
     // Send welcome email
-    await transporter.sendMail({
-      from: process.env.ZOHO_MAIL_USER,
-      to: email,
+    await mailClient.sendMail({
+      from: {
+        address: process.env.ZEPTOMAIL_FROM_EMAIL!,
+        name: process.env.ZEPTOMAIL_FROM_NAME || "Shaoxuan",
+      },
+      to: [
+        {
+          email_address: {
+            address: email,
+            name: email.split("@")[0],
+          },
+        },
+      ],
       subject: "🎉 Welcome to My Newsletter!",
-      html: welcomeEmailTemplate,
+      htmlbody: welcomeEmailTemplate,
+      track_clicks: true,
+      track_opens: true,
     });
 
     // Notify admin
-    await transporter.sendMail({
-      from: process.env.ZOHO_MAIL_USER,
-      to: process.env.ADMIN_EMAIL,
+    await mailClient.sendMail({
+      from: {
+        address: process.env.ZEPTOMAIL_FROM_EMAIL!,
+        name: process.env.ZEPTOMAIL_FROM_NAME || "Shaoxuan",
+      },
+      to: [
+        {
+          email_address: {
+            address: process.env.ADMIN_EMAIL!,
+            name: "Admin",
+          },
+        },
+      ],
       subject: "New Newsletter Subscriber",
-      text: `New subscriber: ${email}\nTime: ${new Date().toISOString()}`,
+      textbody: `New subscriber: ${email}\nTime: ${new Date().toISOString()}`,
     });
 
     return res.status(200).json({
@@ -90,7 +111,10 @@ export default async function handler(
     }
 
     return res.status(500).json({
-      error: "Failed to process subscription",
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to process subscription",
     });
   }
 }
