@@ -19,6 +19,9 @@ import {
   HiEnvelope,
   HiCalendarDays,
   HiClipboard,
+  HiPlay,
+  HiDocument,
+  HiArrowDown,
 } from "react-icons/hi2";
 
 import {
@@ -47,11 +50,15 @@ export const iconLibrary: Record<string, IconType> = {
   check: HiCheck,
   helpCircle: HiMiniQuestionMarkCircle,
   infoCircle: HiInformationCircle,
+  info: HiInformationCircle,
   warningTriangle: HiExclamationTriangle,
   errorCircle: HiExclamationCircle,
   checkCircle: HiCheckCircle,
   email: HiEnvelope,
   globe: HiMiniGlobeAsiaAustralia,
+  play: HiPlay,
+  document: HiDocument,
+  arrowDown: HiArrowDown,
   person: PiUserCircleDuotone,
   grid: PiGridFourDuotone,
   book: PiBookBookmarkDuotone,

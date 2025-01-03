@@ -2,12 +2,30 @@ import { MDXRemote, MDXRemoteProps } from "next-mdx-remote/rsc";
 import React, { ReactNode } from "react";
 import Image from "next/image";
 
-import { SmartImage, SmartLink, Text } from "@/once-ui/components";
 import { CodeBlock } from "@/once-ui/modules";
 import { HeadingLink } from "@/components";
+import {
+  Button,
+  Grid,
+  Flex,
+  Heading,
+  Text,
+  SmartImage,
+  Carousel,
+  SmartLink,
+  Icon,
+  Comment,
+} from "@/once-ui/components";
 
 import { TextProps } from "@/once-ui/interfaces";
 import { SmartImageProps } from "@/once-ui/components/SmartImage";
+import { PDFViewer } from "@/once-ui/components/PDFViewer";
+
+interface PDFProps {
+  url: string;
+  width?: string;
+  height?: string;
+}
 
 type TableProps = {
   data: {
@@ -150,11 +168,21 @@ const components = {
   h4: createHeading(4) as any,
   h5: createHeading(5) as any,
   h6: createHeading(6) as any,
+  Button: Button,
+  Grid: Grid,
+  Flex: Flex,
+  Heading: Heading,
+  Text: Text,
+  SmartImage: SmartImage,
+  Carousel: Carousel,
+  PDF: PDFViewer,
+  Icon: Icon,
   Image: CustomImage,
   img: createImage as any,
   a: CustomLink as any,
   Table,
   CodeBlock,
+  Comment,
 };
 
 type CustomMDXProps = MDXRemoteProps & {
