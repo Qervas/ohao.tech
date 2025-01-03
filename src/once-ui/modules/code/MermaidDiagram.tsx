@@ -80,11 +80,15 @@ export const MermaidDiagram: React.FC<MermaidProps> = ({ chart }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [showFullScreen, setShowFullScreen] = useState(false);
   const [enlargedContent, setEnlargedContent] = useState<string>("");
+  const [isZoomed, setIsZoomed] = useState(false);
 
-  const renderDiagram = async (
-    targetDiv: HTMLDivElement,
-    isEnlarged = false,
-  ) => {
+  // Add zoom state
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const isDragging = useRef(false);
+  const lastPosition = useRef({ x: 0, y: 0 });
+
+  const renderDiagram = async (targetDiv: HTMLDivElement) => {
     try {
       const id = `mermaid-${Math.random().toString(36).slice(2)}`;
       const { svg } = await mermaid.render(id, chart);
@@ -97,7 +101,8 @@ export const MermaidDiagram: React.FC<MermaidProps> = ({ chart }) => {
 
       targetDiv.innerHTML = enhancedSvg;
 
-      if (isEnlarged) {
+      // Store the content for the enlarged view
+      if (showFullScreen) {
         setEnlargedContent(enhancedSvg);
       }
 
@@ -105,55 +110,118 @@ export const MermaidDiagram: React.FC<MermaidProps> = ({ chart }) => {
       if (svgElement) {
         svgElement.style.maxWidth = "100%";
         svgElement.style.height = "auto";
-        // Add subtle animation on hover
-        svgElement.style.transition = "filter 0.3s ease";
-        svgElement.addEventListener("mouseenter", () => {
-          svgElement.style.filter = "drop-shadow(0 0 4px #00ffff)";
-        });
-        svgElement.addEventListener("mouseleave", () => {
-          svgElement.style.filter = "drop-shadow(0 0 2px #00ffff)";
-        });
       }
     } catch (error) {
       console.error("Mermaid rendering failed:", error);
       targetDiv.innerHTML = `
-        <div style="
-          color: #ff0000;
-          padding: 20px;
-          text-align: center;
-          border: 1px solid #ff0000;
-          border-radius: 4px;
-        ">
+        <div style="color: #ff0000; padding: 20px; text-align: center; border: 1px solid #ff0000; border-radius: 4px;">
           Failed to render diagram
         </div>
       `;
     }
   };
 
+  // Handle mouse wheel for zooming
+  const handleWheel = (e: WheelEvent) => {
+    if (!showFullScreen) return;
+    e.preventDefault();
+    const delta = e.deltaY * -0.001; // Made zoom more subtle
+    setScale((prev) => Math.min(Math.max(0.5, prev + delta), 2));
+  };
+
+  // Handle mouse drag for panning
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!showFullScreen) return;
+    isDragging.current = true;
+    lastPosition.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging.current) return;
+    const dx = e.clientX - lastPosition.current.x;
+    const dy = e.clientY - lastPosition.current.y;
+    setPosition((prev) => ({ x: prev.x + dx, y: prev.y + dy }));
+    lastPosition.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handleMouseUp = () => {
+    isDragging.current = false;
+  };
+
+  // Initial render
   useEffect(() => {
     if (containerRef.current) {
       renderDiagram(containerRef.current);
     }
   }, [chart]);
 
+  // Reset zoom and position when closing dialog
+  useEffect(() => {
+    if (!showFullScreen) {
+      setScale(1);
+      setPosition({ x: 0, y: 0 });
+    } else if (containerRef.current) {
+      renderDiagram(containerRef.current);
+    }
+  }, [showFullScreen]);
+
   return (
     <>
       <div style={{ position: "relative" }}>
-        <IconButton
-          icon="maximize"
-          variant="secondary"
+        <div
           style={{
             position: "absolute",
             top: "12px",
             right: "12px",
             zIndex: 1,
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            padding: "4px 8px",
             background: "rgba(0, 0, 0, 0.7)",
-            border: "1px solid #00ffff",
-            boxShadow: "0 0 10px rgba(0, 255, 255, 0.3)",
+            borderRadius: "var(--radius-m)",
+            boxShadow: "0 0 10px rgba(0, 255, 255, 0.2)",
+            cursor: "pointer",
+            transition: "all 0.2s ease",
           }}
-          onClick={() => setShowFullScreen(true)}
-          tooltip="Enlarge diagram"
-        />
+          onClick={() => {
+            setShowFullScreen(true);
+            setIsZoomed(true);
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "rgba(0, 0, 0, 0.8)";
+            e.currentTarget.style.boxShadow = "0 0 15px rgba(0, 255, 255, 0.3)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "rgba(0, 0, 0, 0.7)";
+            e.currentTarget.style.boxShadow = "0 0 10px rgba(0, 255, 255, 0.2)";
+          }}
+        >
+          <span
+            style={{
+              color: "#00ffff",
+              fontSize: "var(--font-size-body-s)",
+              userSelect: "none",
+            }}
+          >
+            Zoom
+          </span>
+          <IconButton
+            icon={isZoomed ? "zoomOut" : "zoomIn"}
+            variant="secondary"
+            style={{
+              background: "rgba(0, 255, 255, 0.1)",
+              border: "1px solid #00ffff",
+              color: "#00ffff",
+            }}
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent double triggering
+              setShowFullScreen(true);
+              setIsZoomed(true);
+            }}
+            tooltip={isZoomed ? "Exit fullscreen" : "View larger"}
+          />
+        </div>
 
         <div
           ref={containerRef}
@@ -169,48 +237,67 @@ export const MermaidDiagram: React.FC<MermaidProps> = ({ chart }) => {
         />
       </div>
 
-      <Dialog open={showFullScreen} onClose={() => setShowFullScreen(false)}>
+      <Dialog
+        isOpen={showFullScreen}
+        onClose={() => {
+          setShowFullScreen(false);
+          setIsZoomed(false);
+        }}
+        title="Enlarged Diagram"
+        description={
+          <span
+            style={{
+              color: "var(--neutral-on-background-weak)",
+              fontSize: "var(--font-size-body-s)",
+            }}
+          >
+            🔍 Scroll to zoom • ✋ Click and drag to pan • ESC to close
+          </span>
+        }
+        style={{
+          // Make dialog fill most of the screen
+          maxWidth: "95vw", // increased from 80vw
+          width: "95vw",
+          height: "90vh", // increased from 80vh
+          margin: "auto",
+        }}
+      >
         <Flex
           direction="column"
           style={{
-            width: "90vw",
-            maxWidth: "1400px",
-            height: "90vh",
-            padding: "var(--static-space-24)",
-            background: "#0a0a0a",
-            border: "1px solid #00ffff",
-            boxShadow: "0 0 30px rgba(0, 255, 255, 0.2)",
-            borderRadius: "var(--radius-l)",
+            width: "100%",
+            height: "calc(90vh - 80px)", // Adjust for dialog header
+            background: "var(--surface-background)",
+            overflow: "hidden",
           }}
         >
-          <Flex justifyContent="flex-end" marginBottom="16">
-            <IconButton
-              icon="close"
-              variant="secondary"
-              onClick={() => setShowFullScreen(false)}
-              style={{
-                border: "1px solid #00ffff",
-                boxShadow: "0 0 10px rgba(0, 255, 255, 0.3)",
-              }}
-            />
-          </Flex>
-
           <div
             style={{
-              flex: 1,
-              overflow: "auto",
-              padding: "var(--static-space-32)",
-              background: "#000d1a",
+              width: "100%",
+              height: "100%",
+              overflow: "hidden",
+              padding: "var(--static-space-24)", // reduced padding to give more space to content
+              cursor: isDragging.current ? "grabbing" : "grab",
+              background: "#000d1a", // darker background for contrast
               borderRadius: "var(--radius-m)",
-              border: "1px solid #00ffff",
-              boxShadow: "inset 0 0 20px rgba(0, 255, 255, 0.1)",
+              border: "1px solid var(--neutral-border-medium)",
             }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            onWheel={handleWheel as any}
           >
             <div
               style={{
-                transform: "scale(1.5)",
-                transformOrigin: "top left",
-                padding: "var(--static-space-24)",
+                transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+                transformOrigin: "center center",
+                transition: isDragging.current ? "none" : "transform 0.1s ease",
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
               }}
               dangerouslySetInnerHTML={{ __html: enlargedContent }}
             />
