@@ -57,11 +57,17 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
 
   const [copyIcon, setCopyIcon] = useState<string>("clipboard");
 
+  const [isCodeVisible, setIsCodeVisible] = useState(
+    language !== "mermaid", // Hide code by default if Mermaid
+  );
+
   useEffect(() => {
     if (codeRef.current && codeInstances.length > 0) {
       Prism.highlightAll();
     }
-  }, [code, codeInstances.length]);
+    // Reset code visibility when language changes
+    setIsCodeVisible(language !== "mermaid");
+  }, [code, codeInstances.length, language]);
 
   const handleCopy = () => {
     if (codeInstances.length > 0) {
@@ -87,6 +93,10 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
     if (index !== -1) {
       setSelectedInstance(index);
     }
+  };
+
+  const toggleCodeVisibility = () => {
+    setIsCodeVisible((prev) => !prev);
   };
 
   const renderContent = () => {
@@ -130,6 +140,44 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
       </Flex>
     );
   };
+
+  const renderMermaidCode = () => (
+    <div
+      style={{
+        padding: "8px",
+        background: "#var(--surface-background)",
+        borderRadius: "4px",
+        border: "1px solid var(--neutral-border-weak)",
+      }}
+    >
+      {isCodeVisible && (
+        <Flex fillWidth padding="8" position="relative" overflowY="auto">
+          <pre
+            data-line={highlight}
+            ref={preRef}
+            className={`${styles.pre} language-mermaid`}
+            tabIndex={-1}
+          >
+            <code
+              ref={codeRef}
+              className={`${styles.code} ${`language-mermaid`}`}
+            >
+              {code}
+            </code>
+          </pre>
+        </Flex>
+      )}
+      <Flex justifyContent="flex-end" padding="8">
+        <Button
+          size="s"
+          variant="tertiary"
+          onClick={toggleCodeVisibility}
+          label={isCodeVisible ? "Hide Code" : "Show Code"}
+          style={{ marginTop: "4px" }}
+        />
+      </Flex>
+    </div>
+  );
 
   return (
     <Flex
@@ -181,7 +229,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
           ) : (
             <div />
           )}
-          {copyButton && !compact && (
+          {copyButton && !compact && language !== "mermaid" && (
             <IconButton
               tooltip="Copy"
               variant="secondary"
@@ -209,52 +257,9 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
         </Flex>
       )}
       {codeInstances.length > 0 && renderContent()}
-      {codeInstances.length > 0 && (
-        <Flex
-          style={{
-            borderTop:
-              !compact && codePreview
-                ? "1px solid var(--neutral-border-medium)"
-                : "none",
-          }}
-          fillWidth
-          padding="8"
-          position="relative"
-          overflowY="auto"
-        >
-          {compact && copyButton && (
-            <Flex
-              zIndex={1}
-              style={{
-                right: "var(--static-space-8)",
-                top: "var(--static-space-8)",
-              }}
-              position="absolute"
-            >
-              <IconButton
-                aria-label="Copy code"
-                onClick={handleCopy}
-                icon={copyIcon}
-                size="m"
-                variant="secondary"
-              />
-            </Flex>
-          )}
-          <pre
-            data-line={highlight}
-            ref={preRef}
-            className={`${styles.pre} language-${language}`}
-            tabIndex={-1}
-          >
-            <code
-              ref={codeRef}
-              className={`${styles.code} ${`language-${language}`}`}
-            >
-              {code}
-            </code>
-          </pre>
-        </Flex>
-      )}
+      {codeInstances.length > 0 &&
+        language === "mermaid" &&
+        renderMermaidCode()}
     </Flex>
   );
 };
