@@ -22,6 +22,19 @@ import {
   HiPlay,
   HiDocument,
   HiArrowDown,
+  HiUsers,
+  HiUser,
+  HiUserPlus,
+  HiUserGroup,
+  HiMap,
+  HiMapPin,
+  HiLink,
+  HiCalendar,
+  HiStar,
+  HiHeart,
+  HiBuildingOffice2,
+  HiCodeBracket,
+  HiMagnifyingGlass,
 } from "react-icons/hi2";
 
 import {
@@ -38,6 +51,7 @@ import {
   FaLinkedin,
   FaXTwitter,
   FaYoutube,
+  FaCodeBranch,
 } from "react-icons/fa6";
 
 export const iconLibrary: Record<string, IconType> = {
@@ -73,4 +87,17 @@ export const iconLibrary: Record<string, IconType> = {
   x: FaXTwitter,
   clipboard: HiClipboard,
   youtube: FaYoutube,
+  users: HiUsers,
+  user: HiUser,
+  userPlus: HiUserPlus,
+  userGroup: HiUserGroup,
+  map: HiMap,
+  mapPin: HiMapPin,
+  link: HiLink,
+  star: HiStar,
+  heart: HiHeart,
+  building: HiBuildingOffice2,
+  code: HiCodeBracket,
+  search: HiMagnifyingGlass,
+  gitFork: FaCodeBranch,
 };

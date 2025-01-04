@@ -1,0 +1,12 @@
+.calendar {
+    :global {
+        .contrib-column {
+            display: none;
+        }
+
+        // Only show the calendar grid
+        .js-calendar-graph {
+            padding-bottom: 0;
+        }
+    }
+}
