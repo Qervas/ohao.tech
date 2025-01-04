@@ -54,18 +54,20 @@ export default TimeDisplay;
 export const Header = () => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const pathname = usePathname() ?? "";
+  const pathname = usePathname();
   const params = useParams();
 
   function handleLanguageChange(locale: string) {
-    const nextLocale = locale as Locale;
     startTransition(() => {
-      router.replace(pathname, { locale: nextLocale });
+      router.replace(pathname || "/", { locale });
     });
   }
 
   const t = useTranslations();
-  const { person, home, about, blog, work, gallery } = renderContent(t);
+  const { person, home, about, blog, work } = renderContent(t);
+  const pathnameStartsWith = (path: string) => {
+    return pathname ? pathname.startsWith(path) : false;
+  };
 
   return (
     <>
@@ -76,7 +78,7 @@ export const Header = () => {
         fillWidth
         minHeight="80"
         justifyContent="center"
-      ></Flex>
+      />
       <Flex
         style={{ height: "fit-content" }}
         className={styles.position}
@@ -108,7 +110,7 @@ export const Header = () => {
               {routes["/"] && (
                 <ToggleButton
                   prefixIcon="home"
-                  href={`/${params?.locale}`}
+                  href="/"
                   selected={pathname === "/"}
                 >
                   <Flex paddingX="2" hide="s">
@@ -119,7 +121,7 @@ export const Header = () => {
               {routes["/about"] && (
                 <ToggleButton
                   prefixIcon="person"
-                  href={`/${params?.locale}/about`}
+                  href="/about"
                   selected={pathname === "/about"}
                 >
                   <Flex paddingX="2" hide="s">
@@ -130,8 +132,8 @@ export const Header = () => {
               {routes["/work"] && (
                 <ToggleButton
                   prefixIcon="grid"
-                  href={`/${params?.locale}/work`}
-                  selected={pathname.startsWith("/work")}
+                  href="/work"
+                  selected={pathnameStartsWith("/work")}
                 >
                   <Flex paddingX="2" hide="s">
                     {work.label}
@@ -141,8 +143,8 @@ export const Header = () => {
               {routes["/blog"] && (
                 <ToggleButton
                   prefixIcon="book"
-                  href={`/${params?.locale}/blog`}
-                  selected={pathname.startsWith("/blog")}
+                  href="/blog"
+                  selected={pathnameStartsWith("/blog")}
                 >
                   <Flex paddingX="2" hide="s">
                     {blog.label}
@@ -152,8 +154,8 @@ export const Header = () => {
               {routes["/github"] && (
                 <ToggleButton
                   prefixIcon="github"
-                  href={`/${params?.locale}/github`}
-                  selected={pathname.startsWith("/github")}
+                  href="/github"
+                  selected={pathnameStartsWith("/github")}
                 >
                   <Flex paddingX="2" hide="s">
                     {github.label}
@@ -171,7 +173,7 @@ export const Header = () => {
             textVariant="body-default-s"
             gap="20"
           >
-            {routing.locales.length > 1 && (
+            {i18n && (
               <Flex
                 background="surface"
                 border="neutral-medium"
@@ -182,19 +184,18 @@ export const Header = () => {
                 gap="2"
                 justifyContent="center"
               >
-                {i18n &&
-                  routing.locales.map((locale, index) => (
-                    <ToggleButton
-                      key={index}
-                      selected={params?.locale === locale}
-                      onClick={() => handleLanguageChange(locale)}
-                      className={
-                        (isPending && "pointer-events-none opacity-60") || ""
-                      }
-                    >
-                      {locale.toUpperCase()}
-                    </ToggleButton>
-                  ))}
+                {["en"].map((locale, index) => (
+                  <ToggleButton
+                    key={index}
+                    selected={params?.locale === locale}
+                    onClick={() => handleLanguageChange(locale)}
+                    className={
+                      (isPending && "pointer-events-none opacity-60") || ""
+                    }
+                  >
+                    {locale.toUpperCase()}
+                  </ToggleButton>
+                ))}
               </Flex>
             )}
             <Flex hide="s">

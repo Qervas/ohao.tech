@@ -70,12 +70,11 @@
     "title": "My projects",
     "description": "Graphics and AI projects by {name}"
   },
-  "gallery": {
-    "label": "Gallery",
-    "title": "My photo gallery",
-    "description": "A photo collection by {name}"
-  },
   "projectCard": {
     "label": "Read Case Study"
+  },
+  "github": {
+    "label": "GitHub",
+    "title": "GitHub"
   }
 }
