@@ -52,19 +52,27 @@ export function Projects({ locale, showFeatured, showRecent }: ProjectsProps) {
       new Date(a.metadata.publishedAt).getTime(),
   );
 
-  const filteredProjects = sortedProjects.filter((project) => {
-    if (showFeatured) {
-      return project.metadata.featured === true;
-    }
+  let filteredProjects = sortedProjects;
 
-    if (showRecent) {
-      const sixMonthsAgo = new Date();
-      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-      return new Date(project.metadata.publishedAt) >= sixMonthsAgo;
-    }
+  // If either filter is active, apply filtering
+  if (showFeatured || showRecent) {
+    filteredProjects = sortedProjects.filter((project) => {
+      // For featured section
+      if (showFeatured && project.metadata.featured) {
+        return true;
+      }
 
-    return true; // Show all projects if no filter is specified
-  });
+      // For recent section
+      if (showRecent) {
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+        const publishDate = new Date(project.metadata.publishedAt);
+        return publishDate >= sixMonthsAgo;
+      }
+
+      return false;
+    });
+  }
 
   if (filteredProjects.length === 0) {
     return (
