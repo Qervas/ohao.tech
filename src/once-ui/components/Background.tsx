@@ -1,46 +1,65 @@
-'use client';
+"use client";
 
-import React, { useEffect, useRef } from 'react';
-import styles from './Background.module.scss';
-import classNames from 'classnames';
+import React, { useEffect, useRef } from "react";
+import styles from "./Background.module.scss";
+import classNames from "classnames";
 
 export interface BackgroundProps {
   className?: string;
   style?: React.CSSProperties;
-  mask?: 'none' | 'cursor' | 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight';
+  mask?:
+    | "none"
+    | "cursor"
+    | "topLeft"
+    | "topRight"
+    | "bottomLeft"
+    | "bottomRight";
+  position?: string;
+  gradient?: {
+    display: boolean;
+    opacity: number;
+  };
+  dots?: {
+    display: boolean;
+    opacity: number;
+    size: string;
+  };
+  lines?: {
+    display: boolean;
+  };
 }
 
 export const Background = React.forwardRef<HTMLDivElement, BackgroundProps>(
-  ({ className, style, mask = 'none' }, ref) => {
+  ({ className, style, mask = "none" }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [mousePosition, setMousePosition] = React.useState({ x: 0, y: 0 });
 
     useEffect(() => {
       const handleMouseMove = (e: MouseEvent) => {
         if (!containerRef.current) return;
-        
+
         const x = (e.clientX / window.innerWidth) * 100;
         const y = (e.clientY / window.innerHeight) * 100;
-        
+
         setMousePosition({ x, y });
-        
-        containerRef.current.style.setProperty('--mouse-x', `${x}%`);
-        containerRef.current.style.setProperty('--mouse-y', `${y}%`);
+
+        containerRef.current.style.setProperty("--mouse-x", `${x}%`);
+        containerRef.current.style.setProperty("--mouse-y", `${y}%`);
       };
 
-      window.addEventListener('mousemove', handleMouseMove);
-      return () => window.removeEventListener('mousemove', handleMouseMove);
+      window.addEventListener("mousemove", handleMouseMove);
+      return () => window.removeEventListener("mousemove", handleMouseMove);
     }, []);
 
     const maskStyle = React.useMemo(() => {
-      const maskSize = '1200px';
+      const maskSize = "1200px";
       switch (mask) {
-        case 'cursor':
+        case "cursor":
           return {
             maskImage: `radial-gradient(${maskSize} at ${mousePosition.x}% ${mousePosition.y}%, black 40%, transparent)`,
             WebkitMaskImage: `radial-gradient(${maskSize} at ${mousePosition.x}% ${mousePosition.y}%, black 40%, transparent)`,
           };
-        case 'topLeft':
+        case "topLeft":
           return {
             maskImage: `radial-gradient(${maskSize} at 0 0, black 40%, transparent)`,
             WebkitMaskImage: `radial-gradient(${maskSize} at 0 0, black 40%, transparent)`,
@@ -51,7 +70,7 @@ export const Background = React.forwardRef<HTMLDivElement, BackgroundProps>(
     }, [mask, mousePosition]);
 
     return (
-      <div 
+      <div
         ref={containerRef}
         className={classNames(styles.backgroundContainer, className)}
         style={{ ...style, ...maskStyle }}
@@ -64,7 +83,7 @@ export const Background = React.forwardRef<HTMLDivElement, BackgroundProps>(
         <div className={styles.particles} />
       </div>
     );
-  }
+  },
 );
 
-Background.displayName = 'Background';
+Background.displayName = "Background";

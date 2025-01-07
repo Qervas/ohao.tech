@@ -3,14 +3,19 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const withMDX = mdx({
   extension: /\.mdx?$/,
-  options: {},
+  options: {
+    // If you use remark-gfm, you'll need to use next.config.mjs
+    // as the package is ESM only
+    // remarkPlugins: [require('remark-gfm')],
+  },
 });
 
-const withNextIntl = createNextIntlPlugin("./src/i18n/getRequestConfig.ts");
+const withNextIntl = createNextIntlPlugin();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  pageExtensions: ["ts", "tsx", "md", "mdx"],
+  pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
+
   images: {
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
@@ -54,6 +59,12 @@ const nextConfig = {
       },
     ],
   },
+
+  webpack: (config) => {
+    config.resolve.fallback = { fs: false, path: false };
+    return config;
+  },
 };
 
+// Compose plugins
 export default withNextIntl(withMDX(nextConfig));
