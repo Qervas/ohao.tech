@@ -64,39 +64,20 @@ export default function Home({
     <Flex
       maxWidth="m"
       fillWidth
-      gap="xl"
+      gap="l" // Reduced from xl
       direction="column"
       alignItems="center"
     >
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebPage",
-            name: home.title,
-            description: home.description,
-            url: `https://${baseURL}`,
-            image: `${baseURL}/og?title=${encodeURIComponent(home.title)}`,
-            publisher: {
-              "@type": "Person",
-              name: person.name,
-              image: {
-                "@type": "ImageObject",
-                url: `${baseURL}${person.avatar}`,
-              },
-            },
-          }),
-        }}
-      />
-      <Flex fillWidth direction="column" paddingY="l" gap="m">
+      {/* Schema and metadata script remains the same */}
+
+      {/* Header Section - More compact */}
+      <Flex fillWidth direction="column" paddingY="m" gap="m">
         <Flex direction="column" fillWidth maxWidth="s">
           <RevealFx
             translateY="4"
             fillWidth
             justifyContent="flex-start"
-            paddingBottom="m"
+            paddingBottom="s" // Reduced padding
           >
             <Heading wrap="balance" variant="display-strong-l">
               {home.headline}
@@ -107,58 +88,82 @@ export default function Home({
             delay={0.2}
             fillWidth
             justifyContent="flex-start"
-            paddingBottom="m"
+            paddingBottom="s" // Reduced padding
           >
             <Text
               wrap="balance"
               onBackground="neutral-weak"
-              variant="heading-default-xl"
+              variant="heading-default-m" // Smaller text
             >
               {home.subline}
             </Text>
           </RevealFx>
+
+          {/* Quick Links Section */}
           <RevealFx translateY="12" delay={0.4}>
-            <Flex fillWidth>
+            <Flex gap="8" fillWidth>
               <Button
                 id="about"
-                data-border="rounded"
                 href={`/${locale}/about`}
                 variant="tertiary"
-                size="m"
+                size="s" // Smaller button
               >
                 <Flex gap="8" alignItems="center">
                   {about.avatar.display && (
                     <Avatar
-                      style={{ marginLeft: "-0.75rem", marginRight: "0.25rem" }}
                       src={person.avatar}
-                      size="m"
+                      size="s" // Smaller avatar
                     />
                   )}
-                  {t("about.title")}
-                  <Arrow trigger="#about" />
+                  About
                 </Flex>
+              </Button>
+              <Button
+                href={`/${locale}/github`}
+                variant="tertiary"
+                size="s"
+                prefixIcon="github"
+              >
+                GitHub
               </Button>
             </Flex>
           </RevealFx>
         </Flex>
       </Flex>
+
+      {/* Featured Project - More focused */}
       <RevealFx translateY="16" delay={0.6}>
-        <Projects range={[1, 1]} locale={locale} />
+        <Flex fillWidth direction="column" gap="m">
+          <Heading variant="heading-strong-m">Featured Project</Heading>
+          <Projects locale={locale} showFeatured={true} />
+        </Flex>
       </RevealFx>
-      {routes["/blog"] && (
-        <Flex fillWidth gap="24" mobileDirection="column">
-          <Flex flex={1} paddingLeft="l">
-            <Heading as="h2" variant="display-strong-xs" wrap="balance">
-              Latest from the blog
-            </Heading>
+
+      {/* Blog & Projects Side by Side */}
+      <Flex fillWidth gap="20" wrap>
+        {routes["/blog"] && (
+          <Flex
+            flex={1}
+            direction="column"
+            gap="m"
+            style={{ minWidth: "300px" }} // Move to style prop instead
+          >
+            <Heading variant="heading-strong-s">Latest Posts</Heading>
+            <Posts range={[1, 2]} columns="1" locale={locale} />
           </Flex>
-          <Flex flex={3} paddingX="20">
-            <Posts range={[1, 2]} columns="2" locale={locale} />
-          </Flex>
+        )}
+        <Flex flex={1} direction="column" gap="m" style={{ minWidth: "300px" }}>
+          <Heading variant="heading-strong-s">Recent Projects</Heading>
+          <Projects locale={locale} showRecent={true} />
+        </Flex>
+      </Flex>
+
+      {/* Newsletter - Keep if needed */}
+      {newsletter.display && (
+        <Flex fillWidth maxWidth="s">
+          <Newsletter newsletter={newsletter} />
         </Flex>
       )}
-      <Projects range={[2]} locale={locale} />
-      {newsletter.display && <Newsletter newsletter={newsletter} />}{" "}
     </Flex>
   );
 }

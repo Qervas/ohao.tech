@@ -51,7 +51,9 @@ export default function Blog({
   const t = useTranslations();
   const { person, blog, newsletter } = renderContent(t);
   return (
-    <Flex fillWidth maxWidth="s" direction="column">
+    <Flex fillWidth maxWidth="m" direction="column">
+      {" "}
+      {/* Changed maxWidth to 'm' */}
       <script
         type="application/ld+json"
         suppressHydrationWarning
@@ -77,11 +79,8 @@ export default function Blog({
       <Heading marginBottom="l" variant="display-strong-s">
         {blog.title}
       </Heading>
-      <Flex fillWidth flex={1} direction="column">
-        <Posts range={[1, 3]} locale={locale} thumbnail />
-        <Posts range={[4]} columns="2" locale={locale} />
-      </Flex>
-      {newsletter.display && <Newsletter newsletter={newsletter} />}{" "}
+      <Posts locale={locale} /> {/* Simplified to use defaults */}
+      {newsletter.display && <Newsletter newsletter={newsletter} />}
     </Flex>
   );
 }

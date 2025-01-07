@@ -42,7 +42,10 @@ async function getGitHubData() {
     const reposData = await reposRes.json();
 
     return {
-      user: userData,
+      user: {
+        ...userData,
+        html_url: `https://github.com/${GITHUB_USERNAME}`,
+      },
       repos: reposData,
     };
   } catch (error) {

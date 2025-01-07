@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef, ReactNode } from "react";
-
 import "@/once-ui/modules/code/CodeHighlight.css";
 import styles from "@/once-ui/modules/code/CodeBlock.module.scss";
-
 import {
   Flex,
   Button,
@@ -12,33 +10,74 @@ import {
   DropdownWrapper,
 } from "@/once-ui/components";
 import { MermaidDiagram } from "./MermaidDiagram";
-
 import Prism from "prismjs";
+
+// Import Prism languages
 import "prismjs/plugins/line-highlight/prism-line-highlight";
-import "prismjs/components/prism-jsx";
-import "prismjs/components/prism-css";
 import "prismjs/components/prism-typescript";
+import "prismjs/components/prism-javascript";
+import "prismjs/components/prism-jsx";
 import "prismjs/components/prism-tsx";
+import "prismjs/components/prism-css";
+import "prismjs/components/prism-scss";
+import "prismjs/components/prism-json";
+import "prismjs/components/prism-markdown";
+import "prismjs/components/prism-python";
+import "prismjs/components/prism-java";
+import "prismjs/components/prism-c";
+import "prismjs/components/prism-cpp";
+import "prismjs/components/prism-rust";
+import "prismjs/components/prism-go";
+import "prismjs/components/prism-bash";
+import "prismjs/components/prism-yaml";
+import "prismjs/components/prism-sql";
+
+const LANGUAGE_NAMES: { [key: string]: string } = {
+  typescript: "TypeScript",
+  javascript: "JavaScript",
+  jsx: "JSX",
+  tsx: "TSX",
+  css: "CSS",
+  scss: "SCSS",
+  json: "JSON",
+  markdown: "Markdown",
+  python: "Python",
+  java: "Java",
+  c: "C",
+  cpp: "C++",
+  rust: "Rust",
+  go: "Go",
+  bash: "Bash",
+  yaml: "YAML",
+  sql: "SQL",
+  mermaid: "Mermaid",
+};
 
 type CodeInstance = {
   code: string;
   language: string;
-  label: string;
+  label?: string;
 };
 
-type CodeBlockProps = {
+interface CodeBlockProps {
   highlight?: string;
   codeInstances?: CodeInstance[];
+  code?: string;
+  language?: string;
+  filename?: string;
   codePreview?: ReactNode;
   copyButton?: boolean;
   compact?: boolean;
   className?: string;
   style?: React.CSSProperties;
-};
+}
 
-const CodeBlock: React.FC<CodeBlockProps> = ({
+export const CodeBlock: React.FC<CodeBlockProps> = ({
   highlight,
   codeInstances = [],
+  code: singleCode,
+  language: singleLanguage,
+  filename,
   codePreview,
   copyButton = true,
   compact = false,
@@ -48,46 +87,52 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
   const codeRef = useRef<HTMLElement>(null);
   const preRef = useRef<HTMLPreElement>(null);
   const [selectedInstance, setSelectedInstance] = useState(0);
+  const [isCopied, setIsCopied] = useState(false);
 
-  const { code, language, label } = codeInstances[selectedInstance] || {
+  // Handle both single code and code instances
+  const instances =
+    codeInstances.length > 0
+      ? codeInstances
+      : singleCode && singleLanguage
+        ? [{ code: singleCode, language: singleLanguage, label: filename }]
+        : [];
+
+  const { code, language, label } = instances[selectedInstance] || {
     code: "",
     language: "",
     label: "Select Code",
   };
 
-  const [copyIcon, setCopyIcon] = useState<string>("clipboard");
-
-  const [isCodeVisible, setIsCodeVisible] = useState(
-    language !== "mermaid", // Hide code by default if Mermaid
-  );
+  const [isCodeVisible, setIsCodeVisible] = useState(language !== "mermaid");
 
   useEffect(() => {
-    if (codeRef.current && codeInstances.length > 0) {
-      Prism.highlightAll();
+    if (codeRef.current && instances.length > 0) {
+      // Prism.highlightElement(codeRef.current);
+      if (language && code) {
+        const grammar = Prism.languages[language];
+        if (grammar) {
+          const highlightedCode = Prism.highlight(code, grammar, language);
+          codeRef.current.innerHTML = highlightedCode;
+        }
+      }
     }
-    // Reset code visibility when language changes
     setIsCodeVisible(language !== "mermaid");
-  }, [code, codeInstances.length, language]);
+  }, [code, instances.length, language]);
 
-  const handleCopy = () => {
-    if (codeInstances.length > 0) {
-      navigator.clipboard
-        .writeText(code)
-        .then(() => {
-          setCopyIcon("check");
+  const handleCopy = async () => {
+    if (!code) return;
 
-          setTimeout(() => {
-            setCopyIcon("clipboard");
-          }, 5000);
-        })
-        .catch((err) => {
-          console.error("Failed to copy code: ", err);
-        });
+    try {
+      await navigator.clipboard.writeText(code);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy code:", err);
     }
   };
 
   const handleContent = (selectedLabel: string) => {
-    const index = codeInstances.findIndex(
+    const index = instances.findIndex(
       (instance) => instance.label === selectedLabel,
     );
     if (index !== -1) {
@@ -95,173 +140,92 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
     }
   };
 
-  const toggleCodeVisibility = () => {
-    setIsCodeVisible((prev) => !prev);
-  };
-
-  const renderContent = () => {
+  const renderCodeContent = () => {
     if (language === "mermaid") {
       return <MermaidDiagram chart={code} />;
     }
 
     return (
-      <Flex fillWidth padding="8" position="relative" overflowY="auto">
-        {compact && copyButton && (
-          <Flex
-            zIndex={1}
-            style={{
-              right: "var(--static-space-8)",
-              top: "var(--static-space-8)",
-            }}
-            position="absolute"
-          >
+      <div className={styles.codeContainer}>
+        <div className={styles.header}>
+          <span className={styles.language}>
+            {label || LANGUAGE_NAMES[language] || language}
+          </span>
+          {copyButton && (
             <IconButton
-              aria-label="Copy code"
-              onClick={handleCopy}
-              icon={copyIcon}
-              size="m"
+              icon={isCopied ? "check" : "clipboard"}
               variant="secondary"
+              size="s"
+              onClick={handleCopy}
+              className={`${styles.copyButton} ${isCopied ? styles.copySuccess : ""}`}
+              tooltip={isCopied ? "Copied!" : "Copy code"}
             />
-          </Flex>
-        )}
-        <pre
-          data-line={highlight}
-          ref={preRef}
-          className={`${styles.pre} language-${language}`}
-          tabIndex={-1}
-        >
-          <code
-            ref={codeRef}
-            className={`${styles.code} ${`language-${language}`}`}
-          >
+          )}
+        </div>
+        <pre ref={preRef} className={styles.pre} data-line={highlight}>
+          <code ref={codeRef} className={`${styles.code} language-${language}`}>
             {code}
           </code>
         </pre>
-      </Flex>
+      </div>
     );
   };
 
   const renderMermaidCode = () => (
-    <div
-      style={{
-        padding: "8px",
-        background: "#var(--surface-background)",
-        borderRadius: "4px",
-        border: "1px solid var(--neutral-border-weak)",
-      }}
-    >
+    <div className={styles.mermaidContainer}>
+      <MermaidDiagram chart={code} />
       {isCodeVisible && (
-        <Flex fillWidth padding="8" position="relative" overflowY="auto">
-          <pre
-            data-line={highlight}
-            ref={preRef}
-            className={`${styles.pre} language-mermaid`}
-            tabIndex={-1}
-          >
-            <code
-              ref={codeRef}
-              className={`${styles.code} ${`language-mermaid`}`}
-            >
-              {code}
-            </code>
-          </pre>
-        </Flex>
+        <pre className={`${styles.pre} language-mermaid`}>
+          <code className={`${styles.code}`}>{code}</code>
+        </pre>
       )}
       <Flex justifyContent="flex-end" padding="8">
         <Button
           size="s"
           variant="tertiary"
-          onClick={toggleCodeVisibility}
+          onClick={() => setIsCodeVisible(!isCodeVisible)}
           label={isCodeVisible ? "Hide Code" : "Show Code"}
-          style={{ marginTop: "4px" }}
         />
       </Flex>
     </div>
   );
 
+  if (!instances.length) return null;
+
   return (
-    <Flex
-      position="relative"
-      zIndex={0}
-      background="surface"
-      radius="l"
-      border="neutral-medium"
-      borderStyle="solid-1"
-      direction="column"
-      justifyContent="center"
-      fillWidth
-      minHeight={3}
-      className={className || ""}
-      style={style}
-    >
-      {(codeInstances.length > 1 || (copyButton && !compact)) && (
-        <Flex
-          style={{
-            borderBottom: "1px solid var(--neutral-border-medium)",
+    <Flex direction="column" className={className} style={style}>
+      {instances.length > 1 && (
+        <DropdownWrapper
+          dropdownOptions={instances.map((instance, index) => ({
+            label:
+              instance.label ||
+              LANGUAGE_NAMES[instance.language] ||
+              instance.language,
+            value: `${instance.label}-${index}`,
+          }))}
+          dropdownProps={{
+            onOptionSelect: (option) => {
+              const selectedLabel = option.value.split("-")[0];
+              handleContent(selectedLabel);
+            },
           }}
-          zIndex={2}
-          fillWidth
-          padding="8"
-          justifyContent="space-between"
         >
-          {codeInstances.length > 1 ? (
-            <Flex>
-              <DropdownWrapper
-                dropdownOptions={codeInstances.map((instance, index) => ({
-                  label: instance.label,
-                  value: `${instance.label}-${index}`,
-                }))}
-                dropdownProps={{
-                  onOptionSelect: (option) => {
-                    const selectedLabel = option.value.split("-")[0];
-                    handleContent(selectedLabel);
-                  },
-                }}
-              >
-                <Button
-                  size="s"
-                  label={label}
-                  suffixIcon="chevronDown"
-                  variant="tertiary"
-                />
-              </DropdownWrapper>
-            </Flex>
-          ) : (
-            <div />
-          )}
-          {copyButton && !compact && language !== "mermaid" && (
-            <IconButton
-              tooltip="Copy"
-              variant="secondary"
-              onClick={handleCopy}
-              icon={copyIcon}
-            />
-          )}
-        </Flex>
+          <Button
+            size="s"
+            label={label || LANGUAGE_NAMES[language] || language}
+            suffixIcon="chevronDown"
+            variant="tertiary"
+          />
+        </DropdownWrapper>
       )}
+
       {codePreview && (
-        <Flex
-          position="relative"
-          zIndex={1}
-          fillHeight
-          padding="l"
-          minHeight={12}
-          justifyContent="center"
-          alignItems="center"
-        >
-          {Array.isArray(codePreview)
-            ? codePreview.map((item, index) => (
-                <React.Fragment key={index}>{item}</React.Fragment>
-              ))
-            : codePreview}
+        <Flex padding="l" justifyContent="center" alignItems="center">
+          {codePreview}
         </Flex>
       )}
-      {codeInstances.length > 0 && renderContent()}
-      {codeInstances.length > 0 &&
-        language === "mermaid" &&
-        renderMermaidCode()}
+
+      {language === "mermaid" ? renderMermaidCode() : renderCodeContent()}
     </Flex>
   );
 };
-
-export { CodeBlock };

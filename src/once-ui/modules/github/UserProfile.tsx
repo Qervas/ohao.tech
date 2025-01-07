@@ -2,6 +2,7 @@
 
 import { Flex, Text, SmartImage, Badge, Button } from "@/once-ui/components";
 import { IconButton } from "@/once-ui/components";
+import { useState } from "react";
 
 interface UserProfileProps {
   user: {
@@ -15,6 +16,7 @@ interface UserProfileProps {
     location?: string;
     blog?: string;
     twitter_username?: string;
+    html_url?: string;
   };
   person: {
     firstName: string;
@@ -24,6 +26,18 @@ interface UserProfileProps {
 }
 
 export default function UserProfile({ user, person }: UserProfileProps) {
+  const [isFollowing, setIsFollowing] = useState(false);
+
+  const handleFollow = () => {
+    // Open GitHub profile in a new tab
+    window.open(`${user.html_url}`, "_blank");
+  };
+
+  const handleSponsor = () => {
+    // Open GitHub Sponsors page in a new tab
+    window.open(`https://github.com/sponsors/${user.login}`, "_blank");
+  };
+
   return (
     <Flex
       fillWidth
@@ -62,18 +76,42 @@ export default function UserProfile({ user, person }: UserProfileProps) {
           </Text>
 
           <Flex gap="16">
-            <Button variant="primary" label="Follow" prefixIcon="userPlus" />
-            <Button variant="secondary" label="Sponsor" prefixIcon="heart" />
+            <Button
+              variant="primary"
+              label="Follow"
+              prefixIcon="userPlus"
+              onClick={handleFollow}
+            />
+            <Button
+              variant="secondary"
+              label="Sponsor"
+              prefixIcon="heart"
+              onClick={handleSponsor}
+            />
           </Flex>
 
           <Flex gap="24">
-            <Flex gap="8" alignItems="center">
+            <Flex
+              gap="8"
+              alignItems="center"
+              style={{ cursor: "pointer" }}
+              onClick={() =>
+                window.open(`${user.html_url}?tab=followers`, "_blank")
+              }
+            >
               <IconButton icon="users" variant="ghost" />
               <Text variant="body-default-s" onBackground="neutral-medium">
                 <strong>{user.followers}</strong> followers
               </Text>
             </Flex>
-            <Flex gap="8" alignItems="center">
+            <Flex
+              gap="8"
+              alignItems="center"
+              style={{ cursor: "pointer" }}
+              onClick={() =>
+                window.open(`${user.html_url}?tab=following`, "_blank")
+              }
+            >
               <IconButton icon="userGroup" variant="ghost" />
               <Text variant="body-default-s" onBackground="neutral-medium">
                 <strong>{user.following}</strong> following

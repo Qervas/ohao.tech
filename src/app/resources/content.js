@@ -152,6 +152,32 @@ const about = {
       },
     ],
   },
+  lab: {
+    display: true,
+    title: "Laboratory Experience",
+    experiences: [
+      {
+        company: "Computer Vision and AI Laboratory, BISTU",
+        timeframe: "March 2021 - December 2021",
+        role: "Research Assistant",
+        achievements: [
+          <>
+            Led development of real-time skiing movement classification system
+            achieving 80% accuracy using STGCN
+          </>,
+          <>
+            Integrated OpenPose framework for robust skeleton coordinate
+            extraction from video data
+          </>,
+          <>
+            Published research findings in Chinese academic journal "Intelligent
+            Computer and Applications"
+          </>,
+        ],
+        images: [],
+      },
+    ],
+  },
   technical: {
     display: true,
     title: "Technical skills",
@@ -200,6 +226,82 @@ const about = {
       },
     ],
   },
+  projects: {
+    display: true,
+    title: "Featured Projects",
+    items: [
+      {
+        title: "Ohao Engine",
+        timeframe: "Nov 2023 - Present",
+        description:
+          "A modern physics engine featuring Vulkan-based rendering pipeline, focusing on high-performance simulation and realistic graphics rendering",
+        achievements: [
+          "Developing a custom physics engine with rigid body dynamics, continuous collision detection, and constraint solvers",
+          "Implementing physically-based rendering (PBR) pipeline with real-time global illumination",
+          "Creating procedural generation systems for terrains, materials, and dynamic environments",
+          "Optimizing performance through parallel computation and efficient memory management",
+        ],
+        technologies: ["C++20", "Vulkan", "GLSL", "CMake", "Physics"],
+        link: "",
+      },
+      {
+        title: "Retro Vault",
+        timeframe: "Sep - Oct 2023",
+        description:
+          "An innovative 2D puzzle platformer featuring a unique time-clone mechanic, developed in Unity for the LiU Game Jam",
+        achievements: [
+          "Designed and implemented core gameplay mechanics including character controller and time-clone system",
+          "Created puzzle mechanics requiring cooperation between the player and their time clone",
+          "Developed a robust level progression system with increasing complexity",
+          "Implemented pixel-perfect collision detection and smooth character animations",
+        ],
+        technologies: ["Unity", "C#", "2D Physics", "Game Design"],
+        link: "",
+      },
+      {
+        title: "Path Tracer",
+        timeframe: "Sep 2023",
+        description:
+          "A CUDA-accelerated Monte Carlo path tracer implementing physically accurate light transport simulation",
+        achievements: [
+          "Implemented unbiased path tracing with importance sampling and multiple importance sampling",
+          "Developed realistic material system supporting diffuse, specular, and transmissive surfaces",
+          "Achieved interactive frame rates through CUDA optimization and efficient GPU utilization",
+          "Added support for environment mapping and HDR rendering",
+        ],
+        technologies: ["C++", "CUDA", "OptiX", "Computer Graphics"],
+        link: "",
+      },
+      {
+        title: "Water Simulation",
+        timeframe: "May - Jun 2023",
+        description:
+          "Real-time fluid simulation using Smoothed Particle Hydrodynamics (SPH) with OpenGL visualization",
+        achievements: [
+          "Implemented SPH algorithm with neighbor search optimization using spatial hashing",
+          "Created real-time rendering system with dynamic lighting and environment mapping",
+          "Developed interactive camera system with depth-of-field and motion blur effects",
+          "Optimized particle system to handle over 100,000 particles at interactive framerates",
+        ],
+        technologies: ["OpenGL", "C++", "CUDA", "Fluid Dynamics"],
+        link: "",
+      },
+      {
+        title: "Xiangqi AI",
+        timeframe: "Mar - Apr 2023",
+        description:
+          "A deep reinforcement learning system for Chinese Chess (Xiangqi) with custom neural network implementation",
+        achievements: [
+          "Built neural network framework from scratch with CUDA acceleration",
+          "Implemented Deep Q-Learning with experience replay and target network",
+          "Created Qt-based GUI supporting both human-AI and AI-AI gameplay modes",
+          "Achieved competitive playing strength through self-play training",
+        ],
+        technologies: ["C++", "CUDA", "Qt", "Deep Learning"],
+        link: "",
+      },
+    ],
+  },
 };
 
 const blog = {
@@ -211,7 +313,7 @@ const blog = {
 };
 
 const work = {
-  label: "Work",
+  label: "Projects",
   title: "My projects",
   description: `Design and dev projects by ${person.name}`,
   // Create new project pages by adding a new .mdx file to app/blog/posts

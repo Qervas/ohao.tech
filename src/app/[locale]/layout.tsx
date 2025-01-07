@@ -110,26 +110,20 @@ export default async function RootLayout({
 					fillWidth margin="0" padding="0"
 					direction="column">
 					<Background
-						mask={effects.mask as any}
-						gradient={effects.gradient as any}
-						dots={effects.dots as any}
-						lines={effects.lines as any}/>
-					<Flex
-						fillWidth
-						minHeight="16">
-					</Flex>
+						mask="cursor"
+					/>
 					<Header/>
 					<Flex
-						zIndex={0}
+						zIndex={1}
 						fillWidth paddingY="l" paddingX="l"
 						justifyContent="center" flex={1}>
 						<Flex
-							justifyContent="center"
-							fillWidth minHeight="0">
-							<RouteGuard>
-								{children}
-							</RouteGuard>
-						</Flex>
+								justifyContent="center"
+								fillWidth minHeight="0">
+								<RouteGuard>
+									{children}
+								</RouteGuard>
+							</Flex>
 					</Flex>
 					<Footer/>
 				</Flex>

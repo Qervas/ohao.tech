@@ -1,79 +1,105 @@
+:root {
+    --code-bg: var(--neutral-background-strong);
+    --code-text: var(--neutral-on-background-strong);
+    --code-comment: #6a737d;
+    --code-punctuation: #e1e4e8;
+    --code-constant: #79b8ff;
+    --code-function: #b392f0;
+    --code-keyword: #f97583;
+    --code-string: #85e89d;
+    --code-variable: #ffab70;
+    --code-operator: #e1e4e8;
+    --code-class: #b392f0;
+}
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: var(--code-text);
+    background: none;
+    text-shadow: none;
+    font-family: var(--font-family-code);
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+    tab-size: 2;
+    hyphens: none;
+}
+
 .token.comment,
 .token.prolog,
 .token.doctype,
 .token.cdata {
-  	color: var(--code-moss);
+    color: var(--code-comment);
+    font-style: italic;
 }
 
 .token.punctuation {
-  	color: var(--code-gray);
+    color: var(--code-punctuation);
 }
 
 .token.property,
 .token.tag,
 .token.constant,
-.token.symbol,
-.token.deleted {
-  	color: var(--code-aqua);
+.token.symbol {
+    color: var(--code-constant);
 }
 
 .token.boolean,
 .token.number {
-  	color: var(--code-green);
+    color: var(--code-constant);
 }
 
 .token.selector,
 .token.attr-name,
 .token.string,
 .token.char,
-.token.builtin,
-.token.inserted {
-  	color: var(--code-blue);
+.token.builtin {
+    color: var(--code-string);
 }
 
 .token.operator,
 .token.entity,
-.token.url,
-.language-css .token.string,
-.style .token.string {
-  	color: var(--code-gray);
+.token.url {
+    color: var(--code-operator);
 }
 
 .token.atrule,
 .token.attr-value,
 .token.keyword {
-  	color: var(--code-violet);
+    color: var(--code-keyword);
 }
 
 .token.function,
 .token.class-name {
-  	color: var(--code-blue);
+    color: var(--code-function);
 }
 
 .token.regex,
 .token.important,
 .token.variable {
-  	color: var(--code-orange);
+    color: var(--code-variable);
 }
-
 .token.important,
 .token.bold {
-  	font-weight: bold;
+    font-weight: bold;
 }
 
 .token.italic {
-  	font-style: italic;
+    font-style: italic;
 }
 
 .token.entity {
-  	cursor: help;
+    cursor: help;
 }
 
 @media print {
-	.line-highlight {
-		print-color-adjust: exact;
-		color-adjust: exact;
-	}
+    .line-highlight {
+        print-color-adjust: exact;
+        color-adjust: exact;
+    }
 }
 
 .line-highlight {
@@ -88,5 +114,5 @@
 
 .line-numbers .line-highlight:before,
 .line-numbers .line-highlight:after {
-	content: none;
+    content: none;
 }
