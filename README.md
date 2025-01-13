@@ -1,13 +1,12 @@
 # Personal Portfolio & Blog
 
-A modern, responsive portfolio website showcasing my work in computer graphics and software development. Built with Next.js and TypeScript, featuring a blog system, project gallery, and newsletter functionality.
+A modern, responsive portfolio website showcasing my work in computer graphics and software development. Built with Next.js and TypeScript, featuring a blog system, project gallery.
 
 ## Features
 
 - 🎨 Project showcase with detailed case studies
 - 📝 Blog system with MDX support
 - 🖼️ Responsive image gallery
-- 📫 Newsletter subscription system
 - 🌍 Internationalization support
 - 🌓 Dark/Light mode
 - 🎯 SEO optimized
@@ -18,7 +17,6 @@ A modern, responsive portfolio website showcasing my work in computer graphics a
 - **Language**: TypeScript
 - **Styling**: SCSS Modules
 - **CMS**: MDX
-- **Database**: MongoDB (for newsletter subscriptions)
 - **Email**: Nodemailer with Zoho Mail
 - **Deployment**: Vercel
 

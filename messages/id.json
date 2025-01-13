@@ -2,11 +2,6 @@
   "person": {
     "role": "Computer Science Graduate Student"
   },
-  "newsletter": {
-    "title": "Subscribe to {firstName}'s Newsletter",
-    "description": "I occasionally write about computer graphics, AI technology, and share thoughts on creative coding and technical innovations",
-    "button": "Sign up"
-  },
   "home": {
     "label": "Home",
     "title": "{name}'s Portfolio",

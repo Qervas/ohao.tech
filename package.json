@@ -6,9 +6,7 @@
     "export": "next export",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "send-newsletter": "ts-node -r tsconfig-paths/register src/scripts/sendNewsletter.ts",
-    "send-newsletter:dry": "ts-node -r tsconfig-paths/register src/scripts/sendNewsletter.ts --dry-run"
+    "lint": "next lint"
   },
   "dependencies": {
     "@floating-ui/react-dom": "^2.1.1",

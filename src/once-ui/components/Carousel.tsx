@@ -96,13 +96,7 @@ const Carousel: React.FC<CarouselProps> = ({
   return (
     <Flex fillWidth gap="12" direction="column">
       <Flex onClick={handleImageClick}>
-        <RevealFx
-          revealedByDefault={revealedByDefault}
-          style={{ width: "100%" }}
-          trigger={isTransitioning}
-          translateY="16"
-          speed="fast"
-        >
+        <RevealFx style={{ width: "100%" }} translateY="16" speed="fast">
           <SmartImage
             sizes={sizes}
             priority

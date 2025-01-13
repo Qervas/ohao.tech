@@ -1,5 +1,4 @@
 import { Flex, Heading } from "@/once-ui/components";
-import { Newsletter } from "@/components/Newsletter";
 import { Posts } from "@/components/blog/Posts";
 import { baseURL, renderContent } from "@/app/resources";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
@@ -49,7 +48,7 @@ export default function Blog({
   unstable_setRequestLocale(locale);
 
   const t = useTranslations();
-  const { person, blog, newsletter } = renderContent(t);
+  const { person, blog} = renderContent(t);
   return (
     <Flex fillWidth maxWidth="m" direction="column">
       {" "}
@@ -80,7 +79,6 @@ export default function Blog({
         {blog.title}
       </Heading>
       <Posts locale={locale} /> {/* Simplified to use defaults */}
-      {newsletter.display && <Newsletter newsletter={newsletter} />}
     </Flex>
   );
 }

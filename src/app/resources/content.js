@@ -12,17 +12,6 @@ const person = {
   languages: ["Chinese (Native)", "English (Fluent)"],
 };
 
-const newsletter = {
-  display: false,
-  title: <>Subscribe to {person.firstName}'s Newsletter</>,
-  description: (
-    <>
-      I occasionally write about technology, and share thoughts on the
-      intersection of creativity and engineering.
-    </>
-  ),
-};
-
 const social = [
   {
     name: "GitHub",
@@ -326,4 +315,4 @@ const github = {
   description: `A code collection by ${person.name}`,
 };
 
-export { person, social, newsletter, home, about, blog, work, github };
+export { person, social,  home, about, blog, work, github };
