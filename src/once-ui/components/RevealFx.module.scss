@@ -1,17 +1,37 @@
 .revealFx {
-    display: inline-block;
-    position: relative;
-    mask-image: linear-gradient(to right, black 0%, black 25%, transparent 50%);
-    mask-size: 300% 100%;
-    transition: all ease-in-out;
-  
-    &.hidden {
-		mask-position: 100% 0;
-		filter: blur(0.5rem);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: revealIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    will-change: transform, opacity;
+}
+
+.fast {
+    animation-duration: 0.4s;
+}
+
+.medium {
+    animation-duration: 0.6s;
+}
+
+.slow {
+    animation-duration: 0.8s;
+}
+
+@keyframes revealIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
     }
-  
-    &.revealed {
-		mask-position: 0 0;
-		filter: blur(0);
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .revealFx {
+        animation: none;
+        opacity: 1;
+        transform: none;
     }
 }

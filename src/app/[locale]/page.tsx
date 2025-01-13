@@ -1,5 +1,5 @@
 import React from "react";
-
+import dynamic from "next/dynamic";
 import {
   Heading,
   Flex,
@@ -7,15 +7,25 @@ import {
   Button,
   Avatar,
   RevealFx,
-  Arrow,
 } from "@/once-ui/components";
-import { Projects } from "@/components/work/Projects";
-
 import { baseURL, routes, renderContent } from "@/app/resources";
-import { Newsletter } from "@/components/Newsletter";
-import { Posts } from "@/components/blog/Posts";
 import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import { useTranslations } from "next-intl";
+
+// Dynamically import heavy components with proper types
+const Projects = dynamic(
+  () => import("@/components/work/Projects").then((mod) => mod.Projects),
+  {
+    ssr: true,
+  },
+) as typeof Projects;
+
+const Posts = dynamic(
+  () => import("@/components/blog/Posts").then((mod) => mod.Posts),
+  {
+    ssr: true,
+  },
+) as typeof Posts;
 
 export async function generateMetadata({
   params: { locale },
@@ -36,12 +46,7 @@ export async function generateMetadata({
       description,
       type: "website",
       url: `https://${baseURL}/${locale}`,
-      images: [
-        {
-          url: ogImage,
-          alt: title,
-        },
-      ],
+      images: [{ url: ogImage, alt: title }],
     },
     twitter: {
       card: "summary_large_image",
@@ -59,111 +64,79 @@ export default function Home({
 }) {
   unstable_setRequestLocale(locale);
   const t = useTranslations();
-  const { home, about, person, newsletter } = renderContent(t);
+  const { home, about, person } = renderContent(t);
+
   return (
-    <Flex
-      maxWidth="m"
-      fillWidth
-      gap="l" // Reduced from xl
-      direction="column"
-      alignItems="center"
-    >
-      {/* Schema and metadata script remains the same */}
+    <Flex maxWidth="m" fillWidth gap="l" direction="column" alignItems="center">
+      {/* Header Section */}
+      <RevealFx speed="fast">
+        <Flex fillWidth direction="column" gap="m" maxWidth="s">
+          <Heading wrap="balance" variant="display-strong-l">
+            {home.headline}
+          </Heading>
+          <Text
+            wrap="balance"
+            onBackground="neutral-weak"
+            variant="heading-default-m"
+          >
+            {home.subline}
+          </Text>
 
-      {/* Header Section - More compact */}
-      <Flex fillWidth direction="column" paddingY="m" gap="m">
-        <Flex direction="column" fillWidth maxWidth="s">
-          <RevealFx
-            translateY="4"
-            fillWidth
-            justifyContent="flex-start"
-            paddingBottom="s" // Reduced padding
-          >
-            <Heading wrap="balance" variant="display-strong-l">
-              {home.headline}
-            </Heading>
-          </RevealFx>
-          <RevealFx
-            translateY="8"
-            delay={0.2}
-            fillWidth
-            justifyContent="flex-start"
-            paddingBottom="s" // Reduced padding
-          >
-            <Text
-              wrap="balance"
-              onBackground="neutral-weak"
-              variant="heading-default-m" // Smaller text
+          {/* Quick Links */}
+          <Flex gap="8" fillWidth>
+            <Button href={`/${locale}/about`} variant="tertiary" size="s">
+              <Flex gap="8" alignItems="center">
+                {about.avatar.display && (
+                  <Avatar src={person.avatar} size="s" />
+                )}
+                About
+              </Flex>
+            </Button>
+            <Button
+              href={`/${locale}/github`}
+              variant="tertiary"
+              size="s"
+              prefixIcon="github"
             >
-              {home.subline}
-            </Text>
-          </RevealFx>
-
-          {/* Quick Links Section */}
-          <RevealFx translateY="12" delay={0.4}>
-            <Flex gap="8" fillWidth>
-              <Button
-                id="about"
-                href={`/${locale}/about`}
-                variant="tertiary"
-                size="s" // Smaller button
-              >
-                <Flex gap="8" alignItems="center">
-                  {about.avatar.display && (
-                    <Avatar
-                      src={person.avatar}
-                      size="s" // Smaller avatar
-                    />
-                  )}
-                  About
-                </Flex>
-              </Button>
-              <Button
-                href={`/${locale}/github`}
-                variant="tertiary"
-                size="s"
-                prefixIcon="github"
-              >
-                GitHub
-              </Button>
-            </Flex>
-          </RevealFx>
+              GitHub
+            </Button>
+          </Flex>
         </Flex>
-      </Flex>
+      </RevealFx>
 
-      {/* Featured Project - More focused */}
-      <RevealFx translateY="16" delay={0.6}>
+      {/* Featured Projects */}
+      <RevealFx speed="fast">
         <Flex fillWidth direction="column" gap="m">
           <Heading variant="heading-strong-m">Featured Project</Heading>
           <Projects locale={locale} showFeatured={true} />
         </Flex>
       </RevealFx>
 
-      {/* Blog & Projects Side by Side */}
-      <Flex fillWidth gap="20" wrap>
-        {routes["/blog"] && (
+      {/* Content Grid */}
+      <RevealFx speed="fast">
+        <Flex fillWidth gap="20" wrap>
+          {routes["/blog"] && (
+            <Flex
+              flex={1}
+              direction="column"
+              gap="m"
+              style={{ minWidth: "300px" }}
+            >
+              <Heading variant="heading-strong-s">Latest Posts</Heading>
+              <Posts locale={locale} range={[1, 2]} columns="1" />
+            </Flex>
+          )}
           <Flex
             flex={1}
             direction="column"
             gap="m"
-            style={{ minWidth: "300px" }} // Move to style prop instead
+            style={{ minWidth: "300px" }}
           >
-            <Heading variant="heading-strong-s">Latest Posts</Heading>
-            <Posts range={[1, 2]} columns="1" locale={locale} />
+            <Heading variant="heading-strong-s">Recent Projects</Heading>
+            <Projects locale={locale} showRecent={true} />
           </Flex>
-        )}
-        <Flex flex={1} direction="column" gap="m" style={{ minWidth: "300px" }}>
-          <Heading variant="heading-strong-s">Recent Projects</Heading>
-          <Projects locale={locale} showRecent={true} />
         </Flex>
-      </Flex>
-
-      {/* Newsletter - Keep if needed */}
-      {newsletter.display && (
-        <Flex fillWidth maxWidth="s">
-          <Newsletter newsletter={newsletter} />
-        </Flex>
-      )}
+      </RevealFx>
     </Flex>
   );
 }

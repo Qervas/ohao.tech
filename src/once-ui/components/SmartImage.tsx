@@ -31,6 +31,8 @@ const SmartImage: React.FC<SmartImageProps> = ({
   enlarge = false,
   src,
   unoptimized = false,
+  priority = false,
+  quality = 75,
   ...props
 }) => {
   const [isEnlarged, setIsEnlarged] = useState(false);
@@ -88,6 +90,11 @@ const SmartImage: React.FC<SmartImageProps> = ({
           src={src}
           alt={alt}
           fill
+          loading={priority ? "eager" : "lazy"}
+          sizes={
+            props.sizes ||
+            "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          }
           style={{
             objectFit: objectFit,
             width: "100%",

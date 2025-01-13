@@ -1,50 +1,46 @@
 import { getPosts } from "@/app/utils/utils";
 import { Grid } from "@/once-ui/components";
 import Post from "./Post";
+import { useMemo } from "react";
 
-interface PostsProps {
+export interface PostsProps {
   range?: [number] | [number, number];
   columns?: "1" | "2" | "3";
   locale: string;
   thumbnail?: boolean;
 }
 
-export function Posts({
+export const Posts: React.FC<PostsProps> = ({
   range,
-  columns = "2", // Changed default to 2
+  columns = "2",
   locale = "en",
-  thumbnail = true, // Changed default to true
-}: PostsProps) {
-  let allBlogs = getPosts(["src", "app", "[locale]", "blog", "posts", locale]);
-
-  const sortedBlogs = allBlogs.sort((a, b) => {
-    return (
-      new Date(b.metadata.publishedAt).getTime() -
-      new Date(a.metadata.publishedAt).getTime()
+  thumbnail = true,
+}: PostsProps) => {
+  const sortedBlogs = useMemo(() => {
+    let allBlogs = getPosts([
+      "src",
+      "app",
+      "[locale]",
+      "blog",
+      "posts",
+      locale,
+    ]);
+    return allBlogs.sort(
+      (a, b) =>
+        new Date(b.metadata.publishedAt).getTime() -
+        new Date(a.metadata.publishedAt).getTime(),
     );
-  });
+  }, [locale]);
 
   const displayedBlogs = range
-    ? sortedBlogs.slice(
-        range[0] - 1,
-        range.length === 2 ? range[1] : sortedBlogs.length,
-      )
+    ? sortedBlogs.slice(range[0] - 1, range[1])
     : sortedBlogs;
 
   return (
-    <>
-      {displayedBlogs.length > 0 && (
-        <Grid
-          columns={`repeat(${columns}, 1fr)`}
-          mobileColumns="1col"
-          fillWidth
-          gap="m"
-        >
-          {displayedBlogs.map((post) => (
-            <Post key={post.slug} post={post} thumbnail={thumbnail} />
-          ))}
-        </Grid>
-      )}
-    </>
+    <Grid columns={`repeat(${columns}, 1fr)`}>
+      {displayedBlogs.map((post) => (
+        <Post key={post.slug} post={post} thumbnail={thumbnail} />
+      ))}
+    </Grid>
   );
-}
+};
