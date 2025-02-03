@@ -221,7 +221,7 @@ const about = {
     items: [
       {
         title: "Ohao Engine",
-        timeframe: "Nov 2023 - Present",
+        timeframe: "Nov 2024 - Present",
         description:
           "A modern physics engine featuring Vulkan-based rendering pipeline, focusing on high-performance simulation and realistic graphics rendering",
         achievements: [
@@ -249,7 +249,7 @@ const about = {
       },
       {
         title: "Path Tracer",
-        timeframe: "Sep 2023",
+        timeframe: "Sep - Nov 2024",
         description:
           "A CUDA-accelerated Monte Carlo path tracer implementing physically accurate light transport simulation",
         achievements: [
@@ -263,7 +263,7 @@ const about = {
       },
       {
         title: "Water Simulation",
-        timeframe: "May - Jun 2023",
+        timeframe: "Jan - Jun 2023",
         description:
           "Real-time fluid simulation using Smoothed Particle Hydrodynamics (SPH) with OpenGL visualization",
         achievements: [
@@ -277,7 +277,7 @@ const about = {
       },
       {
         title: "Xiangqi AI",
-        timeframe: "Mar - Apr 2023",
+        timeframe: "Sep - Oct 2024",
         description:
           "A deep reinforcement learning system for Chinese Chess (Xiangqi) with custom neural network implementation",
         achievements: [
