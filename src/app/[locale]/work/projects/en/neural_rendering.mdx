@@ -1,0 +1,112 @@
+---
+title: "Neural Scene Representation and Rendering"
+publishedAt: "2025-02-01"
+status: "active"
+featured: true
+summary: "Master thesis research on advanced neural rendering techniques, comparing and optimizing NeRF, 3D Gaussian Splatting, and light field imaging for next-generation graphics applications."
+images:
+  - "/images/projects/neural_rendering/neural_rendering_art.png"
+
+team:
+  - name: "Shaoxuan Yin"
+    role: "Master's Student"
+    avatar: "/images/me_snap.png"
+    linkedIn: "https://www.linkedin.com/in/shaoxuan-yin-021548170/"
+---
+
+## Overview
+
+This master thesis investigates cutting-edge neural rendering techniques, focusing on three major approaches:
+- Neural Radiance Fields (NeRFs)
+- 3D Gaussian Splatting
+- Classical Light Field Imaging
+
+<Grid columns="repeat(2, 1fr)" gap="16">
+  <Flex direction="column" background="surface" padding="24" radius="l" border="neutral-medium" borderStyle="solid-1">
+    <Heading variant="heading-strong-m">Research Objectives</Heading>
+    <ul>
+      <li>Comparative analysis of neural rendering methods</li>
+      <li>Optimization of rendering efficiency and quality</li>
+      <li>Development of hybrid rendering approaches</li>
+      <li>Investigation of real-time applications</li>
+    </ul>
+  </Flex>
+
+  <Flex direction="column" background="surface" padding="24" radius="l" border="neutral-medium" borderStyle="solid-1">
+    <Heading variant="heading-strong-m">Technical Focus</Heading>
+    <ul>
+      <li>Neural network architectures for 3D scenes</li>
+      <li>Hierarchical data structures</li>
+      <li>Adaptive sampling techniques</li>
+      <li>Performance optimization methods</li>
+    </ul>
+  </Flex>
+</Grid>
+
+## Technical Implementation
+
+<Grid columns="1" gap="24">
+  <Flex direction="column" background="surface" padding="32" radius="l" border="neutral-medium" borderStyle="solid-1">
+    <Heading variant="heading-strong-l" marginBottom="24">Research Pipeline</Heading>
+    <CodeBlock
+      codeInstances={[
+        {
+          language: "mermaid",
+          code: `graph TB
+    classDef default fill:secondaryColor,stroke:secondaryBorderColor,color:secondaryTextColor
+    classDef highlight fill:primaryColor,stroke:primaryBorderColor,color:primaryTextColor
+
+    A[Input Images] --> B[Scene Reconstruction]
+    B --> C[Neural Representation]
+    C --> D[Rendering Optimization]
+    D --> E[Quality Evaluation]
+
+    B --> B1[NeRF Processing]
+    B --> B2[Gaussian Splatting]
+    B --> B3[Light Field Processing]
+
+    C --> C1[Network Architecture]
+    C --> C2[Data Structures]
+    C --> C3[Sampling Methods]
+
+    D --> D1[Speed Optimization]
+    D --> D2[Memory Management]
+    D --> D3[Quality Control]
+
+    class A,B,C,D highlight`
+        }
+      ]}
+      style={{ minHeight: "600px" }}
+    />
+  </Flex>
+</Grid>
+
+## Current Progress
+
+- Literature review and research methodology planning
+- Setting up data collection pipeline for diverse scene types
+- Investigating existing implementations of NeRF and Gaussian Splatting
+- Designing evaluation metrics and benchmarking frameworks
+
+## Immediate Next Steps
+
+1. Complete comprehensive dataset collection
+2. Set up baseline implementations
+3. Begin initial experimentation with basic NeRF pipeline
+4. Establish testing environments for comparative analysis
+
+## Expected Outcomes
+
+1. Comprehensive comparison of neural rendering methods
+2. Novel optimization techniques for real-time applications
+3. Hybrid approach combining strengths of multiple methods
+4. Guidelines for method selection based on use case
+
+<Comment
+  author="Research Status"
+  content={
+    <>
+      This thesis is in its initial research and data collection phase. Currently focusing on building a strong foundation through literature review and methodology planning. Expected completion: June/August 2025.
+    </>
+  }
+/>

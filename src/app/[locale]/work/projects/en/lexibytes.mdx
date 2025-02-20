@@ -1,0 +1,129 @@
+---
+title: "LexiBytes - AI-Powered Interactive Game"
+publishedAt: "2025-02-01"
+status: "active"
+featured: true
+summary: "Revolutionary game development project utilizing local LLMs for dynamic content generation, featuring progressive AI integration from text to visual generation."
+images:
+  - "/images/projects/lexibytes/banner.png"
+
+team:
+  - name: "Shaoxuan Yin"
+    role: "Game Developer"
+    avatar: "/images/me_snap.png"
+    linkedIn: "https://www.linkedin.com/in/shaoxuan-yin-021548170/"
+---
+
+## Project Overview
+
+LexiBytes is an innovative game development project that explores the integration of local Large Language Models (LLMs) in gaming, with a three-phase implementation approach:
+
+<Grid columns="repeat(3, 1fr)" gap="16">
+  <Flex direction="column" background="surface" padding="24" radius="l" border="neutral-medium" borderStyle="solid-1">
+    <Heading variant="heading-strong-m">Phase 1: Text Game</Heading>
+    <ul>
+      <li>Dynamic story generation</li>
+      <li>Character interactions</li>
+      <li>Puzzle generation</li>
+      <li>Local LLM integration</li>
+    </ul>
+  </Flex>
+
+  <Flex direction="column" background="surface" padding="24" radius="l" border="neutral-medium" borderStyle="solid-1">
+    <Heading variant="heading-strong-m">Phase 2: Static Visuals</Heading>
+    <ul>
+      <li>AI image generation</li>
+      <li>Scene visualization</li>
+      <li>Character portraits</li>
+      <li>Environmental art</li>
+    </ul>
+  </Flex>
+
+  <Flex direction="column" background="surface" padding="24" radius="l" border="neutral-medium" borderStyle="solid-1">
+    <Heading variant="heading-strong-m">Phase 3: Dynamic Visuals</Heading>
+    <ul>
+      <li>Real-time generation</li>
+      <li>Animation synthesis</li>
+      <li>Interactive environments</li>
+      <li>Dynamic world building</li>
+    </ul>
+  </Flex>
+</Grid>
+
+## Technical Architecture
+
+<Grid columns="1" gap="24">
+  <Flex direction="column" background="surface" padding="32" radius="l" border="neutral-medium" borderStyle="solid-1">
+    <Heading variant="heading-strong-l" marginBottom="24">System Design</Heading>
+    <CodeBlock
+      codeInstances={[
+        {
+          language: "mermaid",
+          code: `graph TB
+    classDef default fill:secondaryColor,stroke:secondaryBorderColor,color:secondaryTextColor
+    classDef highlight fill:primaryColor,stroke:primaryBorderColor,color:primaryTextColor
+
+    A[Unity Frontend] --> B[C++ Backend]
+    B --> C[Ollama Integration]
+    C --> D[Local LLM]
+
+    B --> E[Content Generation]
+    E --> E1[Text Generation]
+    E --> E2[Image Generation]
+    E --> E3[Animation System]
+
+    A --> F[Game Systems]
+    F --> F1[UI/UX]
+    F --> F2[Game Logic]
+    F --> F3[Asset Management]
+
+    class A,B,C highlight`
+        }
+      ]}
+      style={{ minHeight: "600px" }}
+    />
+  </Flex>
+</Grid>
+
+## Current Development Status
+
+- Phase 1 (Text Game): 80% Complete
+  - Core LLM integration implemented
+  - Basic game mechanics functioning
+  - Story generation system active
+
+- Phase 2 (Static Visuals): 30% Complete
+  - Initial image generation tests
+  - Basic scene composition system
+  - Art style definition in progress
+
+- Phase 3 (Dynamic Visuals): Planning Stage
+  - Architecture design
+  - Technical feasibility assessment
+  - Performance optimization strategies
+
+## Technical Features
+
+- Cross-platform C++ backend
+- Unity-based frontend
+- Local LLM inference using Ollama
+- Asynchronous content generation
+- Steam platform integration
+
+## Next Steps
+
+1. Complete Phase 1 polishing
+2. Advance Phase 2 development
+3. Begin Phase 3 prototyping
+4. Steam store page preparation
+5. Beta testing coordination
+
+<Comment
+  author="Development Status"
+  content={
+    <>
+      Project is actively being developed with regular updates and new features being added. Follow the repository for the latest progress!{' '}
+      <span role="img" aria-label="game">🎮</span>
+    </>
+  }
+/>

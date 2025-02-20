@@ -15,7 +15,7 @@
     "description": "Meet {name}, {role} from {location}",
     "intro": {
       "title": "Introduction",
-      "description": "Passionate computer science student with a focus on graphics and AI. Exploring the intersection of technology and creativity to build innovative solutions."
+      "description": "Hey! In 2024, I got really inspired by the concept of first principles thinking - you know, breaking things down to their fundamental truths and building up from there. Instead of just following tutorials or waiting to join the perfect team, I started building my own projects from scratch. Right now, I'm deep into graphics and AI, working on everything from neural rendering to game development. What really drives me? I'm actually super fascinated by how humans and machines might work together in the future - maybe even merge one day (yeah, I know it sounds sci-fi, but that's what gets me excited!). Each project I take on, whether it's training AI models or simulating physics, is like a small step toward understanding how we might get there. It's challenging and sometimes feels crazy ambitious, but hey, that's what makes it fun! I'm Shaoxuan Yin, a Computer Science graduate student at Linköping University, passionate about computer graphics and AI."
     },
     "work": {
       "title": "Work Experience",
@@ -57,7 +57,7 @@
   },
   "blog": {
     "label": "Blog",
-    "title": "Writing about graphics and AI...",
+    "title": "Writing about graphics and AI...(Most on X)",
     "description": "Read what {name} has been up to recently"
   },
   "work": {
