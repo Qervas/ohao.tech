@@ -1,0 +1,92 @@
+---
+title: "Pushing Forward on My NeRF Master Thesis: Setting Up, Training, and Rendering"
+publishedAt: "2025-03-30"
+image: "/images/blogs/nerf_thesis_week1.png"
+summary: "A week of progress in neural rendering: from environment setup to successful 3D scene reconstruction"
+tag: "Research"
+---
+
+### Context and Goals
+
+Neural Radiance Fields (NeRF) have recently captured the attention of researchers and industry veterans for their ability to represent intricate 3D scenes from simple 2D images. My master thesis project aims to push these boundaries further by investigating and comparing various neural rendering techniques (e.g., NeRF, 3D Gaussian Splatting) and exploring potential performance improvements. I'm working toward a framework that can generate realistic 3D/VR content at scale, potentially in real-time, for applications in gaming, AR/VR, and scientific visualization.
+
+### Environment Setup and Installation
+
+Last week, I consolidated a stable working environment on Ubuntu with an NVIDIA RTX 4070 Ti SUPER GPU. I created separate Conda environments to keep each toolset organized:
+
+```bash
+# Nerfstudio Environment (Python 3.11)
+conda create -n nerfstudio python=3.11
+conda activate nerfstudio
+pip install nerfstudio
+
+# nerf-pytorch Environment (Python 3.9)
+conda create -n py39 python=3.9
+conda activate py39
+
+# 3D Gaussian Splatting Environment (Python 3.9)
+conda create -n gaussian_env python=3.9
+conda activate gaussian_env
+```
+
+<Comment
+  author="Technical Note"
+  content={
+    <>
+      Early on, I encountered a NumPy compatibility issue (NumPy 2.0.2 not playing nicely with PyTorch 2.1.2), which I solved by downgrading NumPy to 1.26.4.
+    </>
+  }
+/>
+
+### Processing Custom Data and Training
+
+A significant milestone was preparing and running data through Nerfstudio. Here's the pipeline I used:
+
+```bash
+# Process images and estimate camera poses
+ns-process-data images --data lab/data/2025-03-17-workbench/png \
+                      --output-dir lab/data/2025-03-17-workbench/processed
+
+# Train the nerfacto model
+ns-train nerfacto --data lab/data/2025-03-17-workbench/processed \
+                  --output-dir lab/nerfstudio/processed
+```
+
+### Overcoming Rendering Challenges
+
+When rendering the trained model, I encountered and solved several issues:
+
+1. **Checkpoint Loading Error**: Modified `eval_utils.py` to set `weights_only=False`
+2. **Performance Enhancement**: Installed tiny-cuda-nn
+```bash
+pip install git+https://github.com/NVlabs/tiny-cuda-nn/#subdirectory=bindings/torch
+```
+3. **Camera Path Generation**: Used either automatic spiral path or manual path definition
+```bash
+# Generate spiral path video
+ns-render spiral --load-config config.yml \
+                --output-path video.mp4 \
+                --output-resolution 1280 \
+                --seconds 5.0 \
+                --fps 30
+```
+
+### Next Steps
+
+1. **Optimization**:
+   - Experiment with hyperparameters
+   - Implement data augmentation
+   - Compare training speed across implementations
+
+2. **Integration**:
+   - Set up 3D Gaussian Splatting pipeline
+   - Investigate real-time performance improvements
+
+<Comment
+  author="Research Status"
+  content={
+    <>
+      This week marked significant progress in establishing our neural rendering pipeline. While we've achieved our initial goals, there's still much to explore in optimizing performance and expanding functionality.
+    </>
+  }
+/>
