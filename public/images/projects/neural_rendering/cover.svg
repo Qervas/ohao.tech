@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a3a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2d2d4a;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#00ff88;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#00ff88;stop-opacity:0" />
+    </radialGradient>
+    <linearGradient id="cameraGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ff88;stop-opacity:0.2" />
+      <stop offset="100%" style="stop-color:#00ffff;stop-opacity:0.1" />
+    </linearGradient>
+    <filter id="blur">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+    <filter id="glow-filter">
+      <feGaussianBlur stdDeviation="4"/>
+      <feColorMatrix values="1 0 1 0 0  0 1 1 0 0  0 0 1 1 0  0 0 0 1 0"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="400" fill="url(#bg)"/>
+
+  <!-- Grid pattern for tech aesthetic -->
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#00ff88" stroke-width="0.5" opacity="0.1"/>
+  </pattern>
+  <rect width="800" height="400" fill="url(#grid)"/>
+
+  <!-- Camera Setup Visualization -->
+  <g id="camera-setup">
+    <!-- Camera base -->
+    <rect x="150" y="180" width="100" height="40" rx="5" fill="url(#cameraGrad)" stroke="#00ff88" stroke-width="2"/>
+
+    <!-- Camera lens -->
+    <circle cx="200" cy="200" r="25" fill="none" stroke="#00ff88" stroke-width="3" opacity="0.9"/>
+    <circle cx="200" cy="200" r="15" fill="none" stroke="#00ffff" stroke-width="2" opacity="0.7"/>
+    <circle cx="200" cy="200" r="8" fill="#00ff88" opacity="0.8"/>
+
+    <!-- Field of view -->
+    <path d="M 225 200 L 300 150 L 300 250 Z" fill="none" stroke="#00ff88" stroke-width="2" opacity="0.6" stroke-dasharray="5,5"/>
+    <path d="M 225 200 L 280 160 L 280 240 Z" fill="#00ff88" opacity="0.1"/>
+
+    <!-- View rays -->
+    <line x1="225" y1="200" x2="300" y2="150" stroke="#00ff88" stroke-width="1.5" opacity="0.7"/>
+    <line x1="225" y1="200" x2="300" y2="250" stroke="#00ff88" stroke-width="1.5" opacity="0.7"/>
+    <line x1="225" y1="200" x2="300" y2="200" stroke="#00ff88" stroke-width="1.5" opacity="0.7"/>
+
+    <!-- Capture points -->
+    <circle cx="280" cy="160" r="3" fill="#00ffff"/>
+    <circle cx="280" cy="200" r="3" fill="#00ffff"/>
+    <circle cx="280" cy="240" r="3" fill="#00ffff"/>
+  </g>
+
+  <!-- Processing Arrow -->
+  <g id="process-arrow">
+    <path d="M 320 180 Q 380 160 440 180" fill="none" stroke="#ff6b35" stroke-width="4"/>
+    <polygon points="435,175 450,180 435,185" fill="#ff6b35"/>
+    <text x="380" y="165" font-family="Arial, sans-serif" font-size="12" fill="#ff6b35" text-anchor="middle" font-weight="bold">PROCESS</text>
+
+    <!-- Data flow particles -->
+    <circle cx="340" cy="182" r="2" fill="#ff6b35" opacity="0.8">
+      <animate attributeName="cx" values="340;420" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="360" cy="178" r="2" fill="#ff6b35" opacity="0.6">
+      <animate attributeName="cx" values="360;440" dur="2.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.6;0.2;0.6" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- NeRF Visualization -->
+  <g id="nerf-viz">
+    <!-- Neural network structure -->
+    <rect x="480" y="80" width="120" height="80" rx="10" fill="none" stroke="#00ffff" stroke-width="2"/>
+    <text x="540" y="75" font-family="Arial, sans-serif" font-size="11" fill="#00ffff" text-anchor="middle" font-weight="bold">NeRF</text>
+
+    <!-- Network layers -->
+    <line x1="500" y1="100" x2="500" y2="140" stroke="#00ffff" stroke-width="2"/>
+    <line x1="520" y1="100" x2="520" y2="140" stroke="#00ffff" stroke-width="2"/>
+    <line x1="540" y1="100" x2="540" y2="140" stroke="#00ffff" stroke-width="2"/>
+    <line x1="560" y1="100" x2="560" y2="140" stroke="#00ffff" stroke-width="2"/>
+    <line x1="580" y1="100" x2="580" y2="140" stroke="#00ffff" stroke-width="2"/>
+
+    <!-- Nodes -->
+    <circle cx="500" cy="105" r="4" fill="#00ffff"/>
+    <circle cx="520" cy="110" r="4" fill="#00ffff"/>
+    <circle cx="540" cy="115" r="4" fill="#00ffff"/>
+    <circle cx="560" cy="110" r="4" fill="#00ffff"/>
+    <circle cx="580" cy="105" r="4" fill="#00ffff"/>
+
+    <circle cx="500" cy="135" r="4" fill="#00ffff"/>
+    <circle cx="520" cy="130" r="4" fill="#00ffff"/>
+    <circle cx="540" cy="125" r="4" fill="#00ffff"/>
+    <circle cx="560" cy="130" r="4" fill="#00ffff"/>
+    <circle cx="580" cy="135" r="4" fill="#00ffff"/>
+
+    <!-- Connections -->
+    <path d="M 500 105 Q 520 115 540 115 Q 560 115 580 105" fill="none" stroke="#00ffff" stroke-width="1" opacity="0.5"/>
+    <path d="M 500 135 Q 520 125 540 125 Q 560 125 580 135" fill="none" stroke="#00ffff" stroke-width="1" opacity="0.5"/>
+  </g>
+
+  <!-- 3D Gaussian Splatting -->
+  <g id="gaussian-splatting">
+    <rect x="480" y="220" width="120" height="80" rx="10" fill="none" stroke="#e91e63" stroke-width="2"/>
+    <text x="540" y="215" font-family="Arial, sans-serif" font-size="11" fill="#e91e63" text-anchor="middle" font-weight="bold">3D Gaussian</text>
+
+    <!-- Gaussian distributions -->
+    <ellipse cx="510" cy="240" rx="12" ry="8" fill="#e91e63" opacity="0.3" stroke="#e91e63" stroke-width="1"/>
+    <ellipse cx="530" cy="250" rx="15" ry="6" fill="#e91e63" opacity="0.4" stroke="#e91e63" stroke-width="1"/>
+    <ellipse cx="550" cy="245" rx="10" ry="10" fill="#e91e63" opacity="0.3" stroke="#e91e63" stroke-width="1"/>
+    <ellipse cx="570" cy="255" rx="13" ry="7" fill="#e91e63" opacity="0.4" stroke="#e91e63" stroke-width="1"/>
+
+    <!-- Gaussian centers -->
+    <circle cx="510" cy="240" r="3" fill="#e91e63"/>
+    <circle cx="530" cy="250" r="3" fill="#e91e63"/>
+    <circle cx="550" cy="245" r="3" fill="#e91e63"/>
+    <circle cx="570" cy="255" r="3" fill="#e91e63"/>
+
+    <!-- Splatting effect -->
+    <path d="M 510 240 Q 530 235 550 245 Q 570 250 580 245" fill="none" stroke="#e91e63" stroke-width="2" opacity="0.6"/>
+  </g>
+
+  <!-- Output arrow -->
+  <g id="output-arrow">
+    <line x1="620" y1="180" x2="700" y2="180" stroke="#ffd700" stroke-width="3"/>
+    <polygon points="695,175 710,180 695,185" fill="#ffd700"/>
+    <text x="665" y="175" font-family="Arial, sans-serif" font-size="10" fill="#ffd700" text-anchor="middle">OUTPUT</text>
+  </g>
+
+  <!-- Rendered output visualization -->
+  <g id="output">
+    <rect x="720" y="140" width="60" height="80" rx="5" fill="url(#cameraGrad)" stroke="#ffd700" stroke-width="2"/>
+    <rect x="730" y="150" width="40" height="60" rx="3" fill="#ffd700" opacity="0.3"/>
+    <text x="750" y="135" font-family="Arial, sans-serif" font-size="10" fill="#ffd700" text-anchor="middle">RENDER</text>
+
+    <!-- Simulated rendered content -->
+    <circle cx="740" cy="170" r="5" fill="#00ff88" opacity="0.7"/>
+    <circle cx="755" cy="180" r="4" fill="#00ffff" opacity="0.6"/>
+    <circle cx="745" cy="195" r="3" fill="#e91e63" opacity="0.8"/>
+    <rect x="735" y="185" width="20" height="3" fill="#ff6b35" opacity="0.5"/>
+  </g>
+
+  <!-- Labels with better visibility -->
+  <text x="200" y="280" font-family="Arial, sans-serif" font-size="14" fill="#00ff88" text-anchor="middle" font-weight="bold">SAPERA SDK</text>
+  <text x="200" y="295" font-family="Arial, sans-serif" font-size="10" fill="#00ffff" text-anchor="middle">Camera Control</text>
+
+  <text x="540" y="185" font-family="Arial, sans-serif" font-size="12" fill="#00ffff" text-anchor="middle" font-weight="bold">Neural Processing</text>
+
+  <text x="750" y="250" font-family="Arial, sans-serif" font-size="14" fill="#ffd700" text-anchor="middle" font-weight="bold">High-Quality</text>
+  <text x="750" y="265" font-family="Arial, sans-serif" font-size="10" fill="#ffd700" text-anchor="middle">Rendering</text>
+
+  <!-- Main title -->
+  <text x="400" y="350" font-family="Arial, sans-serif" font-size="20" fill="#ffffff" text-anchor="middle" font-weight="bold">Neural Rendering Research Pipeline</text>
+  <text x="400" y="370" font-family="Arial, sans-serif" font-size="12" fill="#00ffff" text-anchor="middle">NeRF vs 3D Gaussian Splatting Comparison</text>
+
+  <!-- Glowing effects -->
+  <circle cx="200" cy="200" r="80" fill="url(#glow)" filter="url(#blur)" opacity="0.4"/>
+  <circle cx="540" cy="150" r="60" fill="url(#glow)" filter="url(#blur)" opacity="0.3"/>
+
+  <!-- Corner accent -->
+  <path d="M 0 0 L 80 0 L 0 80 Z" fill="url(#glow)" opacity="0.1"/>
+  <path d="M 800 400 L 720 400 L 800 320 Z" fill="url(#glow)" opacity="0.1"/>
+</svg>

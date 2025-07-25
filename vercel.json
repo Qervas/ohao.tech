@@ -40,7 +40,7 @@
       ]
     },
     {
-      "source": "/(.*)\\.(?:png|jpg|jpeg|gif|svg|webp|ico)",
+      "source": "/images/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -53,7 +53,7 @@
       ]
     },
     {
-      "source": "/(.*)\\.(css|js)",
+      "source": "/_astro/(.*)",
       "headers": [
         {
           "key": "Cache-Control",

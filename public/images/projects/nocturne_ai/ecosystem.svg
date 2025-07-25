@@ -1,0 +1,251 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0a;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#16213e;stop-opacity:1" />
+    </linearGradient>
+
+    <radialGradient id="alphaGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#00ff88;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#00ff88;stop-opacity:0" />
+    </radialGradient>
+
+    <radialGradient id="betaGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ff9800;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#ff9800;stop-opacity:0" />
+    </radialGradient>
+
+    <radialGradient id="gammaGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#9c27b0;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#9c27b0;stop-opacity:0" />
+    </radialGradient>
+
+    <radialGradient id="humanGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#00ffff;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#00ffff;stop-opacity:0" />
+    </radialGradient>
+
+    <filter id="blur">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="400" fill="url(#bg)"/>
+
+  <!-- Grid pattern for tech aesthetic -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#00ff88" stroke-width="0.3" opacity="0.3"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="400" fill="url(#grid)"/>
+
+  <!-- Agent Alpha - Analytical (Green Triangle) -->
+  <g id="agent-alpha">
+    <!-- Glow effect -->
+    <circle cx="200" cy="150" r="60" fill="url(#alphaGlow)" filter="url(#blur)" opacity="0.4"/>
+
+    <!-- Agent body -->
+    <polygon points="200,120 230,180 170,180" fill="#00ff88" stroke="#00ff88" stroke-width="2" filter="url(#glow)">
+      <animate attributeName="opacity" values="0.7;1;0.7" dur="3s" repeatCount="indefinite"/>
+    </polygon>
+
+    <!-- Inner pattern -->
+    <polygon points="200,135 220,165 180,165" fill="none" stroke="#000" stroke-width="1"/>
+    <circle cx="200" cy="155" r="8" fill="#000" opacity="0.7"/>
+
+    <!-- Data particles around Alpha -->
+    <circle cx="180" cy="130" r="2" fill="#00ff88">
+      <animate attributeName="r" values="1;3;1" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="220" cy="140" r="2" fill="#00ff88">
+      <animate attributeName="r" values="1;3;1" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="190" cy="190" r="2" fill="#00ff88">
+      <animate attributeName="r" values="1;3;1" dur="1.8s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- Label -->
+    <text x="200" y="205" font-family="Courier New" font-size="12" fill="#00ff88" text-anchor="middle">Alpha</text>
+    <text x="200" y="220" font-family="Courier New" font-size="8" fill="#00ffff" text-anchor="middle">Analytical</text>
+  </g>
+
+  <!-- Agent Beta - Creative (Orange Triangle) -->
+  <g id="agent-beta">
+    <!-- Glow effect -->
+    <circle cx="400" cy="120" r="60" fill="url(#betaGlow)" filter="url(#blur)" opacity="0.4"/>
+
+    <!-- Agent body -->
+    <polygon points="400,90 430,150 370,150" fill="#ff9800" stroke="#ff9800" stroke-width="2" filter="url(#glow)">
+      <animate attributeName="opacity" values="0.8;1;0.8" dur="2.5s" repeatCount="indefinite"/>
+    </polygon>
+
+    <!-- Creative flowing pattern -->
+    <path d="M380 130 Q400 110 420 130 Q400 140 380 130" fill="none" stroke="#000" stroke-width="1"/>
+    <circle cx="400" cy="125" r="6" fill="#000" opacity="0.7"/>
+
+    <!-- Creative energy particles -->
+    <path d="M370 100 Q380 90 390 100" fill="none" stroke="#ff9800" stroke-width="1" opacity="0.8">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite"/>
+    </path>
+    <path d="M410 100 Q420 90 430 100" fill="none" stroke="#ff9800" stroke-width="1" opacity="0.8">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="1.7s" repeatCount="indefinite"/>
+    </path>
+
+    <!-- Label -->
+    <text x="400" y="175" font-family="Courier New" font-size="12" fill="#ff9800" text-anchor="middle">Beta</text>
+    <text x="400" y="190" font-family="Courier New" font-size="8" fill="#00ffff" text-anchor="middle">Creative</text>
+  </g>
+
+  <!-- Agent Gamma - Logical (Purple Triangle) -->
+  <g id="agent-gamma">
+    <!-- Glow effect -->
+    <circle cx="600" cy="150" r="60" fill="url(#gammaGlow)" filter="url(#blur)" opacity="0.4"/>
+
+    <!-- Agent body -->
+    <polygon points="600,120 630,180 570,180" fill="#9c27b0" stroke="#9c27b0" stroke-width="2" filter="url(#glow)">
+      <animate attributeName="opacity" values="0.6;1;0.6" dur="3.5s" repeatCount="indefinite"/>
+    </polygon>
+
+    <!-- Geometric logical pattern -->
+    <rect x="590" y="145" width="20" height="20" fill="none" stroke="#000" stroke-width="1"/>
+    <line x1="590" y1="155" x2="610" y2="155" stroke="#000" stroke-width="1"/>
+    <line x1="600" y1="145" x2="600" y2="165" stroke="#000" stroke-width="1"/>
+
+    <!-- Logic flow particles -->
+    <rect x="575" y="125" width="4" height="4" fill="#9c27b0">
+      <animate attributeName="opacity" values="0.4;1;0.4" dur="2.2s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="620" y="135" width="4" height="4" fill="#9c27b0">
+      <animate attributeName="opacity" values="0.4;1;0.4" dur="2.8s" repeatCount="indefinite"/>
+    </rect>
+
+    <!-- Label -->
+    <text x="600" y="205" font-family="Courier New" font-size="12" fill="#9c27b0" text-anchor="middle">Gamma</text>
+    <text x="600" y="220" font-family="Courier New" font-size="8" fill="#00ffff" text-anchor="middle">Logical</text>
+  </g>
+
+  <!-- Human User (White Circle) -->
+  <g id="human-user">
+    <!-- Glow effect -->
+    <circle cx="400" cy="280" r="50" fill="url(#humanGlow)" filter="url(#blur)" opacity="0.3"/>
+
+    <!-- User body -->
+    <circle cx="400" cy="280" r="25" fill="#ffffff" stroke="#00ffff" stroke-width="2" filter="url(#glow)">
+      <animate attributeName="r" values="23;27;23" dur="4s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- User icon -->
+    <circle cx="400" cy="275" r="8" fill="#00ffff"/>
+    <path d="M390 285 Q400 290 410 285" fill="none" stroke="#00ffff" stroke-width="2"/>
+
+    <!-- Label -->
+    <text x="400" y="320" font-family="Courier New" font-size="12" fill="#ffffff" text-anchor="middle">Human</text>
+    <text x="400" y="335" font-family="Courier New" font-size="8" fill="#00ffff" text-anchor="middle">Participant</text>
+  </g>
+
+  <!-- Communication Lines and Message Particles -->
+  <g id="communications">
+    <!-- Alpha to Beta communication -->
+    <line x1="200" y1="150" x2="400" y2="120" stroke="#00ff88" stroke-width="2" opacity="0.6" stroke-dasharray="5,5">
+      <animate attributeName="stroke-dashoffset" values="0;10" dur="2s" repeatCount="indefinite"/>
+    </line>
+    <circle cx="300" cy="135" r="3" fill="#00ff88">
+      <animateMotion dur="3s" repeatCount="indefinite">
+        <mpath href="#path-alpha-beta"/>
+      </animateMotion>
+    </circle>
+    <path id="path-alpha-beta" d="M200 150 L400 120" fill="none" stroke="none"/>
+
+    <!-- Beta to Gamma communication -->
+    <line x1="400" y1="120" x2="600" y2="150" stroke="#ff9800" stroke-width="2" opacity="0.6" stroke-dasharray="3,7">
+      <animate attributeName="stroke-dashoffset" values="0;10" dur="1.8s" repeatCount="indefinite"/>
+    </line>
+    <circle cx="500" cy="135" r="3" fill="#ff9800">
+      <animateMotion dur="2.5s" repeatCount="indefinite">
+        <mpath href="#path-beta-gamma"/>
+      </animateMotion>
+    </circle>
+    <path id="path-beta-gamma" d="M400 120 L600 150" fill="none" stroke="none"/>
+
+    <!-- Gamma to Alpha communication -->
+    <line x1="600" y1="150" x2="200" y2="150" stroke="#9c27b0" stroke-width="2" opacity="0.6" stroke-dasharray="4,6">
+      <animate attributeName="stroke-dashoffset" values="0;10" dur="2.5s" repeatCount="indefinite"/>
+    </line>
+    <circle cx="400" cy="150" r="3" fill="#9c27b0">
+      <animateMotion dur="4s" repeatCount="indefinite">
+        <mpath href="#path-gamma-alpha"/>
+      </animateMotion>
+    </circle>
+    <path id="path-gamma-alpha" d="M600 150 L200 150" fill="none" stroke="none"/>
+
+    <!-- Human to all agents -->
+    <line x1="400" y1="280" x2="200" y2="150" stroke="#00ffff" stroke-width="1" opacity="0.8"/>
+    <line x1="400" y1="280" x2="400" y2="120" stroke="#00ffff" stroke-width="1" opacity="0.8"/>
+    <line x1="400" y1="280" x2="600" y2="150" stroke="#00ffff" stroke-width="1" opacity="0.8"/>
+
+    <!-- Broadcast messages from human -->
+    <circle cx="320" cy="215" r="2" fill="#00ffff">
+      <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite" begin="0s"/>
+    </circle>
+    <circle cx="400" cy="200" r="2" fill="#00ffff">
+      <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite" begin="0.7s"/>
+    </circle>
+    <circle cx="500" cy="215" r="2" fill="#00ffff">
+      <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite" begin="1.4s"/>
+    </circle>
+  </g>
+
+  <!-- Network Statistics Display -->
+  <g id="network-stats">
+    <rect x="20" y="20" width="200" height="80" rx="10" fill="rgba(0,0,0,0.7)" stroke="#00ff88" stroke-width="1"/>
+    <text x="30" y="40" font-family="Courier New" font-size="10" fill="#00ff88">NETWORK STATUS</text>
+    <text x="30" y="55" font-family="Courier New" font-size="8" fill="#00ffff">Agents: 3 Online</text>
+    <text x="30" y="70" font-family="Courier New" font-size="8" fill="#00ffff">Messages: 247</text>
+    <text x="30" y="85" font-family="Courier New" font-size="8" fill="#00ffff">Trust Avg: 0.82</text>
+
+    <!-- Status LED -->
+    <circle cx="190" cy="35" r="4" fill="#00ff88">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="1s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Title -->
+  <text x="400" y="50" font-family="Courier New" font-size="24" fill="#00ff88" text-anchor="middle">NocturneAI Ecosystem</text>
+  <text x="400" y="70" font-family="Courier New" font-size="12" fill="#00ffff" text-anchor="middle">Multi-Agent Social Network</text>
+
+  <!-- Relationship indicators -->
+  <g id="relationships">
+    <!-- Alpha-Beta relationship strength -->
+    <text x="300" y="125" font-family="Courier New" font-size="6" fill="#00ff88" text-anchor="middle">Trust: 80%</text>
+
+    <!-- Beta-Gamma relationship strength -->
+    <text x="500" y="125" font-family="Courier New" font-size="6" fill="#ff9800" text-anchor="middle">Trust: 60%</text>
+
+    <!-- Gamma-Alpha relationship strength -->
+    <text x="400" y="140" font-family="Courier New" font-size="6" fill="#9c27b0" text-anchor="middle">Trust: 90%</text>
+  </g>
+
+  <!-- Background ambient particles -->
+  <g id="ambient" opacity="0.3">
+    <circle cx="100" cy="300" r="1" fill="#00ff88">
+      <animate attributeName="cy" values="300;50;300" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="700" cy="100" r="1" fill="#ff9800">
+      <animate attributeName="cy" values="100;350;100" dur="10s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="750" cy="250" r="1" fill="#9c27b0">
+      <animate attributeName="cx" values="750;50;750" dur="12s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

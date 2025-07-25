@@ -91,7 +91,7 @@ dist
 
 # Gatsby files
 .cache/
-public
+# public - removed because Astro needs public folder for static assets
 
 # vuepress build output
 .vuepress/dist
