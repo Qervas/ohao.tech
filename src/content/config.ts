@@ -1,8 +1,6 @@
 import { defineCollection, z } from "astro:content";
-import { glob } from "astro/loaders";
 
 const sessions = defineCollection({
-  type: "content",
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
@@ -66,7 +64,6 @@ const sessions = defineCollection({
 });
 
 const projects = defineCollection({
-  type: "content",
   schema: z.object({
     title: z.string(),
     description: z.string(),
@@ -154,7 +151,6 @@ const projects = defineCollection({
 });
 
 const articles = defineCollection({
-  type: "content",
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
