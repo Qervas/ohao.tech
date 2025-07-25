@@ -15,27 +15,10 @@ export default defineConfig({
     react(),
   ],
   output: "server",
-  adapter: vercel({
-    webAnalytics: { enabled: true },
-    imageService: false,
-  }),
+  adapter: vercel(),
   site: "https://ohao.tech",
   server: {
     host: true,
     port: 4321,
-    headers: {},
-  },
-  vite: {
-    optimizeDeps: {
-      exclude: ["@resvg/resvg-js"],
-    },
-    assetsInclude: [
-      "**/*.png",
-      "**/*.jpg",
-      "**/*.jpeg",
-      "**/*.gif",
-      "**/*.svg",
-      "**/*.webp",
-    ],
   },
 });
