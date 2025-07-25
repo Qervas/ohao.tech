@@ -1,0 +1,275 @@
+---
+export interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  sizes?: string;
+  aspectRatio?: 'video' | 'square' | 'portrait' | 'auto';
+  clickable?: boolean;
+  width?: number;
+  height?: number;
+  fallbackSrc?: string;
+}
+
+const {
+  src,
+  alt,
+  caption,
+  class: className = '',
+  loading = 'lazy',
+  sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
+  aspectRatio = 'auto',
+  clickable = false,
+  width,
+  height,
+  fallbackSrc = '/images/placeholder.png'
+} = Astro.props;
+
+// Determine aspect ratio class
+const aspectClass = {
+  video: 'aspect-video',
+  square: 'aspect-square',
+  portrait: 'aspect-[3/4]',
+  auto: ''
+}[aspectRatio];
+
+// Create absolute URL for images
+const imageUrl = src.startsWith('/') ? src : `/${src}`;
+const fallbackUrl = fallbackSrc.startsWith('/') ? fallbackSrc : `/${fallbackSrc}`;
+
+// Generate unique ID for this image
+const imageId = `img-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div class={`robust-image-container relative ${className}`} data-image-src={imageUrl}>
+  <div class={`overflow-hidden rounded-lg ${aspectClass} bg-gray-100`}>
+    {clickable ? (
+      <button
+        class="w-full h-full focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2"
+        onclick="openImageModal(this)"
+        type="button"
+      >
+        <img
+          id={imageId}
+          src={imageUrl}
+          alt={alt}
+          loading={loading}
+          sizes={sizes}
+          width={width}
+          height={height}
+          class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+          data-fallback={fallbackUrl}
+          onerror="handleImageError(this)"
+          onload="handleImageLoad(this)"
+        />
+      </button>
+    ) : (
+      <img
+        id={imageId}
+        src={imageUrl}
+        alt={alt}
+        loading={loading}
+        sizes={sizes}
+        width={width}
+        height={height}
+        class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+        data-fallback={fallbackUrl}
+        onerror="handleImageError(this)"
+        onload="handleImageLoad(this)"
+      />
+    )}
+
+    <!-- Loading indicator -->
+    <div class="loading-indicator absolute inset-0 flex items-center justify-center bg-gray-100">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600"></div>
+    </div>
+
+    <!-- Error indicator -->
+    <div class="error-indicator absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-500 hidden">
+      <div class="text-center">
+        <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+        <p class="text-sm">Image not found</p>
+        <p class="text-xs text-gray-400 mt-1">{imageUrl}</p>
+      </div>
+    </div>
+  </div>
+
+  {caption && (
+    <p class="text-sm text-muted-foreground text-center mt-2 px-2">
+      {caption}
+    </p>
+  )}
+</div>
+
+<style>
+  .robust-image-container img {
+    transition: opacity 0.3s ease;
+  }
+
+  .robust-image-container .loading-indicator {
+    transition: opacity 0.3s ease;
+  }
+
+  .robust-image-container .error-indicator {
+    transition: opacity 0.3s ease;
+  }
+
+  .robust-image-container.loaded .loading-indicator {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .robust-image-container.error .loading-indicator {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .robust-image-container.error .error-indicator {
+    display: flex !important;
+  }
+
+  .robust-image-container.error img {
+    opacity: 0;
+  }
+</style>
+
+<script is:inline>
+  if (typeof window !== 'undefined') {
+    // Global image error handler
+    window.handleImageError = function(img) {
+      console.warn('Image failed to load:', img.src);
+      console.warn('Attempting fallback:', img.dataset.fallback);
+
+      const container = img.closest('.robust-image-container');
+
+      // Try fallback image first
+      if (img.dataset.fallback && img.src !== img.dataset.fallback) {
+        img.src = img.dataset.fallback;
+        return;
+      }
+
+      // If fallback also fails, show error state
+      container?.classList.add('error');
+
+      // Log debugging info
+      console.error('Image load error details:', {
+        originalSrc: container?.dataset.imageSrc,
+        currentSrc: img.src,
+        fallbackSrc: img.dataset.fallback,
+        alt: img.alt,
+        container: container
+      });
+    };
+
+    // Global image load handler
+    window.handleImageLoad = function(img) {
+      console.log('Image loaded successfully:', img.src);
+      const container = img.closest('.robust-image-container');
+      container?.classList.add('loaded');
+
+      // Verify image is actually visible
+      setTimeout(() => {
+        const rect = img.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) {
+          console.warn('Image loaded but has zero dimensions:', {
+            src: img.src,
+            dimensions: `${rect.width}x${rect.height}`,
+            computedStyle: window.getComputedStyle(img)
+          });
+        }
+      }, 100);
+    };
+
+    // Global modal function
+    window.openImageModal = function(button) {
+      const img = button.querySelector('img');
+      if (!img) return;
+
+      // Create modal overlay
+      const modal = document.createElement('div');
+      modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm';
+      modal.onclick = () => modal.remove();
+
+      // Create modal content
+      const modalContent = document.createElement('div');
+      modalContent.className = 'relative max-w-7xl max-h-full p-4';
+      modalContent.onclick = (e) => e.stopPropagation();
+
+      // Create large image
+      const modalImg = document.createElement('img');
+      modalImg.src = img.src;
+      modalImg.alt = img.alt;
+      modalImg.className = 'max-w-full max-h-full object-contain rounded-lg';
+
+      // Create close button
+      const closeBtn = document.createElement('button');
+      closeBtn.innerHTML = '×';
+      closeBtn.className = 'absolute top-2 right-2 w-8 h-8 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors text-xl leading-none';
+      closeBtn.onclick = () => modal.remove();
+
+      modalContent.appendChild(modalImg);
+      modalContent.appendChild(closeBtn);
+      modal.appendChild(modalContent);
+      document.body.appendChild(modal);
+
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden';
+
+      // Cleanup on close
+      modal.addEventListener('remove', () => {
+        document.body.style.overflow = '';
+      });
+
+      // Close on escape key
+      const handleEscape = (e) => {
+        if (e.key === 'Escape') {
+          modal.remove();
+          document.removeEventListener('keydown', handleEscape);
+        }
+      };
+      document.addEventListener('keydown', handleEscape);
+    };
+
+    // Debug function to check all images on page
+    window.debugImages = function() {
+      const images = document.querySelectorAll('.robust-image-container img');
+      console.log('=== IMAGE DEBUG REPORT ===');
+      console.log(`Found ${images.length} images`);
+
+      images.forEach((img, index) => {
+        const container = img.closest('.robust-image-container');
+        const rect = img.getBoundingClientRect();
+
+        console.log(`Image ${index + 1}:`, {
+          src: img.src,
+          alt: img.alt,
+          loaded: img.complete,
+          visible: rect.width > 0 && rect.height > 0,
+          dimensions: `${rect.width}x${rect.height}`,
+          container: container?.className,
+          naturalSize: `${img.naturalWidth}x${img.naturalHeight}`
+        });
+      });
+
+      // Check if images directory is accessible
+      fetch('/images/')
+        .then(response => {
+          console.log('Images directory accessible:', response.ok);
+        })
+        .catch(error => {
+          console.error('Images directory not accessible:', error);
+        });
+    };
+
+    // Auto-debug on load in development
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(window.debugImages, 2000);
+      });
+    }
+  }
+</script>

@@ -17,6 +17,7 @@ export default defineConfig({
   output: "server",
   adapter: vercel({
     webAnalytics: { enabled: true },
+    imageService: false,
   }),
   site: "https://ohao.tech",
   server: {
@@ -24,10 +25,22 @@ export default defineConfig({
     port: 4321,
     headers: {},
   },
-
+  image: {
+    service: {
+      entrypoint: "astro/assets/services/noop",
+    },
+  },
   vite: {
     optimizeDeps: {
       exclude: ["@resvg/resvg-js"],
     },
+    assetsInclude: [
+      "**/*.png",
+      "**/*.jpg",
+      "**/*.jpeg",
+      "**/*.gif",
+      "**/*.svg",
+      "**/*.webp",
+    ],
   },
 });

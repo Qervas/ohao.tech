@@ -1,0 +1,197 @@
+---
+// This component helps debug image loading issues
+---
+
+<div id="image-debugger" class="fixed bottom-4 right-4 z-50 bg-black/80 text-white p-4 rounded-lg shadow-xl max-w-md hidden">
+  <div class="flex items-center justify-between mb-2">
+    <h3 class="font-bold text-sm">Image Debug</h3>
+    <button onclick="toggleDebugger()" class="text-white/70 hover:text-white">×</button>
+  </div>
+  <div id="debug-content" class="text-xs space-y-1"></div>
+  <button onclick="runImageDiagnostics()" class="mt-2 bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded text-xs">
+    Run Diagnostics
+  </button>
+</div>
+
+<button
+  onclick="toggleDebugger()"
+  class="fixed bottom-4 left-4 z-50 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-xl text-xs font-bold"
+  title="Toggle Image Debugger"
+>
+  IMG
+</button>
+
+<script is:inline>
+  if (typeof window !== 'undefined') {
+    let debuggerVisible = false;
+
+    window.toggleDebugger = function() {
+      const debuggerEl = document.getElementById('image-debugger');
+      debuggerVisible = !debuggerVisible;
+      debuggerEl.classList.toggle('hidden', !debuggerVisible);
+
+      if (debuggerVisible) {
+        window.runImageDiagnostics();
+      }
+    };
+
+    window.runImageDiagnostics = function() {
+      const content = document.getElementById('debug-content');
+      const results = [];
+
+      // Check environment
+      results.push(`🌍 Environment: ${window.location.hostname}`);
+      results.push(`📍 Path: ${window.location.pathname}`);
+      results.push(`🕐 Time: ${new Date().toLocaleTimeString()}`);
+      results.push('---');
+
+      // Check images directory accessibility
+      fetch('/images/')
+        .then(response => {
+          results.push(`📁 /images/ directory: ${response.ok ? '✅ Accessible' : '❌ Not accessible'}`);
+          updateContent();
+        })
+        .catch(error => {
+          results.push(`📁 /images/ directory: ❌ Error - ${error.message}`);
+          updateContent();
+        });
+
+      // Check all images on page
+      const allImages = document.querySelectorAll('img');
+      results.push(`🖼️ Total images found: ${allImages.length}`);
+
+      let loadedCount = 0;
+      let errorCount = 0;
+      let invisibleCount = 0;
+
+      allImages.forEach((img, index) => {
+        const rect = img.getBoundingClientRect();
+        const isVisible = rect.width > 0 && rect.height > 0;
+        const isLoaded = img.complete && img.naturalHeight !== 0;
+
+        if (isLoaded) loadedCount++;
+        if (!isLoaded && img.src) errorCount++;
+        if (!isVisible) invisibleCount++;
+
+        // Test specific problematic images
+        if (img.src.includes('/images/projects/') || img.src.includes('/images/')) {
+          const status = isLoaded ? '✅' : '❌';
+          const visibility = isVisible ? '👁️' : '🙈';
+          results.push(`${status}${visibility} ${img.src.split('/').pop()}`);
+
+          if (!isLoaded) {
+            // Try to load the image and report specific error
+            const testImg = new Image();
+            testImg.onload = () => {
+              results.push(`  ✅ Test load succeeded for ${img.src.split('/').pop()}`);
+              updateContent();
+            };
+            testImg.onerror = () => {
+              results.push(`  ❌ Test load failed for ${img.src.split('/').pop()}`);
+              updateContent();
+            };
+            testImg.src = img.src;
+          }
+        }
+      });
+
+      results.push('---');
+      results.push(`✅ Loaded: ${loadedCount}`);
+      results.push(`❌ Failed: ${errorCount}`);
+      results.push(`🙈 Invisible: ${invisibleCount}`);
+
+      // Check specific image paths
+      const testPaths = [
+        '/images/projects/nocturne_ai/ecosystem.svg',
+        '/images/projects/nocturne_ai/agents.png',
+        '/images/avatar.png',
+        '/images/placeholder.svg'
+      ];
+
+      results.push('---');
+      results.push('🔍 Testing specific paths:');
+
+      testPaths.forEach(path => {
+        fetch(path)
+          .then(response => {
+            results.push(`  ${response.ok ? '✅' : '❌'} ${path}`);
+            if (!response.ok) {
+              results.push(`    Status: ${response.status} ${response.statusText}`);
+            }
+            updateContent();
+          })
+          .catch(error => {
+            results.push(`  ❌ ${path} - ${error.message}`);
+            updateContent();
+          });
+      });
+
+      function updateContent() {
+        content.innerHTML = results.join('<br>');
+      }
+
+      updateContent();
+    };
+
+    // Auto-run diagnostics on problematic pages
+    document.addEventListener('DOMContentLoaded', () => {
+      const isProjectsPage = window.location.pathname.includes('/projects');
+      const isArticlesPage = window.location.pathname.includes('/articles');
+      const isSessionsPage = window.location.pathname.includes('/sessions');
+
+      if (isProjectsPage || isArticlesPage || isSessionsPage) {
+        // Auto-show debugger on image-heavy pages in development
+        if (window.location.hostname === 'localhost' ||
+            window.location.hostname === '127.0.0.1' ||
+            window.location.search.includes('debug=true')) {
+          setTimeout(() => {
+            window.toggleDebugger();
+          }, 1000);
+        }
+      }
+    });
+
+    // Monitor for new images added dynamically
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === 1) { // Element node
+            const newImages = node.querySelectorAll ? node.querySelectorAll('img') : [];
+            if (newImages.length > 0 && debuggerVisible) {
+              setTimeout(window.runImageDiagnostics, 500);
+            }
+          }
+        });
+      });
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  }
+</script>
+
+<style>
+  #image-debugger {
+    max-height: 80vh;
+    overflow-y: auto;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  #debug-content {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 8px;
+    border-radius: 4px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  /* Hide debugger in production unless debug=true */
+  @media (min-width: 1px) {
+    .debug-hidden {
+      display: none !important;
+    }
+  }
+</style>
