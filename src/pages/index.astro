@@ -3,11 +3,124 @@ import Layout from '../layouts/Layout.astro';
 import Icon from '../components/Icon.astro';
 import { getCollection } from 'astro:content';
 
-// Get recent projects and articles
-const allProjects = await getCollection('projects');
-const allArticles = await getCollection('articles', ({ data }) => {
-  return data.status === 'published';
-});
+// Fallback content loading for Vercel deployment
+let allProjects = [];
+let allArticles = [];
+
+try {
+  allProjects = await getCollection('projects');
+  allArticles = await getCollection('articles', ({ data }) => {
+    return data.status === 'published';
+  });
+} catch (error) {
+  console.warn('Content collections failed to load, using fallbacks:', error);
+
+  // Fallback data for Vercel deployment
+  allProjects = [
+    {
+      slug: 'neural-rendering',
+      data: {
+        title: 'Neural Scene Representation and Rendering',
+        description: 'Master thesis research on advanced neural rendering techniques using Sapera SDK for high-quality image acquisition, RealityCapture for photogrammetry, and comparing NeRF vs 3D Gaussian Splatting.',
+        publishedAt: new Date('2025-02-01'),
+        status: 'active',
+        technologies: ['NeRF', '3D Gaussian Splatting', 'Sapera SDK'],
+        category: 'research'
+      }
+    },
+    {
+      slug: 'nocturne-ai',
+      data: {
+        title: 'NocturneAI: Interactive Multi-Agent Ecosystem',
+        description: 'A real-time multi-agent system where AI creatures with distinct personalities autonomously communicate, form relationships, and collaborate in a cyberpunk-inspired digital ecosystem.',
+        publishedAt: new Date('2025-02-01'),
+        status: 'active',
+        technologies: ['SvelteKit', 'TypeScript', 'Tauri'],
+        category: 'ai'
+      }
+    },
+    {
+      slug: 'ohao-engine',
+      data: {
+        title: 'Ohao Engine - Modern Vulkan Game Engine',
+        description: 'A modern game engine built with Vulkan, featuring real-time PBR rendering, intuitive scene management, and a robust material system.',
+        publishedAt: new Date('2024-11-01'),
+        status: 'active',
+        technologies: ['C++', 'Vulkan', 'OpenGL'],
+        category: 'engine'
+      }
+    }
+  ];
+
+  allArticles = [
+    {
+      slug: 'ohao-agents-startup',
+      data: {
+        title: 'Building My First Startup: A Night Shift for Productivity',
+        description: 'Day 1: Starting my journey to build a multi-agent system that works while I sleep',
+        publishedAt: new Date('2025-03-06'),
+        type: 'article',
+        status: 'published',
+        readingTime: 7
+      }
+    },
+    {
+      slug: 'rl-chapter-4-dynamic-programming',
+      data: {
+        title: 'RL Chapter 4: Dynamic Programming',
+        description: 'Exploring policy evaluation, policy improvement, and value iteration in reinforcement learning',
+        publishedAt: new Date('2025-01-25'),
+        type: 'reading',
+        status: 'published',
+        readingTime: 8
+      }
+    },
+    {
+      slug: 'reading-reinforcement-learning-sutton-barto',
+      data: {
+        title: 'RL Book Series - Part 1: Foundations and Finite MDPs',
+        description: 'Starting my journey through Sutton & Barto\'s RL textbook - Chapter 3 notes on Finite Markov Decision Processes',
+        publishedAt: new Date('2025-01-22'),
+        type: 'reading',
+        status: 'published',
+        readingTime: 6
+      }
+    },
+    {
+      slug: 'opencv-cuda-fedora-build',
+      data: {
+        title: 'Successfully Built OpenCV with CUDA on Fedora',
+        description: 'A step-by-step guide to building OpenCV from source with CUDA, cuDNN, and G-API support',
+        publishedAt: new Date('2024-10-13'),
+        type: 'article',
+        status: 'published',
+        readingTime: 10
+      }
+    },
+    {
+      slug: 'debugging-3am-thoughts',
+      data: {
+        title: '3 AM Debugging: When Your Code Becomes Philosophy',
+        description: 'Late night coding sessions and the philosophical questions they raise',
+        publishedAt: new Date('2024-02-15'),
+        type: 'thought',
+        status: 'published',
+        readingTime: 5
+      }
+    },
+    {
+      slug: 'cpp-templates-parameter-packs',
+      data: {
+        title: 'C++ Templates: Understanding Parameter Packs',
+        description: 'Deep dive into variadic templates and parameter pack expansion in modern C++',
+        publishedAt: new Date('2024-01-22'),
+        type: 'article',
+        status: 'published',
+        readingTime: 12
+      }
+    }
+  ];
+}
 
 // Get only active projects
 const activeProjects = allProjects
