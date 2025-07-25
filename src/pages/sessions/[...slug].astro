@@ -3,17 +3,14 @@ import Layout from '../../layouts/Layout.astro';
 import Icon from '../../components/Icon.astro';
 import { getCollection } from 'astro:content';
 
-export const prerender = true;
+const { slug } = Astro.params;
 
-export async function getStaticPaths() {
-  const sessions = await getCollection('sessions');
-  return sessions.map((session) => ({
-    params: { slug: session.slug },
-    props: { session },
-  }));
+const sessions = await getCollection('sessions');
+const session = sessions.find((session) => session.slug === slug);
+
+if (!session) {
+  return Astro.redirect('/404');
 }
-
-const { session } = Astro.props;
 const { Content } = await session.render();
 
 // Get all articles that reference this session

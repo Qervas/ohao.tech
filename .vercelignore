@@ -55,7 +55,6 @@ jspm_packages/
 
 # Nuxt.js build / generate output
 .nuxt
-dist
 
 # Gatsby files
 .cache/
@@ -86,20 +85,17 @@ Thumbs.db
 # Astro
 .astro/
 
-# Build outputs (keep dist for Vercel)
-# dist/
+# TypeScript cache
+*.tsbuildinfo
 
-# Documentation and notes
+# Documentation files (but keep README)
 docs/
-# Don't ignore content markdown files
-!src/content/**/*.md
-# Ignore other markdown files except README and content
-*.md
-!README.md
-
-# Development scripts
 convert-projects.md
 rl-book-template.md
 
-# TypeScript cache
-*.tsbuildinfo
+# Keep all content files - DO NOT IGNORE
+# Content collections need to be available at build time
+# !src/content/**/*.md
+# !src/content/**/*.json
+# !src/content/**/*.yaml
+# !src/content/**/*.yml

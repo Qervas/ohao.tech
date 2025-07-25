@@ -8,17 +8,14 @@ import DiagramViewer from '../../components/content/DiagramViewer.astro';
 import TextDiagram from '../../components/content/TextDiagram.astro';
 import Comments from '../../components/content/Comments.astro';
 
-export const prerender = true;
+const { slug } = Astro.params;
 
-export async function getStaticPaths() {
-  const projects = await getCollection('projects');
-  return projects.map((project) => ({
-    params: { slug: project.slug },
-    props: { project },
-  }));
+const projects = await getCollection('projects');
+const project = projects.find((project) => project.slug === slug);
+
+if (!project) {
+  return Astro.redirect('/404');
 }
-
-const { project } = Astro.props;
 const { Content } = await project.render();
 
 function formatDate(date: Date) {
