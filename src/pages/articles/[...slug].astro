@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import Icon from '../../components/Icon.astro';
+import SimpleImage from '../../components/SimpleImage.astro';
 
 const { slug } = Astro.params;
 
@@ -135,10 +136,10 @@ const relatedArticles = article.data.series ?
               <div class="flex flex-col md:flex-row gap-6 items-start">
                 {article.data.book.cover && (
                   <div class="flex-shrink-0">
-                    <img
+                    <SimpleImage
                       src={article.data.book.cover}
                       alt={article.data.book.title}
-                      class="w-32 h-48 object-cover rounded-lg shadow-lg"
+                      class="w-12 h-16 rounded object-cover shadow-sm"
                       loading="lazy"
                     />
                   </div>
@@ -264,7 +265,7 @@ const relatedArticles = article.data.series ?
 
             {article.data.coverImage && (
               <div class="aspect-video rounded-2xl overflow-hidden mb-8 shadow-xl">
-                <img
+                <SimpleImage
                   src={article.data.coverImage.src}
                   alt={article.data.coverImage.alt || article.data.title}
                   class="w-full h-full object-cover"

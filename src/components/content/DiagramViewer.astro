@@ -1,4 +1,6 @@
 ---
+import SimpleImage from '../SimpleImage.astro';
+
 export interface Props {
   src: string;
   alt: string;
@@ -66,13 +68,11 @@ const typeColors = {
   <!-- Diagram Container -->
   <div class="diagram-container relative bg-white">
     <div class="diagram-wrapper overflow-auto">
-      <img
+      <SimpleImage
         src={src}
         alt={alt}
         class="diagram-image max-w-full h-auto mx-auto block transition-transform duration-200 ease-in-out"
         loading="lazy"
-        onclick={zoomable ? "toggleImageZoom(this)" : undefined}
-        style={zoomable ? "cursor: zoom-in;" : undefined}
       />
     </div>
 
@@ -123,13 +123,14 @@ const typeColors = {
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
-      <img
+      <SimpleImage
         src={src}
         alt={alt}
-        class="zoom-modal-image max-w-full max-h-full object-contain"
+        class="diagram-modal-image max-w-full max-h-full object-contain"
       />
     </div>
   </div>
+</div>
 )}
 
 <script>

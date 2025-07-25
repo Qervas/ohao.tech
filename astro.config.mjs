@@ -25,11 +25,6 @@ export default defineConfig({
     port: 4321,
     headers: {},
   },
-  image: {
-    service: {
-      entrypoint: "astro/assets/services/noop",
-    },
-  },
   vite: {
     optimizeDeps: {
       exclude: ["@resvg/resvg-js"],

@@ -1,0 +1,175 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SimpleImage from '../components/SimpleImage.astro';
+---
+
+<Layout title="Image Test Page">
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">Image Test Page</h1>
+
+    <div class="space-y-8">
+      <!-- Test Avatar Image -->
+      <section>
+        <h2 class="text-xl font-semibold mb-4">Avatar Image (PNG)</h2>
+        <div class="w-32 h-32">
+          <SimpleImage
+            src="/images/avatar.png"
+            alt="Avatar"
+            class="w-full h-full object-cover rounded-full"
+          />
+        </div>
+      </section>
+
+      <!-- Test Project Images -->
+      <section>
+        <h2 class="text-xl font-semibold mb-4">NocturneAI Project Images</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <h3 class="text-sm font-medium mb-2">Ecosystem (SVG)</h3>
+            <SimpleImage
+              src="/images/projects/nocturne_ai/ecosystem.svg"
+              alt="NocturneAI Ecosystem"
+              class="w-full h-48 object-contain border rounded"
+            />
+          </div>
+          <div>
+            <h3 class="text-sm font-medium mb-2">Agents (PNG)</h3>
+            <SimpleImage
+              src="/images/projects/nocturne_ai/agents.png"
+              alt="AI Agents"
+              class="w-full h-48 object-cover border rounded"
+            />
+          </div>
+          <div>
+            <h3 class="text-sm font-medium mb-2">Chat Interface (PNG)</h3>
+            <SimpleImage
+              src="/images/projects/nocturne_ai/chat.png"
+              alt="Chat Interface"
+              class="w-full h-48 object-cover border rounded"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Test Neural Rendering Images -->
+      <section>
+        <h2 class="text-xl font-semibold mb-4">Neural Rendering Project</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <h3 class="text-sm font-medium mb-2">Cover (SVG)</h3>
+            <SimpleImage
+              src="/images/projects/neural_rendering/cover.svg"
+              alt="Neural Rendering Cover"
+              class="w-full h-48 object-contain border rounded"
+            />
+          </div>
+          <div>
+            <h3 class="text-sm font-medium mb-2">Pipeline (SVG)</h3>
+            <SimpleImage
+              src="/images/projects/neural_rendering/pipeline.svg"
+              alt="Neural Rendering Pipeline"
+              class="w-full h-48 object-contain border rounded"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Test Book Cover -->
+      <section>
+        <h2 class="text-xl font-semibold mb-4">Book Cover (SVG)</h2>
+        <div class="w-32">
+          <SimpleImage
+            src="/images/books/rl-sutton-barto-generated.svg"
+            alt="RL Sutton Barto Book"
+            class="w-full h-auto border rounded"
+          />
+        </div>
+      </section>
+
+      <!-- Test Blog Images -->
+      <section>
+        <h2 class="text-xl font-semibold mb-4">Blog Images (PNG/JPG)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <h3 class="text-sm font-medium mb-2">C++ Templates</h3>
+            <SimpleImage
+              src="/images/blogs/cpp_templates_1.png"
+              alt="C++ Templates"
+              class="w-full h-48 object-contain border rounded"
+            />
+          </div>
+          <div>
+            <h3 class="text-sm font-medium mb-2">Perspective Matrix</h3>
+            <SimpleImage
+              src="/images/blogs/perspective_matrix.png"
+              alt="Perspective Matrix"
+              class="w-full h-48 object-contain border rounded"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Test Placeholder -->
+      <section>
+        <h2 class="text-xl font-semibold mb-4">Placeholder Image</h2>
+        <div class="w-64">
+          <SimpleImage
+            src="/images/placeholder.svg"
+            alt="Placeholder"
+            class="w-full h-auto border rounded"
+          />
+        </div>
+      </section>
+
+      <!-- Test Non-existent Image -->
+      <section>
+        <h2 class="text-xl font-semibold mb-4">Non-existent Image (Should Hide)</h2>
+        <SimpleImage
+          src="/images/non-existent.png"
+          alt="This should not display"
+          class="w-32 h-32 border rounded bg-gray-100"
+        />
+      </section>
+
+      <!-- Image Loading Status -->
+      <section>
+        <h2 class="text-xl font-semibold mb-4">Console Output</h2>
+        <p class="text-gray-600">Check browser console (F12) for image loading status:</p>
+        <ul class="list-disc pl-5 text-sm text-gray-600">
+          <li>✅ Successful loads will show green checkmarks</li>
+          <li>❌ Failed loads will show red X marks and hide the image</li>
+          <li>All paths and loading status are logged to console</li>
+        </ul>
+      </section>
+    </div>
+  </div>
+
+  <!-- Debug Info -->
+  <script is:inline>
+    if (typeof window !== 'undefined') {
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log('🧪 Image Test Page Loaded');
+        console.log('📍 Current URL:', window.location.href);
+        console.log('🔍 Total images on page:', document.querySelectorAll('img').length);
+
+        setTimeout(() => {
+          const images = document.querySelectorAll('img');
+          let loaded = 0;
+          let failed = 0;
+
+          images.forEach(img => {
+            if (img.complete) {
+              if (img.naturalWidth > 0) {
+                loaded++;
+              } else {
+                failed++;
+              }
+            }
+          });
+
+          console.log(`📊 Image Status: ${loaded} loaded, ${failed} failed, ${images.length - loaded - failed} loading`);
+        }, 3000);
+      });
+    }
+  </script>
+</Layout>

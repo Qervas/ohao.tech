@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Icon from '../../components/Icon.astro';
+import SimpleImage from '../../components/SimpleImage.astro';
 import { getCollection } from 'astro:content';
 
 const { slug } = Astro.params;
@@ -147,10 +148,11 @@ const progress = getProgress();
           <div class="lg:col-span-1">
             {session.data.coverImage && (
               <div class="mb-6">
-                <img
+                <SimpleImage
                   src={session.data.coverImage.src}
                   alt={session.data.coverImage.alt}
-                  class="w-full rounded-lg shadow-lg"
+                  class="w-full rounded-lg shadow-md"
+                  loading="lazy"
                 />
               </div>
             )}
