@@ -1,0 +1,8 @@
+CACHE_BUST_TIMESTAMP=2025-01-25T10:52:00Z
+DEPLOYMENT_VERSION=v20250125-cache-fix
+REASON=Force Vercel cache invalidation for image serving fix
+
+This file is used to trigger a new deployment and force Vercel
+to invalidate cached content, particularly for image serving.
+
+Images are working correctly on test pages but cached on main site.

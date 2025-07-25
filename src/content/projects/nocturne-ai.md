@@ -8,16 +8,16 @@ category: "ai"
 technologies: ["SvelteKit", "TypeScript", "Tauri", "Rust", "Ollama", "LLM Integration", "HTML5 Canvas", "Real-time Systems"]
 repository: "https://github.com/Qervas/NocturneAI"
 coverImage:
-  src: "/images/projects/nocturne_ai/ecosystem.svg"
+  src: "/images/projects/nocturne_ai/ecosystem.svg?v=20250125"
   alt: "NocturneAI multi-agent ecosystem interface"
 images:
-  - src: "/images/projects/nocturne_ai/ecosystem.svg"
+  - src: "/images/projects/nocturne_ai/ecosystem.svg?v=20250125"
     alt: "Multi-agent ecosystem visualization"
     caption: "Real-time visualization of AI agents communicating in their digital ecosystem"
-  - src: "/images/projects/nocturne_ai/agents.png"
+  - src: "/images/projects/nocturne_ai/agents.png?v=20250125"
     alt: "AI agent personalities"
     caption: "Three distinct AI agents with unique personalities and specializations"
-  - src: "/images/projects/nocturne_ai/chat.png"
+  - src: "/images/projects/nocturne_ai/chat.png?v=20250125"
     alt: "Interactive chat interface"
     caption: "Multi-modal chat system supporting human-AI and AI-AI conversations"
 diagrams:
