@@ -5,14 +5,9 @@ import path from "path";
 export const GET: APIRoute = async ({ params, request }) => {
   try {
     const url = new URL(request.url);
-    console.log(
-      "Image API request:",
-      url.pathname,
-      "params:",
-      JSON.stringify(params),
-    );
+    console.log("Projects image API request:", url.pathname, "params:", JSON.stringify(params));
 
-    // Handle the path parameter properly
+    // Handle the path parameter for projects
     let imagePath = "";
     if (params.path) {
       if (Array.isArray(params.path)) {
@@ -22,38 +17,25 @@ export const GET: APIRoute = async ({ params, request }) => {
       }
     }
 
-    const filePath = path.join(process.cwd(), "public", "images", imagePath);
+    const filePath = path.join(process.cwd(), "public", "images", "projects", imagePath);
 
-    console.log("Parsed image path:", imagePath);
+    console.log("Projects image path:", imagePath);
     console.log("Full file path:", filePath);
-    console.log("CWD:", process.cwd());
 
     // Check if file exists
     if (!fs.existsSync(filePath)) {
-      console.log("File not found:", filePath);
+      console.log("Projects image not found:", filePath);
 
-      // List what's actually in the directory for debugging
+      // List directory contents for debugging
       const dirPath = path.dirname(filePath);
       try {
         const files = fs.readdirSync(dirPath);
-        console.log("Directory contents of", dirPath, ":", files);
+        console.log("Projects directory contents of", dirPath, ":", files);
       } catch (e) {
-        console.log("Could not read directory:", dirPath, "Error:", e.message);
-
-        // Try to list the parent directory too
-        const parentDir = path.join(process.cwd(), "public", "images");
-        try {
-          const parentFiles = fs.readdirSync(parentDir);
-          console.log("Parent images directory contents:", parentFiles);
-        } catch (parentE) {
-          console.log(
-            "Could not read parent images directory:",
-            parentE.message,
-          );
-        }
+        console.log("Could not read projects directory:", dirPath, "Error:", e.message);
       }
 
-      return new Response(`Image not found: ${imagePath} at ${filePath}`, {
+      return new Response(`Projects image not found: ${imagePath} at ${filePath}`, {
         status: 404,
         headers: {
           "Content-Type": "text/plain",
@@ -90,7 +72,7 @@ export const GET: APIRoute = async ({ params, request }) => {
         break;
     }
 
-    console.log("Successfully serving image:", filePath, "as", contentType);
+    console.log("Successfully serving projects image:", filePath, "as", contentType);
 
     // Return the image with proper headers
     return new Response(fileBuffer, {
@@ -102,7 +84,7 @@ export const GET: APIRoute = async ({ params, request }) => {
       },
     });
   } catch (error) {
-    console.error("Error serving image:", error);
+    console.error("Error serving projects image:", error);
     return new Response(`Internal server error: ${error.message}`, {
       status: 500,
       headers: {
