@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import Icon from '../../components/Icon.astro';
-import SimpleImage from '../../components/SimpleImage.astro';
+
 import PDFViewer from '../../components/content/PDFViewer.astro';
 import DiagramViewer from '../../components/content/DiagramViewer.astro';
 import TextDiagram from '../../components/content/TextDiagram.astro';
@@ -168,7 +168,7 @@ function getStatusLabel(status: string) {
                   {project.data.team.map(member => (
                     <div class="flex items-center gap-3">
                       {member.avatar && (
-                        <SimpleImage
+                        <img
                           src={member.avatar}
                           alt={member.name}
                           class="w-8 h-8 rounded-full object-cover"
@@ -266,7 +266,7 @@ function getStatusLabel(status: string) {
           ) : (
             <div class="max-w-xl mx-auto">
               <div class="rounded-lg overflow-hidden shadow-md border border-gray-200">
-                <SimpleImage
+                <img
                   src={project.data.images[0].src}
                   alt={project.data.images[0].alt || project.data.title}
                   class="w-full h-auto"
@@ -296,7 +296,7 @@ function getStatusLabel(status: string) {
               ) : (
                 <div class="group cursor-pointer">
                   <div class="rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
-                    <SimpleImage
+                    <img
                       src={image.src}
                       alt={image.alt || `${project.data.title} - Image ${index + 1}`}
                       class="w-full h-auto group-hover:scale-105 transition-transform duration-300"
@@ -441,7 +441,7 @@ function getStatusLabel(status: string) {
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
       </svg>
     </button>
-    <SimpleImage
+    <img
       id="modalImage"
       src=""
       alt=""

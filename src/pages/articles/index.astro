@@ -1,7 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Icon from '../../components/Icon.astro';
-import SimpleImage from '../../components/SimpleImage.astro';
 import { getCollection } from 'astro:content';
 
 // Get all articles and sort by date
@@ -134,7 +133,7 @@ function getReadingTime(minutes: number | undefined) {
                   {article.data.coverImage && (
                     <div class="ml-6 flex-shrink-0">
                       <div class="w-20 h-20 rounded-lg overflow-hidden bg-accent/20">
-                        <SimpleImage
+                        <img
                           src={article.data.coverImage.src}
                           alt={article.data.coverImage.alt || article.data.title}
                           class="w-full h-full object-cover"
@@ -147,7 +146,7 @@ function getReadingTime(minutes: number | undefined) {
                   {article.data.book?.cover && (
                     <div class="ml-6 flex-shrink-0">
                       <div class="w-12 h-16 rounded overflow-hidden shadow-sm">
-                        <SimpleImage
+                        <img
                           src={article.data.book.cover}
                           alt={article.data.book.title}
                           class="w-full h-full object-cover"
@@ -243,7 +242,7 @@ function getReadingTime(minutes: number | undefined) {
                   {article.data.coverImage && (
                     <div class="ml-6 flex-shrink-0">
                       <div class="w-24 h-24 rounded-lg overflow-hidden bg-accent/20">
-                        <SimpleImage
+                        <img
                           src={article.data.coverImage.src}
                           alt={article.data.coverImage.alt || article.data.title}
                           class="w-full h-full object-cover"
@@ -268,7 +267,7 @@ function getReadingTime(minutes: number | undefined) {
                 <div class="flex items-start gap-4">
                   {book.data.book?.cover && (
                     <div class="flex-shrink-0">
-                      <SimpleImage
+                      <img
                         src={book.data.book.cover}
                         alt={book.data.book.title}
                         class="w-12 h-16 rounded object-cover shadow-sm"

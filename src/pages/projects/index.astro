@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Icon from '../../components/Icon.astro';
-import SimpleImage from '../../components/SimpleImage.astro';
+
 import ImageDebugger from '../../components/ImageDebugger.astro';
 import { getCollection } from 'astro:content';
 
@@ -79,7 +79,7 @@ function getStatusLabel(status: string) {
                 {(featuredProjects[0].data.coverImage || featuredProjects[0].data.images?.[0]) && (
                   <div class="h-64 overflow-hidden relative">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
-                    <SimpleImage
+                    <img
                       src={(featuredProjects[0].data.coverImage?.src || featuredProjects[0].data.images?.[0]?.src)}
                       alt={(featuredProjects[0].data.coverImage?.alt || featuredProjects[0].data.images?.[0]?.alt || featuredProjects[0].data.title)}
                       class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -118,7 +118,7 @@ function getStatusLabel(status: string) {
                     {(project.data.coverImage || project.data.images?.[0]) && (
                       <div class="h-48 overflow-hidden relative">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent z-10"></div>
-                        <SimpleImage
+                        <img
                           src={(project.data.coverImage?.src || project.data.images?.[0]?.src)}
                           alt={(project.data.coverImage?.alt || project.data.images?.[0]?.alt || project.data.title)}
                           class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -170,7 +170,7 @@ function getStatusLabel(status: string) {
                 {(project.data.coverImage || project.data.images?.[0]) && (
                   <div class="h-48 overflow-hidden relative">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent z-10"></div>
-                    <SimpleImage
+                    <img
                       src={(project.data.coverImage?.src || project.data.images?.[0]?.src)}
                       alt={(project.data.coverImage?.alt || project.data.images?.[0]?.alt || project.data.title)}
                       class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"

@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Icon from '../../components/Icon.astro';
-import SimpleImage from '../../components/SimpleImage.astro';
+
 import { getCollection } from 'astro:content';
 
 export const prerender = true;
@@ -120,7 +120,7 @@ const getProgress = (session: any) => {
               <div class="group border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300 hover:shadow-lg">
                 {session.data.coverImage && (
                   <div class="aspect-video overflow-hidden">
-                    <SimpleImage
+                    <img
                       src={session.data.coverImage.src}
                       alt={session.data.coverImage.alt}
                       class="w-full h-full object-cover"
@@ -186,7 +186,7 @@ const getProgress = (session: any) => {
               <div class="group border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300 hover:shadow-lg opacity-75 hover:opacity-100">
                 {session.data.coverImage && (
                   <div class="aspect-video overflow-hidden">
-                    <SimpleImage
+                    <img
                       src={session.data.coverImage.src}
                       alt={session.data.coverImage.alt}
                       class="w-full h-full object-cover"
@@ -240,7 +240,7 @@ const getProgress = (session: any) => {
               <div class="group border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300 hover:shadow-lg opacity-60 hover:opacity-100">
                 {session.data.coverImage && (
                   <div class="aspect-video overflow-hidden">
-                    <SimpleImage
+                    <img
                       src={session.data.coverImage.src}
                       alt={session.data.coverImage.alt}
                       class="w-full h-full object-cover"
