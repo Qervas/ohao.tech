@@ -24,6 +24,7 @@ export default defineConfig({
     port: 4321,
     headers: {},
   },
+
   vite: {
     optimizeDeps: {
       exclude: ["@resvg/resvg-js"],

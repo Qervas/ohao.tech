@@ -91,6 +91,9 @@ Thumbs.db
 
 # Documentation and notes
 docs/
+# Don't ignore content markdown files
+!src/content/**/*.md
+# Ignore other markdown files except README and content
 *.md
 !README.md
 
