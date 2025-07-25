@@ -50,31 +50,63 @@ A modern, performant personal website built with [Astro](https://astro.build/), 
 ```
 
 ## 🚀 Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js 16.14.0 or higher
-- npm 7.0.0 or higher
+- **Node.js** 18+ (recommended: 20+)
+- **npm** or **yarn** package manager
 
-### Installation
+### Local Development
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/ohao.tech.git
-   cd ohao.tech
-   ```
+1. **Clone the repository**:
+```bash
+git clone https://github.com/Qervas/ohao.tech.git
+cd ohao.tech
+```
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+2. **Install dependencies**:
+```bash
+npm install
+```
 
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
+3. **Start development server**:
+```bash
+npm run dev
+```
 
-4. Open [http://localhost:4321](http://localhost:4321) in your browser.
+4. **Open your browser**:
+   - Navigate to [http://localhost:4321](http://localhost:4321)
+   - The site will auto-reload when you make changes
+
+### Build for Production
+
+```bash
+# Build the site
+npm run build
+
+# Preview the built site locally
+npm run preview
+```
+
+## 📁 Project Structure
+
+```
+ohao.tech/
+├── src/
+│   ├── content/           # Content collections
+│   │   ├── articles/      # Blog posts and articles
+│   │   ├── projects/      # Project showcases
+│   │   └── sessions/      # Reading sessions (books, etc.)
+│   ├── components/        # Reusable Astro/React components
+│   ├── layouts/           # Page layouts
+│   ├── pages/             # File-based routing
+│   └── styles/            # Global styles
+├── public/                # Static assets
+│   └── images/            # Project images and graphics
+├── .github/               # GitHub Actions workflows
+└── docs/                  # Documentation
+```
 
 ## 🛠️ Available Scripts
 
