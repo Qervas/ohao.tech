@@ -58,7 +58,7 @@ jspm_packages/
 
 # Gatsby files
 .cache/
-public
+# public - removed because Astro needs public folder for static assets
 
 # Storybook build outputs
 .out
