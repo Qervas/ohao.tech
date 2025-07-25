@@ -1,0 +1,232 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Direct Image Test">
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">Direct Image Test</h1>
+
+    <div class="space-y-6">
+      <!-- Test with direct img tags -->
+      <section>
+        <h2 class="text-xl font-semibold mb-4">Direct Image Tests</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Avatar -->
+          <div class="border p-4 rounded">
+            <h3 class="font-medium mb-2">Avatar (PNG)</h3>
+            <img
+              src="/images/avatar.png"
+              alt="Avatar"
+              class="w-32 h-32 object-cover rounded border"
+              onload="console.log('✅ Avatar loaded successfully')"
+              onerror="console.error('❌ Avatar failed to load')"
+            />
+            <p class="text-xs mt-1 text-gray-500">/images/avatar.png</p>
+          </div>
+
+          <!-- NocturneAI Ecosystem -->
+          <div class="border p-4 rounded">
+            <h3 class="font-medium mb-2">NocturneAI Ecosystem (SVG)</h3>
+            <img
+              src="/images/projects/nocturne_ai/ecosystem.svg"
+              alt="Ecosystem"
+              class="w-full h-32 object-contain border"
+              onload="console.log('✅ Ecosystem SVG loaded successfully')"
+              onerror="console.error('❌ Ecosystem SVG failed to load')"
+            />
+            <p class="text-xs mt-1 text-gray-500">/images/projects/nocturne_ai/ecosystem.svg</p>
+          </div>
+
+          <!-- NocturneAI Agents -->
+          <div class="border p-4 rounded">
+            <h3 class="font-medium mb-2">NocturneAI Agents (PNG)</h3>
+            <img
+              src="/images/projects/nocturne_ai/agents.png"
+              alt="Agents"
+              class="w-full h-32 object-contain border"
+              onload="console.log('✅ Agents PNG loaded successfully')"
+              onerror="console.error('❌ Agents PNG failed to load')"
+            />
+            <p class="text-xs mt-1 text-gray-500">/images/projects/nocturne_ai/agents.png</p>
+          </div>
+
+          <!-- NocturneAI Chat -->
+          <div class="border p-4 rounded">
+            <h3 class="font-medium mb-2">NocturneAI Chat (PNG)</h3>
+            <img
+              src="/images/projects/nocturne_ai/chat.png"
+              alt="Chat"
+              class="w-full h-32 object-contain border"
+              onload="console.log('✅ Chat PNG loaded successfully')"
+              onerror="console.error('❌ Chat PNG failed to load')"
+            />
+            <p class="text-xs mt-1 text-gray-500">/images/projects/nocturne_ai/chat.png</p>
+          </div>
+
+          <!-- Neural Rendering Cover -->
+          <div class="border p-4 rounded">
+            <h3 class="font-medium mb-2">Neural Rendering Cover (SVG)</h3>
+            <img
+              src="/images/projects/neural_rendering/cover.svg"
+              alt="Neural Cover"
+              class="w-full h-32 object-contain border"
+              onload="console.log('✅ Neural Rendering Cover loaded successfully')"
+              onerror="console.error('❌ Neural Rendering Cover failed to load')"
+            />
+            <p class="text-xs mt-1 text-gray-500">/images/projects/neural_rendering/cover.svg</p>
+          </div>
+
+          <!-- Book Cover -->
+          <div class="border p-4 rounded">
+            <h3 class="font-medium mb-2">Book Cover (SVG)</h3>
+            <img
+              src="/images/books/rl-sutton-barto-generated.svg"
+              alt="Book"
+              class="w-full h-32 object-contain border"
+              onload="console.log('✅ Book cover loaded successfully')"
+              onerror="console.error('❌ Book cover failed to load')"
+            />
+            <p class="text-xs mt-1 text-gray-500">/images/books/rl-sutton-barto-generated.svg</p>
+          </div>
+
+          <!-- Blog Image -->
+          <div class="border p-4 rounded">
+            <h3 class="font-medium mb-2">C++ Templates (PNG)</h3>
+            <img
+              src="/images/blogs/cpp_templates_1.png"
+              alt="C++ Templates"
+              class="w-full h-32 object-contain border"
+              onload="console.log('✅ C++ Templates loaded successfully')"
+              onerror="console.error('❌ C++ Templates failed to load')"
+            />
+            <p class="text-xs mt-1 text-gray-500">/images/blogs/cpp_templates_1.png</p>
+          </div>
+
+          <!-- Placeholder -->
+          <div class="border p-4 rounded">
+            <h3 class="font-medium mb-2">Placeholder (SVG)</h3>
+            <img
+              src="/images/placeholder.svg"
+              alt="Placeholder"
+              class="w-full h-32 object-contain border"
+              onload="console.log('✅ Placeholder loaded successfully')"
+              onerror="console.error('❌ Placeholder failed to load')"
+            />
+            <p class="text-xs mt-1 text-gray-500">/images/placeholder.svg</p>
+          </div>
+
+          <!-- Non-existent (should fail) -->
+          <div class="border p-4 rounded">
+            <h3 class="font-medium mb-2">Non-existent (Should Fail)</h3>
+            <img
+              src="/images/non-existent.png"
+              alt="Non-existent"
+              class="w-full h-32 object-contain border bg-red-50"
+              onload="console.log('🔥 Non-existent image somehow loaded?!')"
+              onerror="console.log('✅ Non-existent image correctly failed to load')"
+            />
+            <p class="text-xs mt-1 text-gray-500">/images/non-existent.png</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Manual Links for Testing -->
+      <section>
+        <h2 class="text-xl font-semibold mb-4">Direct Links (Click to Test)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+          <a href="/images/avatar.png" target="_blank" class="text-blue-600 hover:underline">🔗 /images/avatar.png</a>
+          <a href="/images/projects/nocturne_ai/ecosystem.svg" target="_blank" class="text-blue-600 hover:underline">🔗 /images/projects/nocturne_ai/ecosystem.svg</a>
+          <a href="/images/projects/nocturne_ai/agents.png" target="_blank" class="text-blue-600 hover:underline">🔗 /images/projects/nocturne_ai/agents.png</a>
+          <a href="/images/projects/nocturne_ai/chat.png" target="_blank" class="text-blue-600 hover:underline">🔗 /images/projects/nocturne_ai/chat.png</a>
+          <a href="/images/projects/neural_rendering/cover.svg" target="_blank" class="text-blue-600 hover:underline">🔗 /images/projects/neural_rendering/cover.svg</a>
+          <a href="/images/books/rl-sutton-barto-generated.svg" target="_blank" class="text-blue-600 hover:underline">🔗 /images/books/rl-sutton-barto-generated.svg</a>
+          <a href="/images/blogs/cpp_templates_1.png" target="_blank" class="text-blue-600 hover:underline">🔗 /images/blogs/cpp_templates_1.png</a>
+          <a href="/images/placeholder.svg" target="_blank" class="text-blue-600 hover:underline">🔗 /images/placeholder.svg</a>
+        </div>
+      </section>
+
+      <!-- Debug Info -->
+      <section>
+        <h2 class="text-xl font-semibold mb-4">Debug Information</h2>
+        <div class="bg-gray-100 p-4 rounded text-sm font-mono">
+          <div>Current URL: <span id="current-url"></span></div>
+          <div>User Agent: <span id="user-agent"></span></div>
+          <div>Timestamp: <span id="timestamp"></span></div>
+          <div class="mt-2">
+            <button onclick="reloadAllImages()" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+              🔄 Reload All Images
+            </button>
+            <button onclick="clearCache()" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 ml-2">
+              🗑️ Clear Cache & Reload
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script is:inline>
+    // Initialize debug info
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('current-url').textContent = window.location.href;
+      document.getElementById('user-agent').textContent = navigator.userAgent;
+      document.getElementById('timestamp').textContent = new Date().toISOString();
+
+      console.log('🧪 Direct Image Test Page Loaded');
+      console.log('📍 URL:', window.location.href);
+
+      // Count and log images after a delay
+      setTimeout(() => {
+        const images = document.querySelectorAll('img');
+        let loaded = 0, failed = 0, loading = 0;
+
+        images.forEach(img => {
+          if (img.complete) {
+            if (img.naturalWidth > 0) {
+              loaded++;
+            } else {
+              failed++;
+            }
+          } else {
+            loading++;
+          }
+        });
+
+        console.log(`📊 Image Status: ${loaded} loaded, ${failed} failed, ${loading} still loading`);
+
+        // Log each image status
+        images.forEach((img, index) => {
+          const status = img.complete ? (img.naturalWidth > 0 ? '✅' : '❌') : '⏳';
+          console.log(`${status} Image ${index + 1}: ${img.src}`);
+        });
+      }, 3000);
+    });
+
+    // Helper functions
+    function reloadAllImages() {
+      console.log('🔄 Reloading all images...');
+      const images = document.querySelectorAll('img');
+      images.forEach(img => {
+        const src = img.src;
+        img.src = '';
+        img.src = src + '?reload=' + Date.now();
+      });
+    }
+
+    function clearCache() {
+      console.log('🗑️ Clearing cache and reloading...');
+      if ('caches' in window) {
+        caches.keys().then(names => {
+          names.forEach(name => {
+            caches.delete(name);
+          });
+        }).then(() => {
+          window.location.reload(true);
+        });
+      } else {
+        window.location.reload(true);
+      }
+    }
+  </script>
+</Layout>
