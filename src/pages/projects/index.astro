@@ -75,12 +75,12 @@ function getStatusLabel(status: string) {
             <a href={`/projects/${featuredProjects[0].slug}`} class="block">
               <div class="relative rounded-3xl overflow-hidden bg-gradient-to-br from-background to-accent/5 shadow-2xl hover:shadow-3xl transition-all duration-700 transform hover:-translate-y-2">
                 {(featuredProjects[0].data.coverImage || featuredProjects[0].data.images?.[0]) && (
-                  <div class="aspect-[21/9] overflow-hidden relative">
+                  <div class="h-64 overflow-hidden relative">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
                     <img
                       src={(featuredProjects[0].data.coverImage?.src || featuredProjects[0].data.images?.[0]?.src)}
                       alt={(featuredProjects[0].data.coverImage?.alt || featuredProjects[0].data.images?.[0]?.alt || featuredProjects[0].data.title)}
-                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      class="w-full h-full object-contain bg-gray-900 group-hover:scale-110 transition-transform duration-700"
                       loading="lazy"
                     />
 
@@ -114,12 +114,12 @@ function getStatusLabel(status: string) {
                 <a href={`/projects/${project.slug}`} class="block">
                   <div class="relative rounded-2xl overflow-hidden bg-gradient-to-br from-background to-accent/5 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
                     {(project.data.coverImage || project.data.images?.[0]) && (
-                      <div class="aspect-[4/3] overflow-hidden relative">
+                      <div class="h-48 overflow-hidden relative">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent z-10"></div>
                         <img
                           src={(project.data.coverImage?.src || project.data.images?.[0]?.src)}
                           alt={(project.data.coverImage?.alt || project.data.images?.[0]?.alt || project.data.title)}
-                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          class="w-full h-full object-contain bg-gray-900 group-hover:scale-105 transition-transform duration-500"
                           loading="lazy"
                         />
 
@@ -166,12 +166,12 @@ function getStatusLabel(status: string) {
               <div class="relative rounded-2xl overflow-hidden bg-gradient-to-br from-background to-accent/5 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:rotate-1">
                 {/* Project Image */}
                 {(project.data.coverImage || project.data.images?.[0]) && (
-                  <div class="aspect-[4/3] overflow-hidden relative">
+                  <div class="h-48 overflow-hidden relative">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent z-10"></div>
                     <img
                       src={(project.data.coverImage?.src || project.data.images?.[0]?.src)}
                       alt={(project.data.coverImage?.alt || project.data.images?.[0]?.alt || project.data.title)}
-                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      class="w-full h-full object-contain bg-gray-900 group-hover:scale-110 transition-transform duration-700"
                       loading="lazy"
                     />
 
