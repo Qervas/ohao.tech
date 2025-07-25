@@ -1,0 +1,570 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import { Image } from 'astro:assets';
+import PDFViewer from '../../components/content/PDFViewer.astro';
+import DiagramViewer from '../../components/content/DiagramViewer.astro';
+import TextDiagram from '../../components/content/TextDiagram.astro';
+import Comments from '../../components/content/Comments.astro';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await project.render();
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
+
+const statuses = {
+  active: { label: 'Active', color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' },
+  completed: { label: 'Completed', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' },
+  paused: { label: 'Paused', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' },
+  planning: { label: 'Planning', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400' }
+};
+
+function getStatusColor(status: string) {
+  return statuses[status as keyof typeof statuses]?.color || 'bg-gray-100 text-gray-800';
+}
+
+function getStatusLabel(status: string) {
+  return statuses[status as keyof typeof statuses]?.label || status;
+}
+---
+
+<Layout title={`${project.data.title} - Shaoxuan Yin`} description={project.data.description}>
+  <!-- Header -->
+  <section class="py-8 border-b border-border/50">
+    <div class="container">
+      <div class="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+        <a href="/projects" class="hover:text-primary transition-colors">Projects</a>
+        <Icon name="ChevronRight" className="w-4 h-4" />
+        <span>{project.data.title}</span>
+      </div>
+
+      <div class="grid lg:grid-cols-4 gap-8">
+        <div class="lg:col-span-3">
+          <div class="flex items-center gap-3 mb-4">
+            <span class={`text-sm px-3 py-1 rounded-full font-medium ${getStatusColor(project.data.status)}`}>
+              {getStatusLabel(project.data.status)}
+            </span>
+            <span class="text-sm px-3 py-1 rounded-full bg-accent text-muted-foreground capitalize">
+              {project.data.category}
+            </span>
+            {project.data.featured && (
+              <span class="text-sm px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">
+                Featured
+              </span>
+            )}
+          </div>
+
+          <h1 class="text-3xl font-bold mb-4">{project.data.title}</h1>
+          <p class="text-lg text-muted-foreground mb-6">{project.data.description}</p>
+
+          <div class="flex flex-wrap gap-4">
+            {project.data.repository && (
+              <a
+                href={project.data.repository}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
+              >
+                <Icon name="Github" className="mr-2 w-4 h-4" />
+                View Code
+              </a>
+            )}
+            {project.data.demo && (
+              <a
+                href={project.data.demo}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center px-4 py-2 rounded-lg border border-border font-medium hover:bg-accent transition-colors"
+              >
+                <Icon name="ExternalLink" className="mr-2 w-4 h-4" />
+                Live Demo
+              </a>
+            )}
+            {project.data.paper && (
+              <a
+                href={project.data.paper}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center px-4 py-2 rounded-lg border border-border font-medium hover:bg-accent transition-colors"
+              >
+                <Icon name="FileText" className="mr-2 w-4 h-4" />
+                Research Paper
+              </a>
+            )}
+          </div>
+        </div>
+
+        <!-- Project Info Sidebar -->
+        <div class="lg:col-span-1">
+          <div class="bg-accent/20 rounded-xl p-6 space-y-6">
+            <div>
+              <h3 class="font-semibold mb-3 flex items-center">
+                <Icon name="Calendar" className="mr-2 w-4 h-4 text-primary" />
+                Timeline
+              </h3>
+              <div class="text-sm space-y-1">
+                <div class="flex justify-between">
+                  <span class="text-muted-foreground">Started:</span>
+                  <span>{formatDate(project.data.publishedAt)}</span>
+                </div>
+                {project.data.updatedAt && (
+                  <div class="flex justify-between">
+                    <span class="text-muted-foreground">Updated:</span>
+                    <span>{formatDate(project.data.updatedAt)}</span>
+                  </div>
+                )}
+                {project.data.timeline?.end && (
+                  <div class="flex justify-between">
+                    <span class="text-muted-foreground">Completed:</span>
+                    <span>{formatDate(project.data.timeline.end)}</span>
+                  </div>
+                )}
+                {project.data.timeline?.duration && (
+                  <div class="flex justify-between">
+                    <span class="text-muted-foreground">Duration:</span>
+                    <span>{project.data.timeline.duration}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {project.data.technologies && project.data.technologies.length > 0 && (
+              <div>
+                <h3 class="font-semibold mb-3 flex items-center">
+                  <Icon name="Code2" className="mr-2 w-4 h-4 text-primary" />
+                  Technologies
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                  {project.data.technologies.map(tech => (
+                    <span class="text-xs px-2 py-1 rounded-full bg-background border border-border">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {project.data.team && project.data.team.length > 0 && (
+              <div>
+                <h3 class="font-semibold mb-3 flex items-center">
+                  <Icon name="Users" className="mr-2 w-4 h-4 text-primary" />
+                  Team
+                </h3>
+                <div class="space-y-3">
+                  {project.data.team.map(member => (
+                    <div class="flex items-center gap-3">
+                      {member.avatar && (
+                        <img
+                          src={member.avatar}
+                          alt={member.name}
+                          class="w-8 h-8 rounded-full object-cover"
+                        />
+                      )}
+                      <div class="flex-1">
+                        <div class="font-medium text-sm">{member.name}</div>
+                        <div class="text-xs text-muted-foreground">{member.role}</div>
+                      </div>
+                      <div class="flex gap-1">
+                        {member.linkedin && (
+                          <a
+                            href={member.linkedin}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            <Icon name="Linkedin" className="w-3 h-3" />
+                          </a>
+                        )}
+                        {member.github && (
+                          <a
+                            href={member.github}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            <Icon name="Github" className="w-3 h-3" />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {project.data.metrics && (
+              <div>
+                <h3 class="font-semibold mb-3 flex items-center">
+                  <Icon name="BarChart3" className="mr-2 w-4 h-4 text-primary" />
+                  Metrics
+                </h3>
+                <div class="text-sm space-y-2">
+                  {project.data.metrics.performance && (
+                    <div class="flex justify-between">
+                      <span class="text-muted-foreground">Performance:</span>
+                      <span class="font-medium">{project.data.metrics.performance}</span>
+                    </div>
+                  )}
+                  {project.data.metrics.accuracy && (
+                    <div class="flex justify-between">
+                      <span class="text-muted-foreground">Accuracy:</span>
+                      <span class="font-medium">{project.data.metrics.accuracy}</span>
+                    </div>
+                  )}
+                  {project.data.metrics.users && (
+                    <div class="flex justify-between">
+                      <span class="text-muted-foreground">Users:</span>
+                      <span class="font-medium">{project.data.metrics.users}</span>
+                    </div>
+                  )}
+                  {project.data.metrics.citations && (
+                    <div class="flex justify-between">
+                      <span class="text-muted-foreground">Citations:</span>
+                      <span class="font-medium">{project.data.metrics.citations}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Project Images -->
+  {project.data.images && project.data.images.length > 0 && (
+    <section class="py-6">
+      <div class="container max-w-5xl mx-auto">
+        <h2 class="text-lg font-semibold mb-4 text-center">Project Gallery</h2>
+
+        {project.data.images.length === 1 ? (
+          project.data.images[0].type === "diagram" ? (
+            <div class="max-w-3xl mx-auto">
+              <DiagramViewer
+                src={project.data.images[0].src}
+                alt={project.data.images[0].alt || project.data.title}
+                caption={project.data.images[0].caption}
+                type="architecture"
+                zoomable={true}
+              />
+            </div>
+          ) : (
+            <div class="max-w-xl mx-auto">
+              <div class="rounded-lg overflow-hidden shadow-md border border-gray-200">
+                <img
+                  src={project.data.images[0].src}
+                  alt={project.data.images[0].alt || project.data.title}
+                  class="w-full h-auto object-contain max-h-48"
+                  loading="lazy"
+                />
+              </div>
+              {project.data.images[0].caption && (
+                <p class="text-sm text-muted-foreground text-center mt-2 italic">
+                  {project.data.images[0].caption}
+                </p>
+              )}
+            </div>
+          )
+        ) : (
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {project.data.images.map((image, index) => (
+              image.type === "diagram" ? (
+                <div class="col-span-2 md:col-span-3 lg:col-span-4">
+                  <DiagramViewer
+                    src={image.src}
+                    alt={image.alt || `${project.data.title} - Diagram ${index + 1}`}
+                    caption={image.caption}
+                    type="architecture"
+                    zoomable={true}
+                  />
+                </div>
+              ) : (
+                <div class="group cursor-pointer">
+                  <div class="rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
+                    <img
+                      src={image.src}
+                      alt={image.alt || `${project.data.title} - Image ${index + 1}`}
+                      class="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                      onclick={`openImageModal('${image.src}', '${image.alt || `${project.data.title} - Image ${index + 1}`}')`}
+                    />
+                  </div>
+                  {image.caption && (
+                    <p class="text-xs text-muted-foreground text-center mt-1 px-1 leading-tight">
+                      {image.caption}
+                    </p>
+                  )}
+                </div>
+              )
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  <!-- Diagrams -->
+  {project.data.diagrams && project.data.diagrams.length > 0 && (
+    <section class="py-6">
+      <div class="container max-w-4xl mx-auto">
+        <h2 class="text-lg font-semibold mb-4 text-center">Technical Diagrams</h2>
+        <div class="grid gap-4">
+          {project.data.diagrams.map((diagram, index) => (
+            <div class="max-w-3xl mx-auto">
+              <TextDiagram
+                title={diagram.title}
+                description={diagram.description}
+                type={diagram.type}
+                diagram={diagram.diagram}
+                height={diagram.height || "400px"}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- PDFs -->
+  {project.data.pdfs && project.data.pdfs.length > 0 && (
+    <section class="py-6 bg-gray-50/50">
+      <div class="container max-w-5xl mx-auto">
+        <h2 class="text-lg font-semibold mb-4 text-center">Documentation</h2>
+        <div class="grid gap-4">
+          {project.data.pdfs.map((pdf, index) => (
+            <PDFViewer
+              src={pdf.src}
+              title={pdf.title}
+              description={pdf.description}
+              type={pdf.type}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Highlights -->
+  {project.data.highlights && project.data.highlights.length > 0 && (
+    <section class="py-8 bg-accent/20">
+      <div class="container">
+        <h2 class="text-xl font-bold mb-6 flex items-center">
+          <Icon name="Star" className="mr-2 w-5 h-5 text-primary" />
+          Key Highlights
+        </h2>
+        <div class="grid md:grid-cols-2 gap-4">
+          {project.data.highlights.map(highlight => (
+            <div class="flex items-start gap-3 p-4 bg-background rounded-lg border border-border/50">
+              <Icon name="Check" className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+              <span>{highlight}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Main Content -->
+  <section class="py-12">
+    <div class="container">
+      <div class="max-w-4xl mx-auto">
+        <div class="prose prose-lg dark:prose-invert max-w-none">
+          <Content />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comments Section -->
+  <Comments slug={project.slug} title={project.data.title} />
+
+  <!-- Navigation -->
+  <section class="py-8 border-t border-border/50">
+    <div class="container">
+      <div class="flex justify-between items-center">
+        <a
+          href="/projects"
+          class="inline-flex items-center text-muted-foreground hover:text-primary transition-colors"
+        >
+          <Icon name="ArrowLeft" className="mr-2 w-4 h-4" />
+          Back to Projects
+        </a>
+
+        <div class="flex gap-4">
+          {project.data.repository && (
+            <a
+              href={project.data.repository}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center px-4 py-2 rounded-lg border border-border hover:bg-accent transition-colors"
+            >
+              <Icon name="Github" className="mr-2 w-4 h-4" />
+              Source Code
+            </a>
+          )}
+          <a
+            href="mailto:shayi783@student.liu.se"
+            class="inline-flex items-center px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+          >
+            <Icon name="Mail" className="mr-2 w-4 h-4" />
+            Discuss Project
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<!-- Image Modal -->
+<div id="imageModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-75 p-4" onclick="closeImageModal()">
+  <div class="relative max-w-4xl max-h-full">
+    <button
+      class="absolute top-4 right-4 z-10 p-2 bg-white bg-opacity-20 text-white rounded-full hover:bg-opacity-30 focus:outline-none focus:ring-2 focus:ring-white"
+      onclick="closeImageModal()"
+      title="Close"
+    >
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <img
+      id="modalImage"
+      src=""
+      alt=""
+      class="max-w-full max-h-full object-contain rounded-lg"
+    />
+  </div>
+</div>
+
+<script>
+  function openImageModal(src, alt) {
+    const modal = document.getElementById('imageModal');
+    const image = document.getElementById('modalImage');
+
+    image.src = src;
+    image.alt = alt;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeImageModal() {
+    const modal = document.getElementById('imageModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = 'auto';
+  }
+
+  // ESC key to close modal
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeImageModal();
+    }
+  });
+
+  // Prevent modal from closing when clicking on the image
+  document.addEventListener('click', function(e) {
+    if (e.target.id === 'modalImage') {
+      e.stopPropagation();
+    }
+  });
+</script>
+
+<style>
+  .prose {
+    color: hsl(var(--foreground));
+  }
+
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4,
+  .prose h5,
+  .prose h6 {
+    color: hsl(var(--foreground));
+    font-weight: 600;
+  }
+
+  .prose a {
+    color: hsl(var(--primary));
+    text-decoration: none;
+  }
+
+  .prose a:hover {
+    text-decoration: underline;
+  }
+
+  .prose code {
+    background-color: hsl(var(--muted));
+    padding: 0.2em 0.4em;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+  }
+
+  .prose pre {
+    background-color: hsl(var(--muted));
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.5rem;
+    overflow-x: auto;
+  }
+
+  .prose blockquote {
+    border-left: 4px solid hsl(var(--primary));
+    padding-left: 1rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .prose ul,
+  .prose ol {
+    padding-left: 1.5rem;
+  }
+
+  .prose li {
+    margin: 0.5rem 0;
+  }
+
+  .prose table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+  }
+
+  .prose th,
+  .prose td {
+    border: 1px solid hsl(var(--border));
+    padding: 0.75rem;
+    text-align: left;
+  }
+
+  .prose th {
+    background-color: hsl(var(--muted));
+    font-weight: 600;
+  }
+
+  /* Image grid responsive adjustments */
+  @media (max-width: 768px) {
+    .grid.md\\:grid-cols-2.lg\\:grid-cols-3 {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

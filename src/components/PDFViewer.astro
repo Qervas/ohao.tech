@@ -1,0 +1,264 @@
+---
+export interface Props {
+  url: string;
+  width?: string;
+  height?: string;
+  title?: string;
+  fallbackText?: string;
+  showDownload?: boolean;
+  className?: string;
+}
+
+const {
+  url,
+  width = "100%",
+  height = "600px",
+  title = "PDF Document",
+  fallbackText = "Your browser doesn't support embedded PDFs. Please download the file to view it.",
+  showDownload = true,
+  className = ""
+} = Astro.props;
+
+// Generate a unique ID for this PDF viewer
+const viewerId = `pdf-viewer-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div class={`pdf-viewer-container ${className}`} id={viewerId}>
+  <!-- PDF Embed -->
+  <div class="pdf-embed-wrapper" style={`height: ${height}`}>
+    <object
+      data={url}
+      type="application/pdf"
+      width={width}
+      height="100%"
+      class="pdf-object"
+    >
+      <iframe
+        src={`${url}#toolbar=1&navpanes=1&scrollbar=1`}
+        width={width}
+        height="100%"
+        class="pdf-iframe"
+        title={title}
+      >
+        <!-- Fallback for browsers that don't support iframes -->
+        <div class="pdf-fallback">
+          <div class="fallback-content">
+            <Icon name="FileText" className="w-12 h-12 text-muted-foreground mb-4" />
+            <p class="text-muted-foreground mb-4">{fallbackText}</p>
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            >
+              <Icon name="Download" className="w-4 h-4 mr-2" />
+              Download PDF
+            </a>
+          </div>
+        </div>
+      </iframe>
+    </object>
+  </div>
+
+  <!-- PDF Controls -->
+  <div class="pdf-controls">
+    <div class="flex items-center justify-between p-3 bg-accent/20 rounded-b-lg border-t border-border/50">
+      <div class="flex items-center gap-3">
+        <Icon name="FileText" className="w-4 h-4 text-muted-foreground" />
+        <span class="text-sm font-medium">{title}</span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        {showDownload && (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-3 py-1 text-sm rounded-md border border-border hover:bg-accent transition-colors"
+            title="Download PDF"
+          >
+            <Icon name="Download" className="w-3 h-3" />
+            Download
+          </a>
+        )}
+
+        <button
+          class="inline-flex items-center gap-2 px-3 py-1 text-sm rounded-md border border-border hover:bg-accent transition-colors"
+          onclick={`toggleFullscreen('${viewerId}')`}
+          title="Toggle Fullscreen"
+        >
+          <Icon name="Maximize2" className="w-3 h-3" />
+          Fullscreen
+        </button>
+
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 px-3 py-1 text-sm rounded-md border border-border hover:bg-accent transition-colors"
+          title="Open in new tab"
+        >
+          <Icon name="ExternalLink" className="w-3 h-3" />
+          Open
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading indicator -->
+  <div class="pdf-loading" id={`${viewerId}-loading`}>
+    <div class="flex items-center justify-center h-32">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <span class="ml-3 text-muted-foreground">Loading PDF...</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .pdf-viewer-container {
+    @apply relative rounded-lg border border-border/50 overflow-hidden;
+  }
+
+  .pdf-embed-wrapper {
+    @apply relative w-full;
+  }
+
+  .pdf-object,
+  .pdf-iframe {
+    @apply w-full border-0 rounded-t-lg;
+  }
+
+  .pdf-fallback {
+    @apply flex items-center justify-center h-full bg-muted/20;
+  }
+
+  .fallback-content {
+    @apply text-center p-8;
+  }
+
+  .pdf-loading {
+    @apply absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center;
+    display: none;
+  }
+
+  .pdf-loading.show {
+    display: flex;
+  }
+
+  /* Fullscreen styles */
+  .pdf-viewer-container.fullscreen {
+    @apply fixed inset-0 z-50 bg-background;
+    width: 100vw !important;
+    height: 100vh !important;
+  }
+
+  .pdf-viewer-container.fullscreen .pdf-embed-wrapper {
+    height: calc(100vh - 60px) !important;
+  }
+
+  .pdf-viewer-container.fullscreen .pdf-object,
+  .pdf-viewer-container.fullscreen .pdf-iframe {
+    height: 100% !important;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .pdf-controls .flex {
+      @apply flex-col gap-2;
+    }
+
+    .pdf-controls .flex:first-child {
+      @apply flex-row;
+    }
+  }
+</style>
+
+<script>
+  import Icon from './Icon.astro';
+
+  // PDF loading detection
+  document.addEventListener('DOMContentLoaded', () => {
+    const pdfContainers = document.querySelectorAll('.pdf-viewer-container');
+
+    pdfContainers.forEach(container => {
+      const object = container.querySelector('.pdf-object');
+      const iframe = container.querySelector('.pdf-iframe');
+      const loading = container.querySelector('.pdf-loading');
+
+      // Show loading initially
+      if (loading) {
+        loading.classList.add('show');
+      }
+
+      // Hide loading when PDF loads
+      const hideLoading = () => {
+        if (loading) {
+          loading.classList.remove('show');
+        }
+      };
+
+      if (object) {
+        object.addEventListener('load', hideLoading);
+      }
+
+      if (iframe) {
+        iframe.addEventListener('load', hideLoading);
+      }
+
+      // Hide loading after timeout as fallback
+      setTimeout(hideLoading, 5000);
+    });
+  });
+
+  // Fullscreen toggle function
+  window.toggleFullscreen = function(viewerId) {
+    const container = document.getElementById(viewerId);
+    if (!container) return;
+
+    container.classList.toggle('fullscreen');
+
+    // Update button icon and text
+    const button = container.querySelector('[onclick*="toggleFullscreen"]');
+    const icon = button?.querySelector('svg');
+
+    if (container.classList.contains('fullscreen')) {
+      // Switch to minimize icon
+      if (icon) {
+        icon.innerHTML = '<path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 0-2-2H3m18 0h-3a2 2 0 0 0-2 2v3"></path>';
+      }
+      button.title = 'Exit Fullscreen';
+
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden';
+    } else {
+      // Switch back to maximize icon
+      if (icon) {
+        icon.innerHTML = '<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>';
+      }
+      button.title = 'Toggle Fullscreen';
+
+      // Restore body scroll
+      document.body.style.overflow = '';
+    }
+  };
+
+  // Close fullscreen on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const fullscreenContainer = document.querySelector('.pdf-viewer-container.fullscreen');
+      if (fullscreenContainer) {
+        const viewerId = fullscreenContainer.id;
+        toggleFullscreen(viewerId);
+      }
+    }
+  });
+
+  // Handle browser back/forward buttons
+  window.addEventListener('popstate', () => {
+    const fullscreenContainer = document.querySelector('.pdf-viewer-container.fullscreen');
+    if (fullscreenContainer) {
+      fullscreenContainer.classList.remove('fullscreen');
+      document.body.style.overflow = '';
+    }
+  });
+</script>

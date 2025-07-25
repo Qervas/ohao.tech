@@ -1,0 +1,183 @@
+---
+// This component renders a 3D cube using Three.js
+// It's designed to be interactive and responsive
+---
+
+<div id="cube-container" class="w-full h-96 rounded-xl overflow-hidden relative"></div>
+
+<script>
+  // Import Three.js
+  import * as THREE from 'three';
+  import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+  // This code will run on the client side
+  document.addEventListener('DOMContentLoaded', () => {
+    // Get the container element
+    const container = document.getElementById('cube-container');
+    if (!container) return;
+
+    // Create scene
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x000000);
+
+    // Create camera
+    const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 5;
+
+    // Create renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+
+    // Add orbit controls
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.screenSpacePanning = false;
+    controls.maxPolarAngle = Math.PI / 1.5;
+    controls.minDistance = 3;
+    controls.maxDistance = 10;
+
+    // Add ambient light
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+
+    // Add directional light
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(1, 1, 1);
+    scene.add(directionalLight);
+
+    // Create cube
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+
+    // Create materials for each face with different colors
+    const materials = [
+      new THREE.MeshPhongMaterial({ color: 0xff3e00 }), // Right - Red
+      new THREE.MeshPhongMaterial({ color: 0x3a86ff }), // Left - Blue
+      new THREE.MeshPhongMaterial({ color: 0x8338ec }), // Top - Purple
+      new THREE.MeshPhongMaterial({ color: 0x06d6a0 }), // Bottom - Green
+      new THREE.MeshPhongMaterial({ color: 0xffbe0b }), // Front - Yellow
+      new THREE.MeshPhongMaterial({ color: 0xfb5607 }), // Back - Orange
+    ];
+
+    const cube = new THREE.Mesh(geometry, materials);
+    scene.add(cube);
+
+    // Add wireframe
+    const edges = new THREE.EdgesGeometry(geometry);
+    const line = new THREE.LineSegments(
+      edges,
+      new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 })
+    );
+    cube.add(line);
+
+    // Animation
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Auto-rotate when not being controlled
+      if (!controls.enabled) {
+        cube.rotation.x += 0.005;
+        cube.rotation.y += 0.01;
+      }
+
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    // Handle window resize
+    function onWindowResize() {
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+
+    // Add event listeners
+    window.addEventListener('resize', onWindowResize, false);
+
+    // Make it interactive
+    let isDragging = false;
+    let previousMousePosition = { x: 0, y: 0 };
+
+    container.addEventListener('mousedown', () => {
+      isDragging = true;
+    });
+
+    container.addEventListener('mousemove', (event) => {
+      if (!isDragging) return;
+
+      const deltaMove = {
+        x: event.offsetX - previousMousePosition.x,
+        y: event.offsetY - previousMousePosition.y
+      };
+
+      cube.rotation.y += deltaMove.x * 0.01;
+      cube.rotation.x += deltaMove.y * 0.01;
+
+      previousMousePosition = {
+        x: event.offsetX,
+        y: event.offsetY
+      };
+    });
+
+    container.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    container.addEventListener('mouseleave', () => {
+      isDragging = false;
+    });
+
+    container.addEventListener('mousedown', (event) => {
+      previousMousePosition = {
+        x: event.offsetX,
+        y: event.offsetY
+      };
+    });
+
+    // Handle touch events for mobile
+    container.addEventListener('touchstart', (event) => {
+      isDragging = true;
+      previousMousePosition = {
+        x: event.touches[0].clientX,
+        y: event.touches[0].clientY
+      };
+      event.preventDefault();
+    });
+
+    container.addEventListener('touchmove', (event) => {
+      if (!isDragging) return;
+
+      const deltaMove = {
+        x: event.touches[0].clientX - previousMousePosition.x,
+        y: event.touches[0].clientY - previousMousePosition.y
+      };
+
+      cube.rotation.y += deltaMove.x * 0.01;
+      cube.rotation.x += deltaMove.y * 0.01;
+
+      previousMousePosition = {
+        x: event.touches[0].clientX,
+        y: event.touches[0].clientY
+      };
+
+      event.preventDefault();
+    });
+
+    container.addEventListener('touchend', () => {
+      isDragging = false;
+    });
+
+    // Start animation
+    animate();
+
+    // Clean up on component unmount
+    return () => {
+      window.removeEventListener('resize', onWindowResize);
+      if (container.contains(renderer.domElement)) {
+        container.removeChild(renderer.domElement);
+      }
+    };
+  });
+</script>

@@ -1,0 +1,156 @@
+---
+import '../styles/global.css';
+import Icon from '../components/Icon.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Personal website of Frank' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+
+    <title>{title} | Frank</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" href="/favicon.ico" />
+
+    <!-- Preload fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  </head>
+
+  <body class="min-h-screen bg-background text-foreground font-sans antialiased">
+    <div class="flex flex-col min-h-screen">
+      <header class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div class="container flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+          <a href="/" class="flex items-center space-x-2 font-bold text-xl">
+            <Icon name="Home" className="w-6 h-6 text-primary" />
+          </a>
+
+          <nav class="hidden md:flex items-center space-x-8">
+            <a href="/" class="text-sm font-medium hover:text-primary transition-colors">Home</a>
+            <a href="/projects" class="text-sm font-medium hover:text-primary transition-colors">Projects</a>
+            <a href="/articles" class="text-sm font-medium hover:text-primary transition-colors">Articles</a>
+            <a href="/sessions" class="text-sm font-medium hover:text-primary transition-colors">Sessions</a>
+            <a href="/playground" class="text-sm font-medium hover:text-primary transition-colors">Playground</a>
+            <a href="/about" class="text-sm font-medium hover:text-primary transition-colors">About</a>
+
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-accent transition-colors" aria-label="Toggle dark mode">
+              <Icon name="Sun" className="w-5 h-5 text-foreground" />
+              <Icon name="Moon" className="hidden w-5 h-5 text-foreground" />
+            </button>
+          </nav>
+
+          <button class="md:hidden p-2 rounded-full hover:bg-accent transition-colors" id="mobile-menu-button" aria-label="Toggle menu">
+            <Icon name="Menu" className="w-5 h-5" />
+          </button>
+        </div>
+      </header>
+
+      <main class="flex-1">
+        <slot />
+      </main>
+
+      <footer class="border-t border-border/40 py-8">
+        <div class="container px-4 sm:px-6 lg:px-8">
+          <div class="flex flex-col md:flex-row justify-between items-center">
+            <p class="text-sm text-muted-foreground">© {new Date().getFullYear()} Frank. All rights reserved.</p>
+            <div class="flex space-x-4 mt-4 md:mt-0">
+              <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" class="text-muted-foreground hover:text-foreground transition-colors">
+                <Icon name="Github" className="w-5 h-5" />
+              </a>
+              <a href="https://twitter.com/yourusername" target="_blank" rel="noopener noreferrer" class="text-muted-foreground hover:text-foreground transition-colors">
+                <Icon name="Twitter" className="w-5 h-5" />
+              </a>
+              <a href="https://linkedin.com/in/yourusername" target="_blank" rel="noopener noreferrer" class="text-muted-foreground hover:text-foreground transition-colors">
+                <Icon name="Linkedin" className="w-5 h-5" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="fixed inset-0 z-50 hidden bg-background/95 backdrop-blur-sm">
+      <div class="flex flex-col items-center justify-center h-full space-y-8">
+        <button id="close-menu" class="absolute top-4 right-4 p-2 rounded-full hover:bg-accent transition-colors">
+          <Icon name="X" className="w-6 h-6" />
+        </button>
+
+        <nav class="flex flex-col items-center space-y-6">
+          <a href="/" class="text-2xl font-medium hover:text-primary transition-colors">Home</a>
+          <a href="/projects" class="text-2xl font-medium hover:text-primary transition-colors">Projects</a>
+          <a href="/articles" class="text-2xl font-medium hover:text-primary transition-colors">Articles</a>
+          <a href="/sessions" class="text-2xl font-medium hover:text-primary transition-colors">Sessions</a>
+          <a href="/playground" class="text-2xl font-medium hover:text-primary transition-colors">Playground</a>
+          <a href="/about" class="text-2xl font-medium hover:text-primary transition-colors">About</a>
+
+          <button id="theme-toggle-mobile" class="mt-4 p-3 rounded-full border border-border hover:bg-accent transition-colors" aria-label="Toggle dark mode">
+            <Icon name="Sun" className="w-6 h-6" />
+          </button>
+        </nav>
+      </div>
+    </div>
+
+    <script>
+      // Theme toggle
+      const themeToggle = document.getElementById('theme-toggle');
+      const themeToggleMobile = document.getElementById('theme-toggle-mobile');
+      const html = document.documentElement;
+
+      // Check for saved theme preference or use system preference
+      const savedTheme = localStorage.getItem('theme');
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+        html.classList.add('dark');
+        document.body.classList.add('dark');
+      }
+
+      // Toggle theme
+      function toggleTheme() {
+        html.classList.toggle('dark');
+        document.body.classList.toggle('dark');
+        const isDark = html.classList.contains('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      }
+
+      themeToggle?.addEventListener('click', toggleTheme);
+      themeToggleMobile?.addEventListener('click', toggleTheme);
+
+      // Mobile menu toggle
+      const mobileMenuButton = document.getElementById('mobile-menu-button');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const closeMenu = document.getElementById('close-menu');
+
+      mobileMenuButton?.addEventListener('click', () => {
+        mobileMenu?.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      });
+
+      closeMenu?.addEventListener('click', () => {
+        mobileMenu?.classList.add('hidden');
+        document.body.style.overflow = '';
+      });
+
+      // Close menu when clicking on a link
+      document.querySelectorAll('#mobile-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu?.classList.add('hidden');
+          document.body.style.overflow = '';
+        });
+      });
+    </script>
+  </body>
+</html>

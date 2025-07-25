@@ -1,0 +1,542 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+  type?: "architecture" | "flowchart" | "sequence" | "class";
+  diagram: string;
+  height?: string;
+}
+
+const { title, description, type = "architecture", diagram, height = "400px" } = Astro.props;
+
+const typeLabels = {
+  architecture: "System Architecture",
+  flowchart: "Flowchart",
+  sequence: "Sequence Diagram",
+  class: "Class Diagram"
+};
+
+const typeColors = {
+  architecture: "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400",
+  flowchart: "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400",
+  sequence: "bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/30 dark:text-purple-400",
+  class: "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400"
+};
+
+// Generate unique ID for this diagram
+const diagramId = `diagram-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div class="text-diagram-container max-w-4xl mx-auto border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm bg-white dark:bg-gray-800">
+  <!-- Header -->
+  <div class="bg-gray-50 dark:bg-gray-700 px-4 py-2 border-b border-gray-200 dark:border-gray-600">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <span class={`inline-flex items-center px-2 py-1 rounded text-xs font-medium border ${typeColors[type]}`}>
+          {typeLabels[type]}
+        </span>
+        <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">{title}</h3>
+      </div>
+      <div class="flex items-center space-x-1">
+        <button
+          class="fullscreen-btn inline-flex items-center px-2 py-1 border border-gray-300 dark:border-gray-600 shadow-sm text-xs font-medium rounded text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          onclick={`openDiagramViewer('${diagramId}')`}
+        >
+          <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+          </svg>
+          <span>View</span>
+        </button>
+      </div>
+    </div>
+    {description && (
+      <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{description}</p>
+    )}
+  </div>
+
+  <!-- Diagram Container -->
+  <div class="diagram-content p-4 bg-white dark:bg-gray-800">
+    <div
+      id={diagramId}
+      class="mermaid-diagram"
+      style={`min-height: ${height}; display: flex; align-items: center; justify-content: center;`}
+    >
+      {diagram}
+    </div>
+  </div>
+</div>
+
+<!-- Fullscreen Viewer Modal -->
+<div id={`viewer-${diagramId}`} class="diagram-viewer fixed inset-0 z-50 hidden bg-black">
+  <!-- Top Bar -->
+  <div class="absolute top-0 left-0 right-0 z-20 bg-black bg-opacity-50 p-4">
+    <div class="flex items-center justify-between">
+      <h3 class="text-white text-lg font-medium">{title}</h3>
+      <div class="flex items-center space-x-3">
+        <!-- Zoom Info -->
+        <span id={`zoom-info-${diagramId}`} class="text-white text-sm bg-black bg-opacity-30 px-2 py-1 rounded">
+          100%
+        </span>
+        <!-- Reset Button -->
+        <button
+          class="p-2 bg-white bg-opacity-20 text-white rounded hover:bg-opacity-30 focus:outline-none"
+          onclick={`resetDiagramView('${diagramId}')`}
+          title="Reset View"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        </button>
+        <!-- Close Button -->
+        <button
+          class="p-2 bg-white bg-opacity-20 text-white rounded hover:bg-opacity-30 focus:outline-none"
+          onclick={`closeDiagramViewer('${diagramId}')`}
+          title="Close"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Diagram Container -->
+  <div
+    id={`viewer-content-${diagramId}`}
+    class="w-full h-full flex items-center justify-center overflow-hidden cursor-grab"
+    style="padding-top: 80px;"
+  >
+    <!-- Content will be populated by JavaScript -->
+  </div>
+
+  <!-- Instructions -->
+  <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black bg-opacity-50 px-4 py-2 rounded">
+    Scroll to zoom • Drag to pan • Double-click to fit
+  </div>
+</div>
+
+<script is:inline define:vars={{ diagramId, diagram }}>
+  // Viewer state
+  let viewerState = {
+    scale: 1,
+    translateX: 0,
+    translateY: 0,
+    isDragging: false,
+    lastMouseX: 0,
+    lastMouseY: 0,
+    minScale: 0.5,
+    maxScale: 5
+  };
+
+  // Initialize Mermaid if not already done
+  if (typeof window.mermaidInitialized === 'undefined') {
+    window.mermaidInitialized = true;
+
+    // Load Mermaid dynamically
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+    script.onload = function() {
+      // Auto-detect theme based on document
+      const isDark = document.documentElement.classList.contains('dark') ||
+                    window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: isDark ? 'dark' : 'default',
+        themeVariables: {
+          primaryColor: isDark ? '#3b82f6' : '#2563eb',
+          primaryTextColor: isDark ? '#f3f4f6' : '#1f2937',
+          primaryBorderColor: isDark ? '#4b5563' : '#d1d5db',
+          lineColor: isDark ? '#9ca3af' : '#6b7280',
+          secondaryColor: isDark ? '#374151' : '#f9fafb',
+          tertiaryColor: isDark ? '#1f2937' : '#ffffff',
+          background: isDark ? '#1f2937' : '#ffffff',
+          mainBkg: isDark ? '#374151' : '#ffffff',
+          secondBkg: isDark ? '#4b5563' : '#f3f4f6',
+          fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        },
+        flowchart: {
+          useMaxWidth: true,
+          htmlLabels: true,
+          nodeSpacing: 50,
+          rankSpacing: 60,
+          padding: 20
+        }
+      });
+
+      // Re-render all diagrams when theme changes
+      window.addEventListener('themechange', () => {
+        const newIsDark = document.documentElement.classList.contains('dark');
+        mermaid.initialize({
+          theme: newIsDark ? 'dark' : 'default',
+          themeVariables: {
+            primaryColor: newIsDark ? '#3b82f6' : '#2563eb',
+            primaryTextColor: newIsDark ? '#f3f4f6' : '#1f2937',
+            primaryBorderColor: newIsDark ? '#4b5563' : '#d1d5db',
+            lineColor: newIsDark ? '#9ca3af' : '#6b7280',
+            secondaryColor: newIsDark ? '#374151' : '#f9fafb',
+            tertiaryColor: newIsDark ? '#1f2937' : '#ffffff',
+            background: newIsDark ? '#1f2937' : '#ffffff',
+            mainBkg: newIsDark ? '#374151' : '#ffffff',
+            secondBkg: newIsDark ? '#4b5563' : '#f3f4f6'
+          }
+        });
+        renderAllDiagrams();
+      });
+
+      renderAllDiagrams();
+    };
+    document.head.appendChild(script);
+  } else if (typeof mermaid !== 'undefined') {
+    setTimeout(renderAllDiagrams, 100);
+  }
+
+  function renderAllDiagrams() {
+    if (typeof mermaid === 'undefined') return;
+
+    const diagrams = document.querySelectorAll('.mermaid-diagram');
+    diagrams.forEach((element, index) => {
+      if (element.getAttribute('data-processed') !== 'true') {
+        try {
+          const graphDefinition = element.textContent.trim();
+          const id = `mermaid-${Date.now()}-${index}`;
+
+          mermaid.render(id, graphDefinition).then(({svg}) => {
+            element.innerHTML = svg;
+            element.setAttribute('data-processed', 'true');
+
+            // Style the SVG for current theme
+            const svgElement = element.querySelector('svg');
+            if (svgElement) {
+              svgElement.style.maxWidth = '100%';
+              svgElement.style.height = 'auto';
+              svgElement.style.display = 'block';
+              svgElement.style.margin = '0 auto';
+            }
+          }).catch((error) => {
+            console.error('Mermaid rendering error:', error);
+            element.innerHTML = `
+              <div class="text-center text-gray-500 dark:text-gray-400 p-8">
+                <svg class="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="text-sm">Unable to render diagram</p>
+              </div>
+            `;
+          });
+        } catch (error) {
+          console.error('Diagram processing error:', error);
+        }
+      }
+    });
+  }
+
+  // Open diagram viewer
+  window.openDiagramViewer = function(diagramId) {
+    const viewer = document.getElementById(`viewer-${diagramId}`);
+    const originalDiagram = document.getElementById(diagramId);
+    const viewerContent = document.getElementById(`viewer-content-${diagramId}`);
+
+    if (!viewer || !originalDiagram || !viewerContent) return;
+
+    // Clone the diagram
+    const clone = originalDiagram.cloneNode(true);
+    clone.id = `viewer-diagram-${diagramId}`;
+    clone.style.transform = 'scale(1) translate(0px, 0px)';
+    clone.style.transformOrigin = 'center center';
+    clone.style.transition = 'transform 0.2s ease-out';
+    clone.style.cursor = 'grab';
+
+    viewerContent.innerHTML = '';
+    viewerContent.appendChild(clone);
+
+    // Reset viewer state
+    viewerState = {
+      scale: 1,
+      translateX: 0,
+      translateY: 0,
+      isDragging: false,
+      lastMouseX: 0,
+      lastMouseY: 0,
+      minScale: 0.5,
+      maxScale: 5
+    };
+
+    // Show viewer
+    viewer.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    // Setup event listeners
+    setupViewerEvents(diagramId);
+    updateZoomInfo(diagramId);
+  };
+
+  // Close diagram viewer
+  window.closeDiagramViewer = function(diagramId) {
+    const viewer = document.getElementById(`viewer-${diagramId}`);
+    if (viewer) {
+      viewer.classList.add('hidden');
+      document.body.style.overflow = 'auto';
+      removeViewerEvents(diagramId);
+    }
+  };
+
+  // Reset diagram view
+  window.resetDiagramView = function(diagramId) {
+    viewerState.scale = 1;
+    viewerState.translateX = 0;
+    viewerState.translateY = 0;
+    updateDiagramTransform(diagramId);
+    updateZoomInfo(diagramId);
+  };
+
+  // Setup viewer event listeners
+  function setupViewerEvents(diagramId) {
+    const viewerContent = document.getElementById(`viewer-content-${diagramId}`);
+    const diagram = document.getElementById(`viewer-diagram-${diagramId}`);
+
+    if (!viewerContent || !diagram) return;
+
+    // Mouse wheel zoom
+    const handleWheel = (e) => {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? 0.9 : 1.1;
+      const newScale = Math.max(viewerState.minScale, Math.min(viewerState.maxScale, viewerState.scale * delta));
+
+      if (newScale !== viewerState.scale) {
+        viewerState.scale = newScale;
+        updateDiagramTransform(diagramId);
+        updateZoomInfo(diagramId);
+      }
+    };
+
+    // Mouse drag to pan
+    const handleMouseDown = (e) => {
+      if (e.button === 0) {
+        viewerState.isDragging = true;
+        viewerState.lastMouseX = e.clientX;
+        viewerState.lastMouseY = e.clientY;
+        diagram.style.cursor = 'grabbing';
+        viewerContent.style.cursor = 'grabbing';
+      }
+    };
+
+    const handleMouseMove = (e) => {
+      if (viewerState.isDragging) {
+        const deltaX = e.clientX - viewerState.lastMouseX;
+        const deltaY = e.clientY - viewerState.lastMouseY;
+
+        viewerState.translateX += deltaX;
+        viewerState.translateY += deltaY;
+        viewerState.lastMouseX = e.clientX;
+        viewerState.lastMouseY = e.clientY;
+
+        updateDiagramTransform(diagramId);
+      }
+    };
+
+    const handleMouseUp = () => {
+      viewerState.isDragging = false;
+      diagram.style.cursor = 'grab';
+      viewerContent.style.cursor = 'grab';
+    };
+
+    // Double-click to fit
+    const handleDoubleClick = () => {
+      window.resetDiagramView(diagramId);
+    };
+
+    // Touch events for mobile
+    let lastTouchDistance = 0;
+    const handleTouchStart = (e) => {
+      if (e.touches.length === 1) {
+        viewerState.isDragging = true;
+        viewerState.lastMouseX = e.touches[0].clientX;
+        viewerState.lastMouseY = e.touches[0].clientY;
+      } else if (e.touches.length === 2) {
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        lastTouchDistance = Math.sqrt(
+          Math.pow(touch2.clientX - touch1.clientX, 2) +
+          Math.pow(touch2.clientY - touch1.clientY, 2)
+        );
+      }
+    };
+
+    const handleTouchMove = (e) => {
+      e.preventDefault();
+      if (e.touches.length === 1 && viewerState.isDragging) {
+        const deltaX = e.touches[0].clientX - viewerState.lastMouseX;
+        const deltaY = e.touches[0].clientY - viewerState.lastMouseY;
+
+        viewerState.translateX += deltaX;
+        viewerState.translateY += deltaY;
+        viewerState.lastMouseX = e.touches[0].clientX;
+        viewerState.lastMouseY = e.touches[0].clientY;
+
+        updateDiagramTransform(diagramId);
+      } else if (e.touches.length === 2) {
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        const currentDistance = Math.sqrt(
+          Math.pow(touch2.clientX - touch1.clientX, 2) +
+          Math.pow(touch2.clientY - touch1.clientY, 2)
+        );
+
+        if (lastTouchDistance > 0) {
+          const scale = currentDistance / lastTouchDistance;
+          const newScale = Math.max(viewerState.minScale, Math.min(viewerState.maxScale, viewerState.scale * scale));
+          viewerState.scale = newScale;
+          updateDiagramTransform(diagramId);
+          updateZoomInfo(diagramId);
+        }
+
+        lastTouchDistance = currentDistance;
+      }
+    };
+
+    const handleTouchEnd = () => {
+      viewerState.isDragging = false;
+      lastTouchDistance = 0;
+    };
+
+    // Add event listeners
+    viewerContent.addEventListener('wheel', handleWheel, { passive: false });
+    viewerContent.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    viewerContent.addEventListener('dblclick', handleDoubleClick);
+
+    // Touch events
+    viewerContent.addEventListener('touchstart', handleTouchStart, { passive: false });
+    viewerContent.addEventListener('touchmove', handleTouchMove, { passive: false });
+    viewerContent.addEventListener('touchend', handleTouchEnd);
+
+    // Store references for cleanup
+    viewerContent._eventHandlers = {
+      wheel: handleWheel,
+      mousedown: handleMouseDown,
+      mousemove: handleMouseMove,
+      mouseup: handleMouseUp,
+      dblclick: handleDoubleClick,
+      touchstart: handleTouchStart,
+      touchmove: handleTouchMove,
+      touchend: handleTouchEnd
+    };
+  }
+
+  // Remove viewer event listeners
+  function removeViewerEvents(diagramId) {
+    const viewerContent = document.getElementById(`viewer-content-${diagramId}`);
+    if (viewerContent && viewerContent._eventHandlers) {
+      const handlers = viewerContent._eventHandlers;
+      viewerContent.removeEventListener('wheel', handlers.wheel);
+      viewerContent.removeEventListener('mousedown', handlers.mousedown);
+      document.removeEventListener('mousemove', handlers.mousemove);
+      document.removeEventListener('mouseup', handlers.mouseup);
+      viewerContent.removeEventListener('dblclick', handlers.dblclick);
+      viewerContent.removeEventListener('touchstart', handlers.touchstart);
+      viewerContent.removeEventListener('touchmove', handlers.touchmove);
+      viewerContent.removeEventListener('touchend', handlers.touchend);
+      delete viewerContent._eventHandlers;
+    }
+  }
+
+  // Update diagram transform
+  function updateDiagramTransform(diagramId) {
+    const diagram = document.getElementById(`viewer-diagram-${diagramId}`);
+    if (diagram) {
+      diagram.style.transform = `scale(${viewerState.scale}) translate(${viewerState.translateX / viewerState.scale}px, ${viewerState.translateY / viewerState.scale}px)`;
+    }
+  }
+
+  // Update zoom info display
+  function updateZoomInfo(diagramId) {
+    const zoomInfo = document.getElementById(`zoom-info-${diagramId}`);
+    if (zoomInfo) {
+      zoomInfo.textContent = `${Math.round(viewerState.scale * 100)}%`;
+    }
+  }
+
+  // ESC key to close viewer
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      const openViewer = document.querySelector('.diagram-viewer:not(.hidden)');
+      if (openViewer) {
+        const diagramId = openViewer.id.replace('viewer-', '');
+        window.closeDiagramViewer(diagramId);
+      }
+    }
+  });
+
+  // Listen for theme changes
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+        window.dispatchEvent(new CustomEvent('themechange'));
+      }
+    });
+  });
+
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class']
+  });
+</script>
+
+<style>
+  .mermaid-diagram {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  .mermaid-diagram svg {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .diagram-viewer {
+    backdrop-filter: blur(8px);
+  }
+
+  .diagram-viewer .cursor-grab:active {
+    cursor: grabbing !important;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .text-diagram-container {
+      margin: 0 -0.5rem;
+      border-radius: 0;
+    }
+
+    .diagram-content {
+      padding: 0.75rem;
+    }
+
+    .diagram-viewer .absolute.bottom-4 {
+      font-size: 0.75rem;
+      padding: 0.5rem 0.75rem;
+    }
+  }
+
+  /* Dark mode adjustments */
+  .dark .text-diagram-container {
+    background-color: rgb(31 41 55);
+    border-color: rgb(55 65 81);
+  }
+
+  .dark .bg-gray-50 {
+    background-color: rgb(55 65 81);
+  }
+
+  .dark .text-gray-900 {
+    color: rgb(243 244 246);
+  }
+
+  .dark .text-gray-500 {
+    color: rgb(156 163 175);
+  }
+</style>

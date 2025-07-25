@@ -1,0 +1,275 @@
+---
+export interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  type?: "architecture" | "flowchart" | "sequence" | "class";
+  zoomable?: boolean;
+}
+
+const { src, alt, caption, type = "architecture", zoomable = true } = Astro.props;
+
+const typeLabels = {
+  architecture: "System Architecture",
+  flowchart: "Flowchart",
+  sequence: "Sequence Diagram",
+  class: "Class Diagram"
+};
+
+const typeColors = {
+  architecture: "bg-blue-100 text-blue-800 border-blue-200",
+  flowchart: "bg-green-100 text-green-800 border-green-200",
+  sequence: "bg-purple-100 text-purple-800 border-purple-200",
+  class: "bg-orange-100 text-orange-800 border-orange-200"
+};
+---
+
+<div class="diagram-viewer border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+  <!-- Header -->
+  <div class="bg-gray-50 px-4 py-3 border-b border-gray-200">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <span class={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${typeColors[type]}`}>
+          {typeLabels[type]}
+        </span>
+        {caption && (
+          <h3 class="text-lg font-medium text-gray-900">{caption}</h3>
+        )}
+      </div>
+      <div class="flex items-center space-x-2">
+        {zoomable && (
+          <button
+            class="zoom-btn inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            onclick="toggleZoom(this)"
+          >
+            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+            </svg>
+            <span>Zoom</span>
+          </button>
+        )}
+        <a
+          href={src}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+          Open
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Diagram Container -->
+  <div class="diagram-container relative bg-white">
+    <div class="diagram-wrapper overflow-auto">
+      <img
+        src={src}
+        alt={alt}
+        class="diagram-image max-w-full h-auto mx-auto block transition-transform duration-200 ease-in-out"
+        loading="lazy"
+        onclick={zoomable ? "toggleImageZoom(this)" : undefined}
+        style={zoomable ? "cursor: zoom-in;" : undefined}
+      />
+    </div>
+
+    {zoomable && (
+      <div class="zoom-controls absolute top-4 right-4 flex flex-col space-y-2 opacity-0 transition-opacity duration-200">
+        <button
+          class="zoom-in-btn p-2 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          onclick="zoomIn(this)"
+          title="Zoom In"
+        >
+          <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+          </svg>
+        </button>
+        <button
+          class="zoom-out-btn p-2 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          onclick="zoomOut(this)"
+          title="Zoom Out"
+        >
+          <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" />
+          </svg>
+        </button>
+        <button
+          class="reset-zoom-btn p-2 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          onclick="resetZoom(this)"
+          title="Reset Zoom"
+        >
+          <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        </button>
+      </div>
+    )}
+  </div>
+</div>
+
+<!-- Zoom Modal -->
+{zoomable && (
+  <div class="zoom-modal fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-75" onclick="closeZoomModal(this)">
+    <div class="relative max-w-full max-h-full p-4">
+      <button
+        class="absolute top-4 right-4 z-10 p-2 bg-white bg-opacity-20 text-white rounded-full hover:bg-opacity-30 focus:outline-none focus:ring-2 focus:ring-white"
+        onclick="closeZoomModal(this)"
+        title="Close"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      <img
+        src={src}
+        alt={alt}
+        class="zoom-modal-image max-w-full max-h-full object-contain"
+      />
+    </div>
+  </div>
+)}
+
+<script>
+  let currentZoom = 1;
+  const minZoom = 0.5;
+  const maxZoom = 3;
+  const zoomStep = 0.25;
+
+  function toggleZoom(button) {
+    const container = button.closest('.diagram-viewer');
+    const controls = container.querySelector('.zoom-controls');
+
+    if (controls.style.opacity === '1') {
+      controls.style.opacity = '0';
+      button.querySelector('span').textContent = 'Zoom';
+    } else {
+      controls.style.opacity = '1';
+      button.querySelector('span').textContent = 'Hide Controls';
+    }
+  }
+
+  function toggleImageZoom(img) {
+    const modal = img.closest('.diagram-viewer').parentNode.querySelector('.zoom-modal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeZoomModal(element) {
+    const modal = element.closest('.zoom-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.style.overflow = 'auto';
+    }
+  }
+
+  function zoomIn(button) {
+    const img = button.closest('.diagram-viewer').querySelector('.diagram-image');
+    currentZoom = Math.min(currentZoom + zoomStep, maxZoom);
+    img.style.transform = `scale(${currentZoom})`;
+    img.style.cursor = currentZoom >= maxZoom ? 'zoom-out' : 'zoom-in';
+  }
+
+  function zoomOut(button) {
+    const img = button.closest('.diagram-viewer').querySelector('.diagram-image');
+    currentZoom = Math.max(currentZoom - zoomStep, minZoom);
+    img.style.transform = `scale(${currentZoom})`;
+    img.style.cursor = currentZoom <= minZoom ? 'zoom-in' : 'zoom-out';
+  }
+
+  function resetZoom(button) {
+    const img = button.closest('.diagram-viewer').querySelector('.diagram-image');
+    currentZoom = 1;
+    img.style.transform = `scale(${currentZoom})`;
+    img.style.cursor = 'zoom-in';
+  }
+
+  // Show zoom controls on hover
+  document.addEventListener('DOMContentLoaded', function() {
+    const diagramContainers = document.querySelectorAll('.diagram-container');
+
+    diagramContainers.forEach(container => {
+      const controls = container.querySelector('.zoom-controls');
+      if (controls) {
+        container.addEventListener('mouseenter', () => {
+          if (controls.style.opacity !== '1') {
+            controls.style.opacity = '0.7';
+          }
+        });
+
+        container.addEventListener('mouseleave', () => {
+          if (controls.style.opacity !== '1') {
+            controls.style.opacity = '0';
+          }
+        });
+      }
+    });
+  });
+
+  // Prevent modal from closing when clicking on the image
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('zoom-modal-image')) {
+      e.stopPropagation();
+    }
+  });
+
+  // ESC key to close modal
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      const modal = document.querySelector('.zoom-modal:not(.hidden)');
+      if (modal) {
+        closeZoomModal(modal);
+      }
+    }
+  });
+</script>
+
+<style>
+  .diagram-container {
+    min-height: 200px;
+    background:
+      radial-gradient(circle at 20px 20px, rgba(0,0,0,0.05) 1px, transparent 1px),
+      radial-gradient(circle at 80px 80px, rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 100px 100px;
+  }
+
+  .diagram-wrapper {
+    padding: 2rem;
+    max-height: 70vh;
+  }
+
+  .diagram-image {
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    background: white;
+  }
+
+  .zoom-controls {
+    backdrop-filter: blur(4px);
+  }
+
+  .zoom-modal {
+    backdrop-filter: blur(4px);
+  }
+
+  .zoom-modal-image {
+    border-radius: 8px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  @media (max-width: 768px) {
+    .diagram-wrapper {
+      padding: 1rem;
+    }
+
+    .zoom-controls {
+      opacity: 0.7 !important;
+    }
+  }
+</style>

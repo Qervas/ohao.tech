@@ -1,0 +1,571 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import { getCollection } from 'astro:content';
+
+// Get all articles and sort by date
+const allArticles = await getCollection('articles', ({ data }) => {
+  return data.status === 'published';
+});
+const articles = allArticles.sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+
+// Organize content by type
+const thoughts = articles.filter(article => article.data.type === 'thought');
+const deepDives = articles.filter(article => article.data.type === 'article');
+const reading = articles.filter(article => article.data.type === 'reading');
+const quotes = articles.filter(article => article.data.type === 'quote');
+const life = articles.filter(article => article.data.type === 'life');
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric'
+  });
+}
+
+function getReadingTime(minutes: number | undefined) {
+  if (!minutes) return '';
+  return `${minutes}m read`;
+}
+---
+
+<Layout title="Articles - Shaoxuan Yin">
+  <!-- Clean Header -->
+  <section class="py-16">
+    <div class="container">
+      <div class="flex gap-8">
+        <!-- Main Content -->
+        <div class="flex-1 max-w-4xl">
+          <div class="mb-12">
+            <h1 class="text-4xl font-light tracking-tight mb-4">
+              Articles
+            </h1>
+            <p class="text-lg text-muted-foreground">
+              Thoughts, insights, and discoveries across technology and life.
+            </p>
+          </div>
+
+          <!-- Tab Navigation -->
+          <div class="border-b border-border">
+            <nav class="flex space-x-8" role="tablist">
+              <button
+                class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm tracking-wide hover:text-foreground hover:border-border transition-all duration-200 active"
+                data-tab="all"
+              >
+                🌊 Stream
+                <span class="ml-2 text-muted-foreground">{articles.length}</span>
+              </button>
+              <button
+                class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm tracking-wide hover:text-foreground hover:border-border transition-all duration-200"
+                data-tab="thoughts"
+              >
+                💭 Brain Dumps
+                <span class="ml-2 text-muted-foreground">{thoughts.length}</span>
+              </button>
+              <button
+                class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm tracking-wide hover:text-foreground hover:border-border transition-all duration-200"
+                data-tab="articles"
+              >
+                🔬 Deep Dives
+                <span class="ml-2 text-muted-foreground">{deepDives.length}</span>
+              </button>
+              <button
+                class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm tracking-wide hover:text-foreground hover:border-border transition-all duration-200"
+                data-tab="reading"
+              >
+                📚 Book Journey
+                <span class="ml-2 text-muted-foreground">{reading.length}</span>
+                {reading.filter(r => r.data.book?.status === 'reading').length > 0 &&
+                  <span class="ml-1 w-2 h-2 bg-blue-500 rounded-full inline-block animate-pulse"></span>
+                }
+              </button>
+              <button
+                class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm tracking-wide hover:text-foreground hover:border-border transition-all duration-200"
+                data-tab="quotes"
+              >
+                ✨ Mind Sparks
+                <span class="ml-2 text-muted-foreground">{quotes.length}</span>
+              </button>
+            </nav>
+          </div>
+
+          <!-- Content Sections -->
+
+      <!-- All Articles -->
+      <div id="tab-all" class="tab-content space-y-1">
+        {articles.map(article => (
+          <article class="group">
+            <a href={`/articles/${article.slug}`} class="block">
+              <div class="p-6 hover:bg-accent/30 transition-colors duration-200 border-b border-border/30 last:border-b-0">
+                <div class="flex items-start justify-between">
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-3 mb-2">
+                      <span class="text-xs text-muted-foreground uppercase tracking-wider font-medium">
+                        {article.data.type}
+                      </span>
+                      <span class="text-xs text-muted-foreground">
+                        {formatDate(article.data.publishedAt)}
+                      </span>
+                      {article.data.readingTime && (
+                        <span class="text-xs text-muted-foreground">
+                          {getReadingTime(article.data.readingTime)}
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 class="text-lg font-medium mb-2 group-hover:text-primary transition-colors">
+                      {article.data.title}
+                    </h3>
+
+                    {article.data.description && (
+                      <p class="text-muted-foreground text-sm leading-relaxed">
+                        {article.data.description}
+                      </p>
+                    )}
+
+                    {article.data.quote && (
+                      <blockquote class="text-muted-foreground text-sm italic leading-relaxed">
+                        "{article.data.quote.text}"
+                      </blockquote>
+                    )}
+                  </div>
+
+                  {article.data.coverImage && (
+                    <div class="ml-6 flex-shrink-0">
+                      <div class="w-20 h-20 rounded-lg overflow-hidden bg-accent/20">
+                        <img
+                          src={article.data.coverImage.src}
+                          alt={article.data.coverImage.alt || article.data.title}
+                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {article.data.book?.cover && (
+                    <div class="ml-6 flex-shrink-0">
+                      <div class="w-12 h-16 rounded overflow-hidden shadow-sm">
+                        <img
+                          src={article.data.book.cover}
+                          alt={article.data.book.title}
+                          class="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </a>
+          </article>
+        ))}
+      </div>
+
+      <!-- Thoughts -->
+      <div id="tab-thoughts" class="tab-content space-y-1 hidden">
+        {thoughts.map(thought => (
+          <article class="group">
+            <a href={`/articles/${thought.slug}`} class="block">
+              <div class="p-6 hover:bg-accent/30 transition-colors duration-200 border-b border-border/30 last:border-b-0">
+                <div class="flex items-center gap-3 mb-2">
+                  <span class="text-xs text-muted-foreground">
+                    {formatDate(thought.data.publishedAt)}
+                  </span>
+                  {thought.data.readingTime && (
+                    <span class="text-xs text-muted-foreground">
+                      {getReadingTime(thought.data.readingTime)}
+                    </span>
+                  )}
+                  {thought.data.location && (
+                    <span class="text-xs text-muted-foreground">
+                      📍 {thought.data.location}
+                    </span>
+                  )}
+                </div>
+
+                <h3 class="text-lg font-medium mb-2 group-hover:text-primary transition-colors">
+                  {thought.data.title}
+                </h3>
+
+                {thought.data.description && (
+                  <p class="text-muted-foreground text-sm leading-relaxed">
+                    {thought.data.description}
+                  </p>
+                )}
+              </div>
+            </a>
+          </article>
+        ))}
+      </div>
+
+      <!-- Deep Dives -->
+      <div id="tab-articles" class="tab-content space-y-1 hidden">
+        {deepDives.map(article => (
+          <article class="group">
+            <a href={`/articles/${article.slug}`} class="block">
+              <div class="p-6 hover:bg-accent/30 transition-colors duration-200 border-b border-border/30 last:border-b-0">
+                <div class="flex items-start justify-between">
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-3 mb-2">
+                      <span class="text-xs text-muted-foreground">
+                        {formatDate(article.data.publishedAt)}
+                      </span>
+                      {article.data.readingTime && (
+                        <span class="text-xs text-muted-foreground">
+                          {getReadingTime(article.data.readingTime)}
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 class="text-xl font-medium mb-3 group-hover:text-primary transition-colors">
+                      {article.data.title}
+                    </h3>
+
+                    {article.data.description && (
+                      <p class="text-muted-foreground leading-relaxed">
+                        {article.data.description}
+                      </p>
+                    )}
+
+                    {article.data.tags.length > 0 && (
+                      <div class="flex flex-wrap gap-2 mt-3">
+                        {article.data.tags.slice(0, 3).map(tag => (
+                          <span class="text-xs px-2 py-1 bg-accent/50 rounded-full text-muted-foreground">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {article.data.coverImage && (
+                    <div class="ml-6 flex-shrink-0">
+                      <div class="w-24 h-24 rounded-lg overflow-hidden bg-accent/20">
+                        <img
+                          src={article.data.coverImage.src}
+                          alt={article.data.coverImage.alt || article.data.title}
+                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </a>
+          </article>
+        ))}
+      </div>
+
+      <!-- Reading -->
+      <div id="tab-reading" class="tab-content space-y-1 hidden">
+        {reading.map(book => (
+          <article class="group">
+            <a href={`/articles/${book.slug}`} class="block">
+              <div class="p-6 hover:bg-accent/30 transition-colors duration-200 border-b border-border/30 last:border-b-0">
+                <div class="flex items-start gap-4">
+                  {book.data.book?.cover && (
+                    <div class="flex-shrink-0">
+                      <img
+                        src={book.data.book.cover}
+                        alt={book.data.book.title}
+                        class="w-16 h-24 object-cover rounded shadow-sm"
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
+
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-3 mb-2">
+                      <span class="text-xs text-muted-foreground">
+                        {formatDate(book.data.publishedAt)}
+                      </span>
+                      {book.data.book?.status && (
+                        <span class={`text-xs px-2 py-1 rounded-full font-medium ${
+                          book.data.book.status === 'reading' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                          book.data.book.status === 'finished' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                          'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400'
+                        }`}>
+                          {book.data.book.status}
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 class="text-lg font-medium mb-1 group-hover:text-primary transition-colors">
+                      {book.data.book?.title || book.data.title}
+                    </h3>
+
+                    {book.data.book?.author && (
+                      <p class="text-muted-foreground text-sm mb-2">
+                        by {book.data.book.author}
+                      </p>
+                    )}
+
+                    {book.data.description && (
+                      <p class="text-muted-foreground text-sm leading-relaxed">
+                        {book.data.description}
+                      </p>
+                    )}
+
+                    {book.data.book?.rating && (
+                      <div class="flex items-center gap-1 mt-2">
+                        {Array.from({ length: 5 }, (_, i) => (
+                          <Icon
+                            name="Star"
+                            className={`w-3 h-3 ${i < book.data.book.rating! ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </a>
+          </article>
+        ))}
+      </div>
+
+      <!-- Quotes -->
+      <div id="tab-quotes" class="tab-content space-y-1 hidden">
+        {quotes.map(quote => (
+          <article class="group">
+            <a href={`/articles/${quote.slug}`} class="block">
+              <div class="p-6 hover:bg-accent/30 transition-colors duration-200 border-b border-border/30 last:border-b-0">
+                <div class="flex items-center gap-3 mb-3">
+                  <span class="text-xs text-muted-foreground">
+                    {formatDate(quote.data.publishedAt)}
+                  </span>
+                </div>
+
+                <blockquote class="text-lg font-light italic mb-3 leading-relaxed group-hover:text-primary transition-colors">
+                  "{quote.data.quote?.text || quote.data.title}"
+                </blockquote>
+
+                <div class="text-muted-foreground text-sm">
+                  — {quote.data.quote?.author}
+                  {quote.data.quote?.source && (
+                    <span class="block mt-1 text-xs">from "{quote.data.quote.source}"</span>
+                  )}
+                </div>
+              </div>
+            </a>
+          </article>
+        ))}
+      </div>
+
+      <!-- Fun Empty States -->
+      {articles.length === 0 && (
+        <div class="text-center py-16">
+          <div class="text-muted-foreground">
+            <div class="text-6xl mb-6">🤔</div>
+            <p class="text-lg font-light">The mind palace is being constructed...</p>
+            <p class="text-sm mt-2">Great ideas are brewing. Check back soon!</p>
+          </div>
+        </div>
+      )}
+
+      {thoughts.length === 0 && (
+        <div id="empty-thoughts" class="text-center py-16 hidden">
+          <div class="text-muted-foreground">
+            <div class="text-6xl mb-6">🧠</div>
+            <p class="text-lg font-light">Brain still warming up...</p>
+            <p class="text-sm mt-2">Random thoughts and shower ideas coming soon!</p>
+          </div>
+        </div>
+      )}
+
+      {deepDives.length === 0 && (
+        <div id="empty-articles" class="text-center py-16 hidden">
+          <div class="text-muted-foreground">
+            <div class="text-6xl mb-6">🔬</div>
+            <p class="text-lg font-light">Lab is under construction...</p>
+            <p class="text-sm mt-2">Deep technical explorations in progress!</p>
+          </div>
+        </div>
+      )}
+
+      {reading.length === 0 && (
+        <div id="empty-reading" class="text-center py-16 hidden">
+          <div class="text-muted-foreground">
+            <div class="text-6xl mb-6">📚</div>
+            <p class="text-lg font-light">Bookshelf is being stocked...</p>
+            <p class="text-sm mt-2">Currently hunting for mind-blowing reads!</p>
+          </div>
+        </div>
+      )}
+
+      {quotes.length === 0 && (
+        <div id="empty-quotes" class="text-center py-16 hidden">
+          <div class="text-muted-foreground">
+            <div class="text-6xl mb-6">✨</div>
+            <p class="text-lg font-light">Collecting wisdom sparks...</p>
+            <p class="text-sm mt-2">Those "holy shit, that's brilliant" moments are coming!</p>
+          </div>
+        </div>
+      )}
+
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="w-80 space-y-8 sticky top-24 h-fit">
+          <!-- Stats -->
+          <div class="bg-accent/10 rounded-xl p-6">
+            <h3 class="font-semibold mb-4">Overview</h3>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="text-center">
+                <div class="text-2xl font-bold text-primary">{articles.length}</div>
+                <div class="text-xs text-muted-foreground">Total Posts</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-amber-600">{reading.filter(r => r.data.book?.status === 'reading').length}</div>
+                <div class="text-xs text-muted-foreground">Currently Reading</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-green-600">{reading.filter(r => r.data.book?.status === 'finished').length}</div>
+                <div class="text-xs text-muted-foreground">Books Finished</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-purple-600">{quotes.length}</div>
+                <div class="text-xs text-muted-foreground">Saved Quotes</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Status -->
+          <div class="bg-accent/10 rounded-xl p-6">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span class="text-sm font-semibold">Currently</span>
+            </div>
+            <p class="text-sm text-muted-foreground">
+              Building neural renderers & questioning everything
+            </p>
+          </div>
+
+          <!-- Latest Activity -->
+          <div class="bg-accent/10 rounded-xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-semibold">Latest Activity</h3>
+              <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            </div>
+
+            <div class="space-y-3">
+              {articles.slice(0, 4).map(article => (
+                <div class="flex items-start gap-3">
+                  <div class="text-xs text-muted-foreground mt-1 w-12 flex-shrink-0">
+                    {formatDate(article.data.publishedAt)}
+                  </div>
+                  <div class="text-sm flex-shrink-0">
+                    {article.data.type === 'thought' && '💭'}
+                    {article.data.type === 'article' && '📝'}
+                    {article.data.type === 'reading' && '📚'}
+                    {article.data.type === 'quote' && '✨'}
+                    {article.data.type === 'life' && '🌟'}
+                  </div>
+                  <a href={`/articles/${article.slug}`} class="text-sm hover:text-primary transition-colors flex-1 leading-relaxed">
+                    {article.data.type === 'quote'
+                      ? `Saved a quote from ${article.data.quote?.author}`
+                      : article.data.type === 'reading'
+                      ? `Started reading "${article.data.book?.title}"`
+                      : article.data.title
+                    }
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+
+
+        </aside>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // Tab functionality
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const targetTab = button.getAttribute('data-tab');
+
+      // Update button states
+      tabButtons.forEach(btn => {
+        btn.classList.remove('active', 'border-primary', 'text-primary');
+        btn.classList.add('text-muted-foreground');
+      });
+
+      button.classList.add('active', 'border-primary', 'text-primary');
+      button.classList.remove('text-muted-foreground');
+
+      // Update content visibility
+      tabContents.forEach(content => {
+        content.classList.add('hidden');
+      });
+
+      // Show empty states for empty tabs
+      document.querySelectorAll('[id^="empty-"]').forEach(el => el.classList.add('hidden'));
+
+      const targetContent = document.getElementById(`tab-${targetTab}`);
+      if (targetContent) {
+        targetContent.classList.remove('hidden');
+
+        // Show appropriate empty state if no content
+        if (targetContent.children.length === 0) {
+          const emptyState = document.getElementById(`empty-${targetTab}`);
+          if (emptyState) {
+            emptyState.classList.remove('hidden');
+          }
+        }
+      }
+    });
+  });
+
+  // Set initial active state
+  document.querySelector('[data-tab="all"]')?.classList.add('active', 'border-primary', 'text-primary');
+  document.querySelector('[data-tab="all"]')?.classList.remove('text-muted-foreground');
+</script>
+
+<style>
+  .tab-button.active {
+    border-color: hsl(var(--primary));
+    color: hsl(var(--primary));
+  }
+
+  .tab-button:not(.active) {
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* Smooth transitions */
+  .tab-content {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Clean hover effects */
+  article:hover {
+    transform: translateY(-1px);
+  }
+
+  /* Typography refinements */
+  h1 {
+    letter-spacing: -0.025em;
+  }
+
+  .tab-button {
+    letter-spacing: 0.025em;
+  }
+</style>

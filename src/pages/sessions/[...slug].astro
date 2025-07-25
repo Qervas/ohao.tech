@@ -1,0 +1,306 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import { getCollection } from 'astro:content';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const sessions = await getCollection('sessions');
+  return sessions.map((session) => ({
+    params: { slug: session.slug },
+    props: { session },
+  }));
+}
+
+const { session } = Astro.props;
+const { Content } = await session.render();
+
+// Get all articles that reference this session
+const allArticles = await getCollection('articles', ({ data }) => {
+  return data.status === 'published' && data.session?.slug === session.slug;
+});
+
+// Sort articles by session part number or date
+const sessionArticles = allArticles.sort((a, b) => {
+  if (a.data.session?.part && b.data.session?.part) {
+    return a.data.session.part - b.data.session.part;
+  }
+  return a.data.publishedAt.valueOf() - b.data.publishedAt.valueOf();
+});
+
+// Get session type icon
+const getSessionIcon = (type: string) => {
+  const iconMap = {
+    book: 'BookOpen',
+    music: 'Music',
+    course: 'GraduationCap',
+    project: 'Code2',
+    series: 'Layers'
+  };
+  return iconMap[type] || 'BookOpen';
+};
+
+// Status colors
+const getStatusColor = (status: string) => {
+  const colorMap = {
+    active: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+    completed: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+    paused: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
+  };
+  return colorMap[status] || colorMap.active;
+};
+
+// Format date
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
+}
+
+// Calculate progress
+const getProgress = () => {
+  if (session.data.type === 'book' && session.data.book) {
+    if (session.data.book.totalChapters && session.data.book.currentChapter) {
+      return Math.round((session.data.book.currentChapter / session.data.book.totalChapters) * 100);
+    }
+    if (session.data.book.totalPages && session.data.book.currentPage) {
+      return Math.round((session.data.book.currentPage / session.data.book.totalPages) * 100);
+    }
+  }
+  if (session.data.type === 'course' && session.data.course) {
+    if (session.data.course.totalLessons && session.data.course.currentLesson) {
+      return Math.round((session.data.course.currentLesson / session.data.course.totalLessons) * 100);
+    }
+  }
+  return null;
+};
+
+const progress = getProgress();
+---
+
+<Layout title={session.data.title}>
+  <!-- Header -->
+  <section class="py-12 border-b border-border/50">
+    <div class="container">
+      <div class="max-w-4xl mx-auto">
+        <!-- Breadcrumb -->
+        <nav class="mb-6">
+          <ol class="flex items-center space-x-2 text-sm">
+            <li><a href="/" class="text-muted-foreground hover:text-primary">Home</a></li>
+            <li><Icon name="ChevronRight" className="w-4 h-4 text-muted-foreground" /></li>
+            <li><a href="/sessions" class="text-muted-foreground hover:text-primary">Sessions</a></li>
+            <li><Icon name="ChevronRight" className="w-4 h-4 text-muted-foreground" /></li>
+            <li class="text-foreground">{session.data.title}</li>
+          </ol>
+        </nav>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+          <!-- Main content -->
+          <div class="lg:col-span-2">
+            <div class="flex items-center gap-3 mb-4">
+              <Icon name={getSessionIcon(session.data.type)} className="w-6 h-6 text-primary" />
+              <span class={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(session.data.status)}`}>
+                {session.data.status}
+              </span>
+              {session.data.featured && (
+                <span class="px-3 py-1 rounded-full text-sm font-medium bg-primary/10 text-primary">
+                  Featured
+                </span>
+              )}
+            </div>
+
+            <h1 class="text-4xl font-bold mb-4">{session.data.title}</h1>
+
+            {session.data.description && (
+              <p class="text-xl text-muted-foreground mb-6">{session.data.description}</p>
+            )}
+
+            <!-- Progress -->
+            {progress && (
+              <div class="mb-6">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm font-medium">Progress</span>
+                  <span class="text-sm text-muted-foreground">{progress}%</span>
+                </div>
+                <div class="w-full bg-muted rounded-full h-3">
+                  <div
+                    class="bg-primary h-3 rounded-full transition-all duration-300"
+                    style={`width: ${progress}%`}
+                  ></div>
+                </div>
+              </div>
+            )}
+
+            <!-- Tags -->
+            {session.data.tags.length > 0 && (
+              <div class="flex flex-wrap gap-2 mb-8">
+                {session.data.tags.map(tag => (
+                  <span class="px-3 py-1 rounded-full text-sm bg-accent text-muted-foreground">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <!-- Sidebar -->
+          <div class="lg:col-span-1">
+            {session.data.coverImage && (
+              <div class="mb-6">
+                <img
+                  src={session.data.coverImage.src}
+                  alt={session.data.coverImage.alt}
+                  class="w-full rounded-lg shadow-lg"
+                />
+              </div>
+            )}
+
+            <!-- Session Details -->
+            <div class="bg-accent/20 rounded-lg p-6 mb-6">
+              <h3 class="font-semibold mb-4">Session Details</h3>
+              <div class="space-y-3 text-sm">
+                <div class="flex justify-between">
+                  <span class="text-muted-foreground">Type:</span>
+                  <span class="capitalize">{session.data.type}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-muted-foreground">Started:</span>
+                  <span>{formatDate(session.data.startedAt)}</span>
+                </div>
+                {session.data.completedAt && (
+                  <div class="flex justify-between">
+                    <span class="text-muted-foreground">Completed:</span>
+                    <span>{formatDate(session.data.completedAt)}</span>
+                  </div>
+                )}
+                <div class="flex justify-between">
+                  <span class="text-muted-foreground">Posts:</span>
+                  <span>{sessionArticles.length}</span>
+                </div>
+
+                {/* Book-specific details */}
+                {session.data.type === 'book' && session.data.book && (
+                  <>
+                    <div class="flex justify-between">
+                      <span class="text-muted-foreground">Author:</span>
+                      <span>{session.data.book.author}</span>
+                    </div>
+                    {session.data.book.totalChapters && (
+                      <div class="flex justify-between">
+                        <span class="text-muted-foreground">Chapters:</span>
+                        <span>{session.data.book.currentChapter || 0} / {session.data.book.totalChapters}</span>
+                      </div>
+                    )}
+                    {session.data.book.totalPages && (
+                      <div class="flex justify-between">
+                        <span class="text-muted-foreground">Pages:</span>
+                        <span>{session.data.book.currentPage || 0} / {session.data.book.totalPages}</span>
+                      </div>
+                    )}
+                    {session.data.book.rating && (
+                      <div class="flex justify-between">
+                        <span class="text-muted-foreground">Rating:</span>
+                        <span>{'⭐'.repeat(session.data.book.rating)}</span>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Session Content -->
+  <section class="py-12">
+    <div class="container">
+      <div class="max-w-4xl mx-auto">
+        <div class="prose prose-lg dark:prose-invert max-w-none">
+          <Content />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Posts -->
+  {sessionArticles.length > 0 && (
+    <section class="py-12 bg-accent/20">
+      <div class="container">
+        <div class="max-w-4xl mx-auto">
+          <h2 class="text-2xl font-bold mb-8 flex items-center gap-2">
+            <Icon name="FileText" className="w-6 h-6 text-primary" />
+            Posts from this Session
+          </h2>
+
+          <div class="grid gap-6">
+            {sessionArticles.map((article, index) => (
+              <article class="group border border-border rounded-lg p-6 hover:border-primary/50 transition-colors bg-background">
+                <div class="flex items-start gap-4">
+                  <div class="flex-shrink-0">
+                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary">
+                      {article.data.session?.part || index + 1}
+                    </div>
+                  </div>
+
+                  <div class="flex-1">
+                    <div class="flex items-center gap-3 mb-2">
+                      <h3 class="font-semibold group-hover:text-primary transition-colors">
+                        <a href={`/articles/${article.slug}`}>
+                          {article.data.session?.title || article.data.title}
+                        </a>
+                      </h3>
+                      <span class="text-xs px-2 py-1 rounded bg-accent text-muted-foreground">
+                        {article.data.type}
+                      </span>
+                    </div>
+
+                    {(article.data.description || article.data.excerpt) && (
+                      <p class="text-muted-foreground text-sm mb-3">
+                        {article.data.description || article.data.excerpt}
+                      </p>
+                    )}
+
+                    <div class="flex items-center gap-4 text-xs text-muted-foreground">
+                      <span>{formatDate(article.data.publishedAt)}</span>
+                      {article.data.readingTime && (
+                        <span>{article.data.readingTime}m read</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Navigation -->
+  <section class="py-8 border-t border-border/50">
+    <div class="container">
+      <div class="max-w-4xl mx-auto flex justify-between">
+        <a
+          href="/sessions"
+          class="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+        >
+          <Icon name="ArrowLeft" className="w-4 h-4" />
+          Back to Sessions
+        </a>
+
+        <a
+          href="/articles"
+          class="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+        >
+          View All Articles
+          <Icon name="ArrowRight" className="w-4 h-4" />
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

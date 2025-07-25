@@ -1,0 +1,327 @@
+/* Import utilities */
+@import "./utilities.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --background: 0 0% 100%;
+        --foreground: 240 10% 3.9%;
+        --card: 0 0% 100%;
+        --card-foreground: 240 10% 3.9%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 240 10% 3.9%;
+        --primary: 221.2 83.2% 53.3%;
+        --primary-foreground: 210 40% 98%;
+        --secondary: 210 40% 96.1%;
+        --secondary-foreground: 222.2 47.4% 11.2%;
+        --muted: 210 40% 96.1%;
+        --muted-foreground: 215.4 16.3% 46.9%;
+        --accent: 210 40% 96.1%;
+        --accent-foreground: 222.2 47.4% 11.2%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 210 40% 98%;
+        --border: 214.3 31.8% 91.4%;
+        --input: 214.3 31.8% 91.4%;
+        --ring: 221.2 83.2% 53.3%;
+        --radius: 0.5rem;
+        --grid-pattern: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(226 232 240 / 0.1)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+    }
+
+    .dark {
+        --background: 240 10% 3.9%;
+        --foreground: 0 0% 98%;
+        --card: 240 10% 3.9%;
+        --card-foreground: 0 0% 98%;
+        --popover: 240 10% 3.9%;
+        --popover-foreground: 0 0% 98%;
+        --primary: 217.2 91.2% 59.8%;
+        --primary-foreground: 210 40% 98%;
+        --secondary: 240 3.7% 15.9%;
+        --secondary-foreground: 0 0% 98%;
+        --muted: 240 3.7% 15.9%;
+        --muted-foreground: 240 5% 64.9%;
+        --accent: 240 3.7% 15.9%;
+        --accent-foreground: 0 0% 98%;
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 3.7% 15.9%;
+        --input: 240 3.7% 15.9%;
+        --ring: 224.3 76.3% 48%;
+        --grid-pattern: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(30 41 59 / 0.3)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+    }
+
+    /* Base styles */
+    * {
+        @apply border-border/50;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Smooth scrolling for the whole document */
+    html {
+        @apply scroll-smooth;
+        scroll-behavior: smooth;
+        scroll-padding-top: 5rem;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
+
+    /* Body styles */
+    body {
+        @apply bg-background text-foreground min-h-screen flex flex-col;
+        font-feature-settings:
+            "rlig" 1,
+            "calt" 1,
+            "ss01" 1,
+            "ss02" 1,
+            "ss03" 1,
+            "ss04" 1,
+            "ss05" 1,
+            "ss06" 1,
+            "ss07" 1,
+            "ss08" 1;
+        text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    /* Typography */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-bold tracking-tight text-balance;
+    }
+
+    h1 {
+        @apply text-4xl md:text-5xl lg:text-6xl;
+    }
+
+    h2 {
+        @apply text-3xl md:text-4xl;
+    }
+
+    h3 {
+        @apply text-2xl md:text-3xl;
+    }
+
+    h4 {
+        @apply text-xl md:text-2xl;
+    }
+
+    /* Links */
+    a {
+        @apply text-primary hover:underline underline-offset-4 transition-colors;
+    }
+
+    /* Buttons */
+    button,
+    [type="button"],
+    [type="reset"],
+    [type="submit"] {
+        @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2;
+    }
+
+    /* Forms */
+    input,
+    textarea,
+    select {
+        @apply bg-background border border-input rounded-md px-3 py-2 text-sm ring-offset-background transition-colors;
+        @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+        @apply disabled:cursor-not-allowed disabled:opacity-50;
+    }
+
+    /* Images */
+    img,
+    video,
+    canvas,
+    svg {
+        @apply max-w-full h-auto;
+    }
+
+    /* Code blocks */
+    pre,
+    code {
+        @apply font-mono text-sm;
+    }
+
+    pre {
+        @apply p-4 rounded-lg overflow-x-auto;
+    }
+
+    /* Tables */
+    table {
+        @apply w-full border-collapse text-sm;
+    }
+
+    th,
+    td {
+        @apply border border-border px-4 py-2 text-left;
+    }
+
+    th {
+        @apply font-semibold bg-muted/50;
+    }
+
+    /* Lists */
+    ul,
+    ol {
+        @apply my-4 pl-6;
+    }
+
+    ul {
+        @apply list-disc;
+    }
+
+    ol {
+        @apply list-decimal;
+    }
+
+    li {
+        @apply my-1.5;
+    }
+
+    /* Blockquotes */
+    blockquote {
+        @apply border-l-4 border-muted-foreground/20 pl-4 italic text-muted-foreground my-4;
+    }
+
+    /* Horizontal rule */
+    hr {
+        @apply my-8 border-t border-border/30;
+    }
+
+    /* Custom utility classes */
+    .prose {
+        @apply max-w-none text-foreground;
+    }
+
+    .prose h1,
+    .prose h2,
+    .prose h3,
+    .prose h4 {
+        @apply mt-8 mb-4 font-bold;
+    }
+
+    .prose p,
+    .prose ul,
+    .prose ol {
+        @apply my-4;
+    }
+
+    .prose a {
+        @apply text-primary hover:underline;
+    }
+
+    .prose img {
+        @apply my-6 rounded-lg shadow-md;
+    }
+
+    /* Grid pattern background */
+    .grid-pattern {
+        background-image: var(--grid-pattern);
+        background-size: 32px 32px;
+        background-position: center;
+    }
+
+    /* Container */
+    .container {
+        @apply px-4 sm:px-6 lg:px-8 mx-auto w-full max-w-7xl;
+    }
+
+    /* Section */
+    section {
+        @apply py-16 md:py-24;
+    }
+
+    /* Card */
+    .card {
+        @apply bg-card text-card-foreground rounded-xl border border-border/50 shadow-sm overflow-hidden transition-all hover:shadow-md;
+    }
+
+    /* Button */
+    .btn {
+        @apply inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none;
+    }
+
+    .btn-primary {
+        @apply bg-primary text-primary-foreground hover:bg-primary/90;
+    }
+
+    .btn-secondary {
+        @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
+    }
+
+    .btn-outline {
+        @apply border border-input bg-transparent hover:bg-accent hover:text-accent-foreground;
+    }
+
+    .btn-ghost {
+        @apply hover:bg-accent hover:text-accent-foreground;
+    }
+
+    .btn-link {
+        @apply underline-offset-4 hover:underline text-primary;
+    }
+
+    /* Input */
+    .input {
+        @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+    }
+
+    /* Badge */
+    .badge {
+        @apply inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+    }
+
+    /* Alert */
+    .alert {
+        @apply relative w-full rounded-lg border p-4;
+    }
+
+    .alert-destructive {
+        @apply border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive;
+    }
+
+    /* Skeleton */
+    .skeleton {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        @apply bg-muted rounded-md;
+    }
+
+    @keyframes pulse {
+        0%,
+        100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+    }
+
+    /* Tooltip */
+    [data-tooltip] {
+        @apply relative cursor-help;
+    }
+
+    [data-tooltip]:hover::after {
+        @apply absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-foreground text-background rounded whitespace-nowrap opacity-100 pointer-events-none;
+        content: attr(data-tooltip);
+        z-index: 50;
+    }
+
+    /* Custom scrollbar for Firefox */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: hsl(var(--muted-foreground) / 0.4) transparent;
+    }
+
+    /* Custom selection */
+    ::selection {
+        @apply bg-primary/20 text-foreground;
+    }
+}

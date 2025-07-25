@@ -1,0 +1,418 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import { getCollection } from 'astro:content';
+
+// Get all projects and sort by date
+const allProjects = await getCollection('projects');
+const sortedProjects = allProjects.sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+
+// Featured projects (only active ones)
+const featuredProjects = sortedProjects.filter(project => project.data.featured && project.data.status === 'active');
+
+// Non-featured projects (excluding active featured ones)
+const projects = sortedProjects.filter(project => !(project.data.featured && project.data.status === 'active'));
+
+// Project categories
+const categories = ['all', 'graphics', 'ai', 'engine', 'research', 'web', 'tools'];
+
+// Project statuses
+const statuses = {
+  active: { label: 'Active', color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' },
+  completed: { label: 'Completed', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' },
+  paused: { label: 'Paused', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' },
+  planning: { label: 'Planning', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400' }
+};
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+}
+
+function getStatusColor(status: string) {
+  return statuses[status as keyof typeof statuses]?.color || 'bg-gray-100 text-gray-800';
+}
+
+function getStatusLabel(status: string) {
+  return statuses[status as keyof typeof statuses]?.label || status;
+}
+---
+
+<Layout title="Projects - Shaoxuan Yin">
+  <!-- Header -->
+  <section class="py-12 border-b border-border/50">
+    <div class="container">
+      <div class="max-w-3xl">
+        <h1 class="text-3xl font-bold mb-4">Projects</h1>
+        <p class="text-lg text-muted-foreground mb-6">
+          Here are some projects I've worked on across different areas like neural rendering,
+          graphics programming, game engines, and AI research.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hero Featured Project -->
+  {featuredProjects.length > 0 && (
+    <section class="py-16 relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/10"></div>
+      <div class="container relative">
+        <div class="text-center mb-12">
+          <h2 class="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mb-4">
+            Featured Work
+          </h2>
+          <p class="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Pushing the boundaries of neural rendering and graphics programming
+          </p>
+        </div>
+
+        {/* Hero Project */}
+        <div class="mb-16">
+          <article class="group relative">
+            <a href={`/projects/${featuredProjects[0].slug}`} class="block">
+              <div class="relative rounded-3xl overflow-hidden bg-gradient-to-br from-background to-accent/5 shadow-2xl hover:shadow-3xl transition-all duration-700 transform hover:-translate-y-2">
+                {(featuredProjects[0].data.coverImage || featuredProjects[0].data.images?.[0]) && (
+                  <div class="aspect-[21/9] overflow-hidden relative">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
+                    <img
+                      src={(featuredProjects[0].data.coverImage?.src || featuredProjects[0].data.images?.[0]?.src)}
+                      alt={(featuredProjects[0].data.coverImage?.alt || featuredProjects[0].data.images?.[0]?.alt || featuredProjects[0].data.title)}
+                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      loading="lazy"
+                    />
+
+                    {/* Floating content overlay */}
+                    <div class="absolute bottom-0 left-0 right-0 p-8 z-20 text-white">
+                      <div class="flex items-center gap-3 mb-4">
+                        <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium">
+                          {getStatusLabel(featuredProjects[0].data.status)}
+                        </span>
+                        <span class="text-white/80 capitalize">{featuredProjects[0].data.category}</span>
+                      </div>
+                      <h3 class="text-3xl font-bold mb-3 group-hover:text-primary/90 transition-colors">
+                        {featuredProjects[0].data.title}
+                      </h3>
+                      <p class="text-white/90 text-lg max-w-2xl">
+                        {featuredProjects[0].data.description}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </a>
+          </article>
+        </div>
+
+        {/* Other Featured Projects */}
+        {featuredProjects.length > 1 && (
+          <div class="grid md:grid-cols-2 gap-8">
+            {featuredProjects.slice(1).map(project => (
+              <article class="group">
+                <a href={`/projects/${project.slug}`} class="block">
+                  <div class="relative rounded-2xl overflow-hidden bg-gradient-to-br from-background to-accent/5 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1">
+                    {(project.data.coverImage || project.data.images?.[0]) && (
+                      <div class="aspect-[4/3] overflow-hidden relative">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent z-10"></div>
+                        <img
+                          src={(project.data.coverImage?.src || project.data.images?.[0]?.src)}
+                          alt={(project.data.coverImage?.alt || project.data.images?.[0]?.alt || project.data.title)}
+                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                        />
+
+                        <div class="absolute bottom-0 left-0 right-0 p-6 z-20 text-white">
+                          <div class="flex items-center gap-2 mb-3">
+                            <span class="px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-medium">
+                              {getStatusLabel(project.data.status)}
+                            </span>
+                            <span class="text-white/70 text-sm capitalize">{project.data.category}</span>
+                          </div>
+                          <h3 class="text-xl font-bold mb-2 group-hover:text-primary/90 transition-colors">
+                            {project.data.title}
+                          </h3>
+                          <p class="text-white/80 text-sm line-clamp-2">
+                            {project.data.description}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </a>
+              </article>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  <!-- All Projects Gallery -->
+  <section class="py-16 relative">
+    <div class="container">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold mb-4">Completed Work</h2>
+        <p class="text-muted-foreground max-w-2xl mx-auto">
+          Projects I've finished and delivered across different domains and technologies
+        </p>
+      </div>
+
+      <div class="masonry-grid" id="projects-grid">
+        {projects.map((project, index) => (
+          <article class={`project-card group masonry-item ${index % 3 === 0 ? 'tall' : index % 5 === 0 ? 'wide' : ''}`} data-category={project.data.category}>
+            <a href={`/projects/${project.slug}`} class="block">
+              <div class="relative rounded-2xl overflow-hidden bg-gradient-to-br from-background to-accent/5 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:rotate-1">
+                {/* Project Image */}
+                {(project.data.coverImage || project.data.images?.[0]) && (
+                  <div class="aspect-[4/3] overflow-hidden relative">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent z-10"></div>
+                    <img
+                      src={(project.data.coverImage?.src || project.data.images?.[0]?.src)}
+                      alt={(project.data.coverImage?.alt || project.data.images?.[0]?.alt || project.data.title)}
+                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      loading="lazy"
+                    />
+
+                    {/* Glassmorphism overlay */}
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20"></div>
+
+                    {/* Status badge */}
+                    <div class="absolute top-4 left-4 z-30">
+                      <span class={`px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm ${
+                        project.data.status === 'active' ? 'bg-green-500/20 text-green-300 border border-green-500/30' :
+                        project.data.status === 'completed' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' :
+                        'bg-gray-500/20 text-gray-300 border border-gray-500/30'
+                      }`}>
+                        {getStatusLabel(project.data.status)}
+                      </span>
+                    </div>
+
+                    {/* Content overlay */}
+                    <div class="absolute bottom-0 left-0 right-0 p-6 z-20 text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                      <div class="flex items-center gap-2 mb-2">
+                        <span class="text-primary-foreground/80 text-sm capitalize font-medium">{project.data.category}</span>
+                        <span class="text-primary-foreground/60 text-xs">
+                          {formatDate(project.data.publishedAt)}
+                        </span>
+                      </div>
+
+                      <h3 class="text-xl font-bold mb-2 group-hover:text-primary/90 transition-colors">
+                        {project.data.title}
+                      </h3>
+
+                      <p class="text-primary-foreground/80 text-sm line-clamp-2 mb-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+                        {project.data.description}
+                      </p>
+
+                      <div class="flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-200">
+                        {/* Technologies */}
+                        <div class="flex flex-wrap gap-1">
+                          {project.data.technologies.slice(0, 3).map(tech => (
+                            <span class="text-xs px-2 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white/90">
+                              {tech}
+                            </span>
+                          ))}
+                          {project.data.technologies.length > 3 && (
+                            <span class="text-xs px-2 py-1 rounded-full bg-white/20 backdrop-blur-sm text-white/90">
+                              +{project.data.technologies.length - 3}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Links */}
+                        <div class="flex gap-2">
+                          {project.data.repository && (
+                            <div class="p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors">
+                              <Icon name="Github" className="w-4 h-4 text-white" />
+                            </div>
+                          )}
+                          {project.data.demo && (
+                            <div class="p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors">
+                              <Icon name="ExternalLink" className="w-4 h-4 text-white" />
+                            </div>
+                          )}
+                          {project.data.paper && (
+                            <div class="p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors">
+                              <Icon name="FileText" className="w-4 h-4 text-white" />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </a>
+          </article>
+        ))}
+      </div>
+
+      {/* Empty State */}
+      <div id="no-projects" class="hidden text-center py-12">
+        <div class="max-w-md mx-auto">
+          <div class="w-24 h-24 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mx-auto mb-6">
+            <Icon name="Search" className="w-12 h-12 text-muted-foreground" />
+          </div>
+          <h3 class="text-xl font-semibold mb-3">No projects found</h3>
+          <p class="text-muted-foreground">Try selecting a different category to discover more work.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="py-20 relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-accent/5 to-primary/5"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.1)_100%)]"></div>
+
+    <div class="container relative text-center">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mb-6">
+          Let's Create Something Amazing Together
+        </h2>
+        <p class="text-lg text-muted-foreground mb-8 leading-relaxed">
+          Ready to push the boundaries of what's possible? Whether it's cutting-edge neural rendering,
+          innovative graphics programming, or revolutionary AI research, I'm excited to collaborate on your next breakthrough.
+        </p>
+
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <a
+            href="mailto:shayi783@student.liu.se"
+            class="group inline-flex items-center px-8 py-4 rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl shadow-lg"
+          >
+            <Icon name="Mail" className="mr-3 w-5 h-5 group-hover:scale-110 transition-transform" />
+            Start a Conversation
+          </a>
+          <a
+            href="https://github.com/Qervas"
+            target="_blank"
+            class="group inline-flex items-center px-8 py-4 rounded-full border-2 border-primary/20 font-semibold hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
+          >
+            <Icon name="Github" className="mr-3 w-5 h-5 group-hover:scale-110 transition-transform" />
+            Explore My Code
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // No filtering needed since we removed the filter buttons
+</script>
+
+<style>
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Advanced visual effects */
+  .masonry-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .masonry-item.tall {
+    grid-row: span 2;
+  }
+
+  .masonry-item.wide {
+    grid-column: span 2;
+  }
+
+  @media (max-width: 768px) {
+    .masonry-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .masonry-item.wide {
+      grid-column: span 1;
+    }
+  }
+
+  /* Button improvements */
+  .filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .filter-btn.bg-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary)/.8));
+    box-shadow: 0 4px 14px hsl(var(--primary)/.3);
+  }
+
+  /* Glassmorphism effects */
+  .project-card {
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .project-card:hover {
+    transform: translateY(-8px) rotate(0.5deg);
+    box-shadow:
+      0 25px 50px -12px rgba(0, 0, 0, 0.25),
+      0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+
+  /* Shadow enhancements */
+  .shadow-3xl {
+    box-shadow:
+      0 35px 60px -12px rgba(0, 0, 0, 0.25),
+      0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+
+  /* Gradient text effects */
+  .bg-clip-text {
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  /* Advanced animations */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .group:hover .masonry-item {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  /* Improved mobile experience */
+  @media (max-width: 767px) {
+    .project-card h3 {
+      font-size: 1.125rem;
+      line-height: 1.4;
+    }
+
+    .project-card p {
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+
+    .masonry-grid {
+      gap: 1.5rem;
+    }
+  }
+
+  /* Backdrop blur support */
+  @supports (backdrop-filter: blur(10px)) {
+    .project-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+  }
+</style>

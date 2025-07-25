@@ -1,0 +1,164 @@
+---
+export interface Props {
+  src: string;
+  title: string;
+  description?: string;
+  type?: "report" | "slides" | "paper" | "documentation";
+  height?: string;
+}
+
+const { src, title, description, type = "report", height = "600px" } = Astro.props;
+
+const typeLabels = {
+  report: "Report",
+  slides: "Slides",
+  paper: "Paper",
+  documentation: "Documentation"
+};
+
+const typeColors = {
+  report: "bg-blue-100 text-blue-800 border-blue-200",
+  slides: "bg-green-100 text-green-800 border-green-200",
+  paper: "bg-purple-100 text-purple-800 border-purple-200",
+  documentation: "bg-gray-100 text-gray-800 border-gray-200"
+};
+---
+
+<div class="pdf-viewer-container max-w-4xl mx-auto border border-gray-200 rounded-lg overflow-hidden shadow-sm bg-white">
+  <!-- Header -->
+  <div class="bg-gray-50 px-4 py-2 border-b border-gray-200">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <span class={`inline-flex items-center px-2 py-1 rounded text-xs font-medium border ${typeColors[type]}`}>
+          {typeLabels[type]}
+        </span>
+        <h3 class="text-sm font-medium text-gray-900">{title}</h3>
+      </div>
+      <div class="flex items-center space-x-1">
+        <a
+          href={src}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center px-2 py-1 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        >
+          <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Download
+        </a>
+        <button
+          class="inline-flex items-center px-2 py-1 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          onclick="window.toggleFullscreen(this)"
+        >
+          <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+          </svg>
+          Expand
+        </button>
+      </div>
+    </div>
+    {description && (
+      <p class="mt-1 text-xs text-gray-500">{description}</p>
+    )}
+  </div>
+
+  <!-- PDF Embed -->
+  <div class="pdf-embed-wrapper">
+    <iframe
+      src={`${src}#toolbar=0&navpanes=0&scrollbar=1&page=1&view=FitH`}
+      type="application/pdf"
+      width="100%"
+      height="400px"
+      class="border-0"
+      title={title}
+    >
+      <div class="fallback-content p-6 text-center">
+        <div class="max-w-sm mx-auto">
+          <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <h4 class="text-sm font-medium text-gray-900 mb-2">PDF Preview Not Available</h4>
+          <p class="text-xs text-gray-600 mb-3">Your browser doesn't support PDF embedding.</p>
+          <a
+            href={src}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Download PDF
+          </a>
+        </div>
+      </div>
+    </iframe>
+  </div>
+</div>
+
+<script is:inline>
+  function toggleFullscreen(button) {
+    const container = button.closest('.pdf-viewer-container');
+    const iframe = container.querySelector('iframe');
+
+    if (!document.fullscreenElement) {
+      container.requestFullscreen().then(() => {
+        iframe.style.height = '100vh';
+        const span = button.querySelector('span');
+        if (span) span.textContent = 'Exit';
+      }).catch((err) => {
+        console.log('Error attempting to enable fullscreen:', err.message);
+      });
+    } else {
+      document.exitFullscreen().then(() => {
+        iframe.style.height = '400px';
+        const span = button.querySelector('span');
+        if (span) span.textContent = 'Expand';
+      });
+    }
+  }
+
+  // Handle fullscreen change events
+  document.addEventListener('fullscreenchange', () => {
+    const containers = document.querySelectorAll('.pdf-viewer-container');
+    containers.forEach(container => {
+      const iframe = container.querySelector('iframe');
+      const button = container.querySelector('button[onclick*="toggleFullscreen"]');
+
+      if (!document.fullscreenElement && iframe) {
+        iframe.style.height = '400px';
+        if (button) {
+          const span = button.querySelector('span');
+          if (span) span.textContent = 'Expand';
+        }
+      }
+    });
+  });
+
+  // Make function globally available
+  window.toggleFullscreen = toggleFullscreen;
+</script>
+
+<style>
+  .pdf-viewer-container:fullscreen {
+    background: white;
+  }
+
+  .pdf-viewer-container:fullscreen .pdf-embed-wrapper {
+    height: 100vh;
+  }
+
+  .pdf-viewer-container:fullscreen iframe {
+    height: 100vh !important;
+  }
+
+  .fallback-content {
+    display: none;
+  }
+
+  /* Show fallback if iframe fails to load */
+  iframe:not([src]) + .fallback-content,
+  iframe[src=""] + .fallback-content {
+    display: block;
+  }
+</style>

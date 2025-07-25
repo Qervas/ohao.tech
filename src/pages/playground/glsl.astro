@@ -1,0 +1,319 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CodePlayground from '../../components/CodePlayground';
+---
+
+<Layout title="GLSL Shader Playground">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <!-- Hero Section -->
+    <section class="py-12 md:py-16">
+      <div class="container px-4 sm:px-6 lg:px-8 mx-auto">
+        <div class="max-w-4xl mx-auto text-center mb-8">
+          <h1 class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            GLSL Shader Playground
+          </h1>
+          <p class="text-lg text-gray-600 dark:text-gray-300 mb-6">
+            Create stunning real-time graphics with WebGL fragment shaders. Experiment with mathematical art,
+            ray marching, fractals, and visual effects. All shaders run in real-time with mouse interaction.
+          </p>
+          <div class="flex flex-wrap justify-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+            <div class="flex items-center">
+              <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              Real-time rendering
+            </div>
+            <div class="flex items-center">
+              <div class="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+              WebGL shaders
+            </div>
+            <div class="flex items-center">
+              <div class="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
+              Interactive controls
+            </div>
+            <div class="flex items-center">
+              <div class="w-2 h-2 bg-pink-500 rounded-full mr-2"></div>
+              Shareable code
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Playground -->
+        <div class="max-w-7xl mx-auto">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden">
+            <CodePlayground client:load className="h-[700px]" />
+          </div>
+        </div>
+
+        <!-- Documentation Section -->
+        <div class="mt-16 max-w-6xl mx-auto">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                  <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 class="text-xl font-bold">GLSL Documentation</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">Learn shader programming with official docs and quick reference</p>
+                  </div>
+                </div>
+                <button
+                  id="docs-toggle"
+                  onclick="toggleDocumentation()"
+                  class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                >
+                  Show Quick Reference
+                </button>
+              </div>
+            </div>
+
+            <!-- Collapsible Documentation Content -->
+            <div id="docs-content" class="hidden">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
+                <!-- Quick Tips -->
+                <div class="p-6 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
+                  <h4 class="text-lg font-semibold mb-4">Quick Reference</h4>
+
+                  <div class="space-y-4">
+                    <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+                      <h5 class="font-semibold text-blue-900 dark:text-blue-300 mb-2">Essential Setup</h5>
+                      <ul class="text-sm text-blue-800 dark:text-blue-200 space-y-1 font-mono">
+                        <li><code>precision mediump float;</code> - Always declare first</li>
+                        <li><code>uv = gl_FragCoord.xy / u_resolution.xy</code> - Normalize coordinates</li>
+                        <li><code>uv = uv * 2.0 - 1.0</code> - Center coordinates [-1,1]</li>
+                        <li><code>uv.x *= u_resolution.x / u_resolution.y</code> - Fix aspect ratio</li>
+                      </ul>
+                    </div>
+
+                    <div class="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4">
+                      <h5 class="font-semibold text-purple-900 dark:text-purple-300 mb-2">Built-in Uniforms</h5>
+                      <ul class="text-sm text-purple-800 dark:text-purple-200 space-y-1 font-mono">
+                        <li><code>u_time</code> - Animation time in seconds</li>
+                        <li><code>u_resolution</code> - Canvas size (width, height)</li>
+                        <li><code>u_mouse</code> - Mouse position (x, y)</li>
+                        <li><code>gl_FragCoord</code> - Current pixel coordinates</li>
+                      </ul>
+                    </div>
+
+                    <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
+                      <h5 class="font-semibold text-green-900 dark:text-green-300 mb-2">Math Functions</h5>
+                      <ul class="text-sm text-green-800 dark:text-green-200 space-y-1 font-mono">
+                        <li><code>sin(), cos(), tan()</code> - Trigonometric functions</li>
+                        <li><code>length(), distance(), dot()</code> - Vector operations</li>
+                        <li><code>smoothstep(), mix(), clamp()</code> - Interpolation</li>
+                        <li><code>fract(), floor(), ceil(), mod()</code> - Math utilities</li>
+                      </ul>
+                    </div>
+
+                    <div class="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4">
+                      <h5 class="font-semibold text-orange-900 dark:text-orange-300 mb-2">Ray Marching</h5>
+                      <ul class="text-sm text-orange-800 dark:text-orange-200 space-y-1 font-mono">
+                        <li><code>sdSphere(p, r)</code> - Sphere distance function</li>
+                        <li><code>sdBox(p, b)</code> - Box distance function</li>
+                        <li><code>min(), max()</code> - CSG operations</li>
+                        <li><code>normalize()</code> - Normal calculation</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Embedded Documentation -->
+                <div class="p-6">
+                  <div class="mb-4">
+                    <h4 class="text-lg font-semibold mb-2">Learning Resources</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">
+                      Essential links to master GLSL shader programming.
+                    </p>
+                  </div>
+
+                  <div class="space-y-4">
+                    <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-4">
+                      <h5 class="font-semibold mb-2">Getting Started</h5>
+                      <ul class="text-sm space-y-1">
+                        <li>• Fragment shaders run once per pixel</li>
+                        <li>• Use coordinates from 0 to 1 or -1 to 1</li>
+                        <li>• Output color via <code class="bg-gray-200 dark:bg-gray-700 px-1 rounded">gl_FragColor</code></li>
+                        <li>• All operations happen in parallel</li>
+                      </ul>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-lg p-4">
+                      <h5 class="font-semibold mb-2">Performance Tips</h5>
+                      <ul class="text-sm space-y-1">
+                        <li>• Keep iterations low for performance</li>
+                        <li>• Use <code class="bg-gray-200 dark:bg-gray-700 px-1 rounded">smoothstep()</code> for smooth edges</li>
+                        <li>• Avoid branches (if/else) when possible</li>
+                        <li>• Debug by outputting values as colors</li>
+                      </ul>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-3">
+                      <a
+                        href="https://learnopengl.com/Getting-started/Shaders"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="flex items-center justify-center px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors"
+                      >
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.168 18.477 18.582 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                        Learn OpenGL Tutorials
+                      </a>
+                      <a
+                        href="https://www.shadertoy.com/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="flex items-center justify-center px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg transition-colors"
+                      >
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        Shadertoy Community
+                      </a>
+                      <a
+                        href="https://thebookofshaders.com/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="flex items-center justify-center px-4 py-3 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors"
+                      >
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        The Book of Shaders
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="mt-16 text-center">
+          <h2 class="text-2xl font-bold mb-4">Ready to Create Shaders?</h2>
+          <p class="text-gray-600 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
+            Start experimenting with the playground above. Your code runs in real-time as you type.
+            Move your mouse around to see interactive effects, and don't forget to share your creations!
+          </p>
+          <div class="flex flex-wrap justify-center gap-4">
+            <a
+              href="/playground"
+              class="inline-flex items-center px-6 py-3 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium rounded-lg transition-colors"
+            >
+              All Playgrounds
+            </a>
+            <a
+              href="/playground/algorithms"
+              class="inline-flex items-center px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors"
+            >
+              Try Algorithm Visualizer
+              <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<script>
+  // Documentation toggle
+  window.toggleDocumentation = function() {
+    const content = document.getElementById('docs-content');
+    const button = document.getElementById('docs-toggle');
+
+    if (content.classList.contains('hidden')) {
+      content.classList.remove('hidden');
+      button.textContent = 'Hide Quick Reference';
+    } else {
+      content.classList.add('hidden');
+      button.textContent = 'Show Quick Reference';
+    }
+  }
+</script>
+
+<style>
+  /* Custom scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: theme('colors.gray.100');
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: theme('colors.gray.400');
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: theme('colors.gray.500');
+  }
+
+  .dark ::-webkit-scrollbar-track {
+    background: theme('colors.gray.800');
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    background: theme('colors.gray.600');
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: theme('colors.gray.500');
+  }
+
+  /* Smooth animations */
+  * {
+    scroll-behavior: smooth;
+  }
+
+  /* Code styling */
+  code {
+    background: theme('colors.gray.100');
+    color: theme('colors.gray.800');
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace;
+  }
+
+  .dark code {
+    background: theme('colors.gray.800');
+    color: theme('colors.gray.200');
+  }
+
+  /* Gradient text animation */
+  @keyframes gradient {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .bg-gradient-to-r {
+    background-size: 200% 200%;
+    animation: gradient 6s ease infinite;
+  }
+
+  /* Documentation section animation */
+  #docs-content {
+    animation: slideDown 0.3s ease-out;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

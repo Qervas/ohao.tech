@@ -1,0 +1,124 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AlgorithmVisualizer from '../../components/AlgorithmVisualizer';
+---
+
+<Layout title="Algorithm Visualizer - CLRS Algorithms Collection">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <!-- Hero Section -->
+    <section class="py-12 md:py-16">
+      <div class="container px-4 sm:px-6 lg:px-8 mx-auto">
+        <div class="max-w-4xl mx-auto text-center mb-8">
+          <h1 class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent">
+            Algorithm Visualizer
+          </h1>
+          <p class="text-lg text-gray-600 dark:text-gray-300 mb-6">
+            Explore the fundamental algorithms from "Introduction to Algorithms" with interactive visualizations.
+            Watch sorting, graph traversal, search, and dynamic programming algorithms come to life.
+          </p>
+          <div class="flex flex-wrap justify-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+            <div class="flex items-center">
+              <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              Step-by-step visualization
+            </div>
+            <div class="flex items-center">
+              <div class="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+              Multiple algorithm categories
+            </div>
+            <div class="flex items-center">
+              <div class="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
+              CLRS textbook algorithms
+            </div>
+            <div class="flex items-center">
+              <div class="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
+              Interactive controls
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Visualizer -->
+        <div class="max-w-7xl mx-auto">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden">
+            <AlgorithmVisualizer client:load className="min-h-[800px]" />
+          </div>
+        </div>
+
+
+
+        <!-- Algorithm Complexity Guide -->
+        <div class="mt-16 max-w-6xl mx-auto">
+          <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+              <h3 class="text-xl font-bold mb-2">Algorithm Complexity Guide</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-300">
+                Understanding time and space complexity across different algorithm categories
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
+              <!-- Time Complexity Chart -->
+              <div>
+                <h4 class="font-semibold mb-4">Common Time Complexities</h4>
+                <div class="space-y-3">
+                  <div class="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                    <span class="font-mono text-sm">O(1)</span>
+                    <span class="text-sm">Constant - Hash table lookup</span>
+                  </div>
+                  <div class="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <span class="font-mono text-sm">O(log n)</span>
+                    <span class="text-sm">Logarithmic - Binary search</span>
+                  </div>
+                  <div class="flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                    <span class="font-mono text-sm">O(n)</span>
+                    <span class="text-sm">Linear - Array traversal</span>
+                  </div>
+                  <div class="flex items-center justify-between p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                    <span class="font-mono text-sm">O(n log n)</span>
+                    <span class="text-sm">Linearithmic - Merge sort</span>
+                  </div>
+                  <div class="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                    <span class="font-mono text-sm">O(n²)</span>
+                    <span class="text-sm">Quadratic - Bubble sort</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Algorithm Categories -->
+              <div>
+                <h4 class="font-semibold mb-4">Algorithm Categories Overview</h4>
+                <div class="space-y-3">
+                  <div class="p-3 border border-gray-200 dark:border-gray-600 rounded-lg">
+                    <div class="font-medium text-sm mb-1">Divide & Conquer</div>
+                    <div class="text-xs text-gray-600 dark:text-gray-400">
+                      Quick Sort, Merge Sort, Binary Search
+                    </div>
+                  </div>
+                  <div class="p-3 border border-gray-200 dark:border-gray-600 rounded-lg">
+                    <div class="font-medium text-sm mb-1">Graph Theory</div>
+                    <div class="text-xs text-gray-600 dark:text-gray-400">
+                      BFS, DFS, Dijkstra, Kruskal, Prim
+                    </div>
+                  </div>
+                  <div class="p-3 border border-gray-200 dark:border-gray-600 rounded-lg">
+                    <div class="font-medium text-sm mb-1">Dynamic Programming</div>
+                    <div class="text-xs text-gray-600 dark:text-gray-400">
+                      Fibonacci, Knapsack, LCS, Edit Distance
+                    </div>
+                  </div>
+                  <div class="p-3 border border-gray-200 dark:border-gray-600 rounded-lg">
+                    <div class="font-medium text-sm mb-1">Greedy Algorithms</div>
+                    <div class="text-xs text-gray-600 dark:text-gray-400">
+                      Huffman Coding, Activity Selection
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </section>
+  </div>
+</Layout>
