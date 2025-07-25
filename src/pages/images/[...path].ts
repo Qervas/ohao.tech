@@ -22,38 +22,57 @@ export const GET: APIRoute = async ({ params, request }) => {
       }
     }
 
+    // Construct the full file path
     const filePath = path.join(process.cwd(), "public", "images", imagePath);
 
-    console.log("Parsed image path:", imagePath);
+    console.log("Requested image path:", imagePath);
     console.log("Full file path:", filePath);
-    console.log("CWD:", process.cwd());
+    console.log("Current working directory:", process.cwd());
+
+    // Security check: ensure the path is within the public/images directory
+    const publicImagesDir = path.join(process.cwd(), "public", "images");
+    const resolvedPath = path.resolve(filePath);
+    const resolvedPublicDir = path.resolve(publicImagesDir);
+
+    if (!resolvedPath.startsWith(resolvedPublicDir)) {
+      console.log("Security violation: path outside images directory");
+      return new Response("Forbidden", { status: 403 });
+    }
 
     // Check if file exists
     if (!fs.existsSync(filePath)) {
       console.log("File not found:", filePath);
 
-      // List what's actually in the directory for debugging
+      // Enhanced debugging: list directory contents
       const dirPath = path.dirname(filePath);
-      try {
-        const files = fs.readdirSync(dirPath);
-        console.log("Directory contents of", dirPath, ":", files);
-      } catch (e) {
-        console.log("Could not read directory:", dirPath, "Error:", e.message);
+      console.log("Looking in directory:", dirPath);
 
-        // Try to list the parent directory too
-        const parentDir = path.join(process.cwd(), "public", "images");
-        try {
-          const parentFiles = fs.readdirSync(parentDir);
-          console.log("Parent images directory contents:", parentFiles);
-        } catch (parentE) {
-          console.log(
-            "Could not read parent images directory:",
-            parentE.message,
-          );
+      try {
+        if (fs.existsSync(dirPath)) {
+          const files = fs.readdirSync(dirPath);
+          console.log("Directory contents:", files);
+        } else {
+          console.log("Directory does not exist:", dirPath);
+
+          // Try to find the closest existing parent directory
+          let currentDir = dirPath;
+          while (currentDir !== path.dirname(currentDir)) {
+            if (fs.existsSync(currentDir)) {
+              const parentFiles = fs.readdirSync(currentDir);
+              console.log(
+                `Closest existing directory ${currentDir}:`,
+                parentFiles,
+              );
+              break;
+            }
+            currentDir = path.dirname(currentDir);
+          }
         }
+      } catch (e) {
+        console.log("Error reading directory:", e.message);
       }
 
-      return new Response(`Image not found: ${imagePath} at ${filePath}`, {
+      return new Response(`Image not found: ${imagePath}`, {
         status: 404,
         headers: {
           "Content-Type": "text/plain",
@@ -63,6 +82,9 @@ export const GET: APIRoute = async ({ params, request }) => {
 
     // Read the file
     const fileBuffer = fs.readFileSync(filePath);
+    const stats = fs.statSync(filePath);
+
+    console.log("File size:", stats.size, "bytes");
 
     // Determine content type based on file extension
     const ext = path.extname(filePath).toLowerCase();
@@ -88,9 +110,23 @@ export const GET: APIRoute = async ({ params, request }) => {
       case ".ico":
         contentType = "image/x-icon";
         break;
+      case ".bmp":
+        contentType = "image/bmp";
+        break;
+      case ".tiff":
+      case ".tif":
+        contentType = "image/tiff";
+        break;
     }
 
-    console.log("Successfully serving image:", filePath, "as", contentType);
+    console.log(
+      "Successfully serving image:",
+      filePath,
+      "as",
+      contentType,
+      "size:",
+      stats.size,
+    );
 
     // Return the image with proper headers
     return new Response(fileBuffer, {
@@ -99,6 +135,9 @@ export const GET: APIRoute = async ({ params, request }) => {
         "Content-Type": contentType,
         "Cache-Control": "public, max-age=31536000, immutable",
         "Access-Control-Allow-Origin": "*",
+        "Content-Length": stats.size.toString(),
+        "Last-Modified": stats.mtime.toUTCString(),
+        ETag: `"${stats.mtime.getTime()}-${stats.size}"`,
       },
     });
   } catch (error) {
